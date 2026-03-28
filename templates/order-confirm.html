@@ -827,14 +827,20 @@
 <div class="page-wrap">
   <div class="page-inner">
 
-    <!-- SUCCESS BLOCK -->
+    {% if error %}
+    <div style="background:#fdf0ef;border:1px solid #f0c0b8;color:#a93226;padding:16px 24px;margin-bottom:32px;font-size:13px;display:flex;align-items:center;gap:10px;border-radius:2px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      {{ error }}
+    </div>
+    {% endif %}
+        <!-- SUCCESS BLOCK -->
     <div class="success-block">
       <div class="success-icon">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
       <div class="success-overline">Order Confirmed</div>
-      <h1 class="success-title">Thank you{% if order %}{% if order.customer %}, <em style="font-style:italic;color:var(--grey-3);">{{ order.customer.full_name|default:order.customer.email|truncatewords:1 }}.</em>{% endif %}{% endif %}</h1>
-      <p class="success-subtitle">Your order has been received and is now being prepared with care.{% if order %}{% if order.customer %} A confirmation email has been sent to <strong>{{ order.customer.email }}</strong>.{% endif %}{% else %} You'll receive a confirmation email shortly.{% endif %}</p>
+      <h1 class="success-title">Thank you{% if order %}{% if order.customer %}, <em style="font-style:italic;color:var(--grey-3);">{{ order.customer_name|truncatewords:1 }}.</em>{% endif %}{% endif %}</h1>
+      <p class="success-subtitle">Your order has been received and is now being prepared with care.{% if order %}{% if order.customer %} A confirmation email has been sent to <strong>{{ order.customer_email_addr }}</strong>.{% endif %}{% else %} You'll receive a confirmation email shortly.{% endif %}</p>
       <div class="order-ref">{% if order %}#{{ order.order_number }}{% else %}—{% endif %}</div>
       <div class="success-actions">
         {% comment %} <a class="btn-track" href="{% if order %}{% url 'order-tracking-page' %}?order={{ order.order_number }}{% else %}{% url 'order-tracking-page' %}{% endif %}">
@@ -869,12 +875,12 @@
             </div>
             {% endif %}
             <div style="flex:1;">
-              <div class="item-name">{{ item.product_name|default:item.product.name }}</div>
+              <div class="item-name">{{ item.name }}</div>
               <div class="item-meta">
                 Qty {{ item.quantity }}{% if item.variant %} &middot; {{ item.variant }}{% endif %}
               </div>
             </div>
-            <div class="item-price">£{{ item.unit_price|floatformat:2 }}</div>
+            <div class="item-price">£{{ item.price|floatformat:2 }}</div>
           </div>
           {% empty %}
           <p style="font-size:13px;color:var(--grey-5);font-style:italic;">No items found.</p>
@@ -884,7 +890,7 @@
         <div class="totals">
           <div class="total-row">
             <span>Subtotal</span>
-            <span>£{{ order.subtotal|default:order.total|floatformat:2 }}</span>
+            <span>£{{ order.subtotal|floatformat:2 }}</span>
           </div>
           {% if order.shipping_cost is not None %}
           {% if order.shipping_cost == 0 %}
@@ -919,17 +925,17 @@
             <h2 class="panel-title">Shipping Details</h2>
           </div>
           {% if order %}
-          {% if order.shipping_address %}
+          {% if order.shipping_line1 %}
           <div class="address-lines">
-            <div class="address-name">{{ order.shipping_address.full_name|default:order.customer.full_name }}</div>
-            {% if order.shipping_address.line1 %}<span>{{ order.shipping_address.line1 }}</span>{% endif %}
-            {% if order.shipping_address.line2 %}<span>{{ order.shipping_address.line2 }}</span>{% endif %}
-            <span>{{ order.shipping_address.city }}{% if order.shipping_address.postcode %}, {{ order.shipping_address.postcode }}{% endif %}</span>
-            {% if order.shipping_address.country %}<span>{{ order.shipping_address.country }}</span>{% endif %}
+            <div class="address-name">{{ order.shipping_name|default:order.customer_name }}</div>
+            {% if order.shipping_line1 %}<span>{{ order.shipping_line1 }}</span>{% endif %}
+            {% if order.shipping_line2 %}<span>{{ order.shipping_line2 }}</span>{% endif %}
+            <span>{{ order.shipping_city }}{% if order.shipping_postcode %}, {{ order.shipping_postcode }}{% endif %}</span>
+            {% if order.shipping_country %}<span>{{ order.shipping_country }}</span>{% endif %}
           </div>
           {% elif order.customer %}
           <div class="address-lines">
-            <div class="address-name">{{ order.customer.full_name|default:order.customer.email }}</div>
+            <div class="address-name">{{ order.customer_name }}</div>
             <span style="color:var(--grey-5);font-style:italic;">Shipping address not recorded.</span>
           </div>
           {% else %}
@@ -973,12 +979,12 @@
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="4" width="22" height="16"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
             </div>
             <div>
-              {% if order.payment_last4 %}
-              <div class="payment-card">{{ order.payment_brand|default:"Card" }} ending in {{ order.payment_last4 }}</div>
+              {% if order.stripe_payment_intent %}
+              <div class="payment-card">Payment confirmed via Stripe</div>
               {% else %}
               <div class="payment-card">Paid via Stripe</div>
               {% endif %}
-              <div class="payment-billed">Billed to {{ order.customer.full_name|default:order.customer.email }}</div>
+              <div class="payment-billed">Billed to {{ order.customer_name }}</div>
             </div>
           </div>
           {% else %}
@@ -1054,7 +1060,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <p>{% if order %}{% if order.customer %}A confirmation email has been sent to <strong>{{ order.customer.email }}</strong> — please check your inbox.{% else %}A confirmation email will be sent to your registered address.{% endif %}{% else %}A confirmation email will be sent to your registered address.{% endif %}</p>
+    <p>{% if order %}{% if order.customer %}A confirmation email has been sent to <strong>{{ order.customer_email_addr }}</strong> — please check your inbox.{% else %}A confirmation email will be sent to your registered address.{% endif %}{% else %}A confirmation email will be sent to your registered address.{% endif %}</p>
     <div class="footer-bottom-links">
       <a href="{% url 'privacy-page' %}">Privacy</a>
       <a href="{% url 'conditions-page' %}">Terms</a>
