@@ -731,18 +731,17 @@
       </div>
 
       <div class="nav-item">
-        <a href="{% url 'gift-page' %}">Design Studio <span class="chevron"></span></a>
         <div class="mega-menu">
           <div class="mega-menu-grid cols-2">
             <div class="mega-col">
               <h5>Services</h5>
-              <ul><li><a href="{% url 'gift-page' %}#design-services">Design Services</a></li></ul>
+              <ul><li><a href="{% url 'design-service-page' %}#design-services">Design Services</a></li></ul>
             </div>
             <div class="mega-col">
               <h5>Resources</h5>
               <ul>
-                <li><a href="{% url 'gift-page' %}#templates">Design Templates</a></li>
-                <li><a href="{% url 'gift-page' %}#faqs">FAQs</a></li>
+                <li><a href="{% url 'design-studio-page' %}#templates">Design Templates</a></li>
+                <li><a href="{% url 'faq-page' %}#faqs">FAQs</a></li>
               </ul>
             </div>
           </div>
@@ -815,8 +814,6 @@
 <div class="mobile-nav" id="mobileNav" aria-hidden="true">
    <a href="{% url 'home-page' %}">Home</a>
     <a href="{% url 'shop-page' %}">Shop</a>
-    <!-- <a href="#">Best Sellers</a> -->
-    <!-- <a href="{% url 'gift-page' %}">Custom Gifts</a> -->
     <a href="{% url 'about-page' %}">About</a>
     <!-- <a href="{% url 'contact-page' %}">Contact</a> -->
 </div>
