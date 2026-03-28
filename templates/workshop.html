@@ -1,0 +1,1255 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CustomiseMe UK | The Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --black: #0a0a0a; --white: #f8f8f6;
+    --grey-1: #1a1a1a; --grey-2: #2e2e2e; --grey-3: #4a4a4a;
+    --grey-4: #888888; --grey-5: #b0b0b0; --grey-6: #d4d4d4;
+    --grey-7: #e8e8e6; --grey-8: #f2f2f0;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans:  'DM Sans', system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--white); color: var(--black);
+    font-family: var(--sans); font-size: 15px; line-height: 1.6;
+    overflow-x: hidden; min-height: 100vh;
+    display: flex; flex-direction: column;
+  }
+
+  /* ── CURSOR ── */
+  * { cursor: none; }
+  #cursor {
+    position: fixed; top: 0; left: 0; width: 10px; height: 10px;
+    background: var(--black); border-radius: 50%; pointer-events: none;
+    z-index: 9999; transform: translate(-50%,-50%);
+    transition: width .2s, height .2s;
+  }
+  #cursor-ring {
+    position: fixed; top: 0; left: 0; width: 36px; height: 36px;
+    border: 1px solid var(--black); border-radius: 50%; pointer-events: none;
+    z-index: 9998; transform: translate(-50%,-50%);
+    transition: width .3s, height .3s;
+  }
+
+  /* ── PAGE WRAP ── */
+  .page-wrap { flex: 1; padding-top: 136px; }
+
+  /* ── READING PROGRESS ── */
+  .progress-track {
+    position: fixed; top: calc(34px + 102px); left: 0; right: 0;
+    height: 2px; background: var(--grey-7); z-index: 99;
+  }
+  .progress-fill { height: 100%; background: var(--black); width: 0%; transition: width .1s linear; }
+
+  /* ═══════════════════════════════
+     § HERO
+  ═══════════════════════════════ */
+  .hero {
+    position: relative; width: 100%; height: 68vh; min-height: 460px;
+    overflow: hidden; display: flex; align-items: flex-end;
+    background: var(--black);
+  }
+  .hero-img {
+    position: absolute; inset: 0;
+    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB7PpNZCxJWEazx8Bs2f_JSzdYDjWcBmZtatF6RXetpfY6SJi4sdxAY6Y-5mHLXXDzc7t6cYAX4EZKAp2-3VBHLKKayScIn-ljuuoViW4mCv6bvRuTYBbpVzSdkUEGCpDzi3ngeWGhO-GX-RDxbhKu8LW-uFWbk1TIn_F0xkuMR2FyT1El9gPlfQmQs9K_lAE870TdmE1pUcClwTkJnqGVUkpd5wJ1mS6vuqvuUPRXXVvRLtbjAwIEHddzl4JOZAaT_idokWdaVBP57');
+    background-size: cover; background-position: center;
+    filter: grayscale(100%); opacity: 0.35;
+  }
+  .hero::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg,
+      rgba(10,10,10,0.45) 0%,
+      rgba(10,10,10,0.05) 35%,
+      rgba(10,10,10,0.6) 68%,
+      rgba(10,10,10,0.88) 100%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    position: absolute; top: 32px; right: 48px; z-index: 2;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--grey-4);
+    border: 1px solid var(--grey-2); padding: 6px 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .hero-tag::before { content: '✦'; font-size: 8px; }
+  .hero-content {
+    position: relative; z-index: 1;
+    padding: 0 80px 72px; max-width: 1200px; width: 100%;
+  }
+  .hero-overline {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--grey-5);
+    display: flex; align-items: center; gap: 12px; margin-bottom: 18px;
+    opacity: 0; animation: fadeUp .7s .1s ease forwards;
+  }
+  .hero-overline::before { content: ''; width: 28px; height: 1px; background: var(--grey-4); }
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(50px, 7vw, 92px);
+    font-weight: 300; line-height: 0.95; color: var(--white);
+    letter-spacing: -0.01em; margin-bottom: 24px;
+    opacity: 0; animation: fadeUp .7s .2s ease forwards;
+  }
+  .hero-title em { font-style: italic; color: rgba(248,248,246,0.42); }
+  .hero-desc {
+    font-size: clamp(14px, 1.4vw, 17px); font-weight: 300;
+    color: rgba(248,248,246,0.65); line-height: 1.75; max-width: 520px;
+    opacity: 0; animation: fadeUp .7s .3s ease forwards;
+  }
+
+  /* ═══════════════════════════════
+     SHARED SECTION CHROME
+  ═══════════════════════════════ */
+  .section-overline {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--grey-5);
+    display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+  }
+  .section-overline::before { content: ''; width: 24px; height: 1px; background: var(--grey-6); }
+
+  /* ═══════════════════════════════
+     § INTRO  (3-col grid)
+  ═══════════════════════════════ */
+  .section-intro {
+    padding: 96px 80px;
+    border-bottom: 1px solid var(--grey-7);
+    display: grid; grid-template-columns: 1fr 2fr;
+    gap: 80px; align-items: start;
+  }
+  .intro-left { }
+  .intro-title {
+    font-family: var(--serif); font-size: clamp(30px, 3.2vw, 44px);
+    font-weight: 300; line-height: 1.1; margin-bottom: 20px;
+  }
+  .intro-title em { font-style: italic; color: var(--grey-4); }
+  .intro-body {
+    font-size: 14px; color: var(--grey-3); line-height: 1.9;
+    font-weight: 400; margin-bottom: 28px;
+  }
+  .intro-badge {
+    display: inline-flex; align-items: center; gap: 10px;
+    border: 1px solid var(--grey-6); padding: 10px 16px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--grey-3);
+  }
+  .intro-badge-icon {
+    width: 20px; height: 20px; display: flex; align-items: center;
+    justify-content: center; color: var(--grey-3);
+  }
+
+  /* Intro feature cards — 2-col */
+  .intro-right {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 2px; background: var(--grey-6); border: 1px solid var(--grey-6);
+    align-self: start;
+  }
+  .intro-card {
+    background: var(--white); padding: 32px 28px;
+    transition: background .2s;
+  }
+  .intro-card:hover { background: var(--grey-8); }
+  .intro-card-icon {
+    width: 40px; height: 40px; border: 1px solid var(--grey-7);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--grey-3); margin-bottom: 18px;
+    transition: border-color .2s, color .2s;
+  }
+  .intro-card:hover .intro-card-icon { border-color: var(--grey-3); color: var(--black); }
+  .intro-card-title {
+    font-family: var(--serif); font-size: 20px; font-weight: 400;
+    margin-bottom: 10px;
+  }
+  .intro-card-body { font-size: 13px; color: var(--grey-4); line-height: 1.8; }
+
+  /* ═══════════════════════════════
+     § TECHNIQUE SECTIONS  (alternating)
+  ═══════════════════════════════ */
+  .section-technique {
+    padding: 96px 80px;
+    border-bottom: 1px solid var(--grey-7);
+  }
+  .technique-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px; align-items: center;
+  }
+  .technique-grid.reverse { direction: rtl; }
+  .technique-grid.reverse > * { direction: ltr; }
+
+  .technique-num {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.24em;
+    text-transform: uppercase; color: var(--grey-5);
+    display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+  }
+  .technique-num::before { content: ''; width: 20px; height: 1px; background: var(--grey-6); }
+  .technique-title {
+    font-family: var(--serif); font-size: clamp(28px, 3vw, 42px);
+    font-weight: 300; line-height: 1.1; margin-bottom: 20px;
+  }
+  .technique-title em { font-style: italic; color: var(--grey-4); }
+  .technique-body {
+    font-size: 14px; color: var(--grey-3); line-height: 1.9; margin-bottom: 32px;
+  }
+
+  /* Technique feature list */
+  .technique-list { display: flex; flex-direction: column; gap: 20px; }
+  .technique-item {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding-bottom: 20px; border-bottom: 1px solid var(--grey-7);
+  }
+  .technique-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .technique-item-num {
+    font-family: var(--serif); font-size: 11px; color: var(--grey-5);
+    letter-spacing: 0.08em; flex-shrink: 0; min-width: 28px; padding-top: 2px;
+  }
+  .technique-item-title {
+    font-size: 13px; font-weight: 600; color: var(--black); margin-bottom: 4px;
+    letter-spacing: 0.02em;
+  }
+  .technique-item-body { font-size: 12px; color: var(--grey-4); line-height: 1.7; }
+
+  /* Technique image */
+  .technique-img {
+    overflow: hidden; border: 1px solid var(--grey-7);
+    background: var(--grey-7); position: relative;
+  }
+  .technique-img img {
+    width: 100%; display: block; object-fit: cover;
+    filter: grayscale(100%); transition: filter .5s, transform .5s;
+  }
+  .technique-img:hover img { filter: grayscale(0%); transform: scale(1.04); }
+
+  /* Technique data pair (Eco/Soft-Touch) */
+  .technique-data {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: var(--grey-6); border: 1px solid var(--grey-6);
+    margin-bottom: 32px;
+  }
+  .technique-data-cell { background: var(--white); padding: 20px 18px; }
+  .technique-data-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--black); margin-bottom: 6px;
+  }
+  .technique-data-body { font-size: 12px; color: var(--grey-4); line-height: 1.6; }
+
+  /* ═══════════════════════════════
+     § GALLERY
+  ═══════════════════════════════ */
+  .section-gallery {
+    padding: 96px 80px;
+    border-bottom: 1px solid var(--grey-7);
+  }
+  .gallery-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 40px; gap: 24px; flex-wrap: wrap;
+  }
+  .gallery-title {
+    font-family: var(--serif); font-size: clamp(26px, 2.8vw, 38px);
+    font-weight: 300; line-height: 1.1;
+  }
+  .gallery-title em { font-style: italic; color: var(--grey-4); }
+  .gallery-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--grey-4);
+    text-decoration: none; border-bottom: 1px solid var(--grey-6);
+    padding-bottom: 2px; transition: color .2s, border-color .2s;
+    white-space: nowrap;
+  }
+  .gallery-link:hover { color: var(--black); border-color: var(--black); }
+
+  .gallery-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 2px; background: var(--grey-6); border: 1px solid var(--grey-6);
+  }
+  .gallery-item {
+    aspect-ratio: 1; overflow: hidden; background: var(--grey-7);
+  }
+  .gallery-item img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: grayscale(100%);
+    transition: filter .5s, transform .5s;
+    display: block;
+  }
+  .gallery-item:hover img { filter: grayscale(0%); transform: scale(1.07); }
+
+  /* ═══════════════════════════════
+     § EQUIPMENT  (dark panel)
+  ═══════════════════════════════ */
+  .section-equipment {
+    padding: 96px 80px;
+    border-bottom: 1px solid var(--grey-7);
+  }
+  .equipment-inner {
+    background: var(--black); color: var(--white);
+    padding: 72px 80px; position: relative; overflow: hidden;
+  }
+  /* grid pattern overlay */
+  .equipment-inner::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(var(--grey-2) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grey-2) 1px, transparent 1px);
+    background-size: 40px 40px; opacity: 0.35;
+  }
+  /* large decorative glyph */
+  .equipment-deco {
+    position: absolute; right: -20px; bottom: -40px;
+    font-family: var(--serif); font-size: 320px; font-weight: 300;
+    line-height: 1; color: var(--grey-2); pointer-events: none;
+    user-select: none; opacity: 0.5;
+  }
+  .equipment-body { position: relative; z-index: 1; }
+  .equipment-overline {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--grey-4);
+    display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+  }
+  .equipment-overline::before { content: ''; width: 24px; height: 1px; background: var(--grey-3); }
+  .equipment-title {
+    font-family: var(--serif); font-size: clamp(32px, 3.5vw, 50px);
+    font-weight: 300; line-height: 1.05; margin-bottom: 16px;
+  }
+  .equipment-title em { font-style: italic; color: rgba(248,248,246,0.4); }
+  .equipment-desc {
+    font-size: 14px; color: var(--grey-4); line-height: 1.8;
+    max-width: 560px; margin-bottom: 56px;
+  }
+  .equipment-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: var(--grey-2); border: 1px solid var(--grey-2);
+  }
+  .equipment-card { background: var(--grey-1); padding: 28px 24px; }
+  .equipment-name {
+    font-family: var(--serif); font-size: 18px; font-weight: 400;
+    color: var(--white); margin-bottom: 6px; line-height: 1.2;
+  }
+  .equipment-type {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--grey-4);
+  }
+  .equipment-num {
+    font-family: var(--serif); font-size: 28px; font-weight: 300;
+    color: var(--grey-3); margin-top: 16px; line-height: 1;
+  }
+
+  /* ═══════════════════════════════
+     § CTA
+  ═══════════════════════════════ */
+  .section-cta {
+    padding: 96px 80px;
+    text-align: center;
+  }
+  .cta-overline {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--grey-5);
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    margin-bottom: 20px;
+  }
+  .cta-overline::before, .cta-overline::after { content: ''; width: 24px; height: 1px; background: var(--grey-6); }
+  .cta-title {
+    font-family: var(--serif); font-size: clamp(34px, 4.5vw, 58px);
+    font-weight: 300; line-height: 1.08; margin-bottom: 16px;
+  }
+  .cta-title em { font-style: italic; color: var(--grey-4); }
+  .cta-body {
+    font-size: 15px; color: var(--grey-4); line-height: 1.8;
+    max-width: 520px; margin: 0 auto 40px;
+  }
+  .cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--black); color: var(--white);
+    font-family: var(--sans); font-size: 10px; font-weight: 600;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    padding: 16px 32px; border: none; cursor: none;
+    position: relative; overflow: hidden; text-decoration: none;
+  }
+  .btn-primary::after {
+    content: ''; position: absolute; inset: 0;
+    background: var(--grey-2); transform: translateX(-100%);
+    transition: transform .35s ease;
+  }
+  .btn-primary:hover::after { transform: translateX(0); }
+  .btn-primary-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 8px; }
+
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: none; color: var(--grey-3);
+    font-family: var(--sans); font-size: 10px; font-weight: 600;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    padding: 15px 32px; border: 1px solid var(--grey-6);
+    cursor: none; transition: border-color .2s, color .2s; text-decoration: none;
+  }
+  .btn-ghost:hover { border-color: var(--grey-3); color: var(--black); }
+
+  /* inline text link */
+  .text-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--grey-4);
+    text-decoration: none; border-bottom: 1px solid var(--grey-6);
+    padding-bottom: 2px; transition: color .2s, border-color .2s;
+  }
+  .text-link:hover { color: var(--black); border-color: var(--black); }
+
+  /* ═══════════════════════════════
+     FOOTER
+  ═══════════════════════════════ */
+  footer { background: var(--black); color: var(--white); padding: 80px 80px 40px; }
+  .footer-top {
+    display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 60px; padding-bottom: 64px; border-bottom: 1px solid var(--grey-2);
+  }
+  .footer-brand img { filter: invert(1); }
+  .footer-brand p { font-size: 13px; color: var(--grey-4); line-height: 1.7; margin-top: 20px; max-width: 260px; }
+  .footer-socials { display: flex; gap: 12px; margin-top: 28px; }
+  .social-btn {
+    width: 36px; height: 36px; border: 1px solid var(--grey-2);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--grey-4); text-decoration: none;
+    transition: border-color .2s, color .2s;
+  }
+  .social-btn:hover { border-color: var(--white); color: var(--white); }
+  .footer-col h4 {
+    font-family: var(--sans); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--grey-5); margin-bottom: 24px;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  .footer-col ul li a { font-size: 13px; color: var(--grey-4); text-decoration: none; transition: color .2s; }
+  .footer-col ul li a:hover { color: var(--white); }
+  .footer-bottom {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 32px; gap: 16px; flex-wrap: wrap;
+  }
+  .footer-bottom p { font-size: 12px; color: var(--grey-4); }
+  .footer-bottom-links { display: flex; gap: 24px; }
+  .footer-bottom-links a { font-size: 12px; color: var(--grey-4); text-decoration: none; transition: color .2s; }
+  .footer-bottom-links a:hover { color: var(--white); }
+
+  /* ═══════════════════════════════
+     ANIMATIONS
+  ═══════════════════════════════ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ═══════════════════════════════
+     RESPONSIVE
+  ═══════════════════════════════ */
+  @media (max-width: 1100px) {
+    .hero-content { padding: 0 48px 60px; }
+    .section-intro, .section-technique, .section-gallery,
+    .section-equipment, .section-cta { padding-left: 48px; padding-right: 48px; }
+    .equipment-inner { padding: 56px 48px; }
+    .equipment-grid { grid-template-columns: repeat(2, 1fr); }
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+    footer { padding: 60px 48px 32px; }
+  }
+  @media (max-width: 768px) {
+    header { padding: 0 24px; }
+    nav { display: none; }
+    .hamburger { display: flex; }
+    .mobile-nav { display: block; }
+    .search-wrap { display: none; }
+
+    .hero-content { padding: 0 24px 48px; }
+    .hero-tag { display: none; }
+
+    .section-intro, .section-technique, .section-gallery,
+    .section-equipment, .section-cta { padding: 64px 24px; }
+
+    .section-intro { grid-template-columns: 1fr; gap: 40px; }
+    .intro-right { grid-template-columns: 1fr; }
+    .technique-grid { grid-template-columns: 1fr; gap: 40px; }
+    .technique-grid.reverse { direction: ltr; }
+    .technique-data { grid-template-columns: 1fr 1fr; }
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+    .equipment-inner { padding: 40px 24px; }
+    .equipment-grid { grid-template-columns: 1fr 1fr; }
+    .cta-actions { flex-direction: column; align-items: center; }
+    .btn-primary, .btn-ghost { width: 100%; justify-content: center; }
+    footer { padding: 60px 24px 32px; }
+    .footer-top { grid-template-columns: 1fr; gap: 36px; }
+    .footer-bottom { flex-direction: column; align-items: flex-start; }
+  }
+  @media (max-width: 480px) {
+    .technique-data { grid-template-columns: 1fr; }
+    .equipment-grid { grid-template-columns: 1fr; }
+  }
+
+  /* =============================================
+     PROMO TICKER BANNER
+     ============================================= */
+  .promo-ticker {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    background: var(--black);
+    height: 34px;
+    overflow: hidden;
+    display: flex; align-items: center;
+  }
+  .promo-ticker-track {
+    display: flex; align-items: center;
+    white-space: nowrap;
+    animation: ticker 40s linear infinite;
+    will-change: transform;
+  }
+  .promo-ticker-track:hover { animation-play-state: paused; }
+  @keyframes ticker {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .promo-ticker-item {
+    display: inline-flex; align-items: center; gap: 32px;
+    font-family: var(--sans); font-size: 10.5px; font-weight: 500;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+    padding: 0 40px;
+  }
+  .promo-ticker-item .dot {
+    display: inline-block; width: 3px; height: 3px; border-radius: 50%;
+    background: rgba(255,255,255,0.35); flex-shrink: 0;
+  }
+
+  /* =============================================
+     HEADER — TWO-ROW STRUCTURE (desktop)
+     ============================================= */
+  header, #mainHeader {
+    position: fixed;
+    top: 34px;
+    left: 0; right: 0;
+    z-index: 100;
+    background: rgba(248,248,246,0.96);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--grey-6);
+    transition: background 0.3s ease, border-color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Top row: search */
+  .header-top-row {
+    display: flex; align-items: center; justify-content: center;
+    padding: 8px 48px;
+    border-bottom: 1px solid var(--grey-7);
+  }
+  .search-wrap {
+    display: flex; align-items: center; gap: 10px;
+    border: 1px solid var(--grey-6);
+    padding: 6px 16px;
+    background: var(--grey-8);
+    width: 460px;
+    transition: border-color 0.3s, background 0.3s, width 0.3s ease;
+  }
+  .search-wrap:focus-within {
+    border-color: var(--black);
+    background: var(--white);
+    width: 520px;
+  }
+  .search-wrap input {
+    background: none; border: none; outline: none;
+    font-family: var(--sans); font-size: 12px; color: var(--black);
+    flex: 1; cursor: none; letter-spacing: 0.04em;
+  }
+  .search-wrap input::placeholder { color: var(--grey-5); }
+  .search-icon { color: var(--grey-4); flex-shrink: 0; }
+
+  /* Bottom row: logo | nav | icons */
+  .header-bottom-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px; height: 68px;
+  }
+
+  /* Logo */
+  .logo {
+    display: flex; align-items: center; gap: 14px;
+    text-decoration: none; color: inherit; flex-shrink: 0;
+  }
+  .logo img {
+    width: 48px; height: 48px; object-fit: contain;
+  }
+  .logo-text {
+    font-family: var(--serif); font-size: 24px; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--black);
+  }
+
+  /* Nav */
+  nav { display: flex; align-items: center; gap: 32px; position: relative; }
+  .nav-item { position: static; }
+  nav > .nav-item > a {
+    font-family: var(--sans); font-size: 12px; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--grey-3); text-decoration: none;
+    position: relative; transition: color .2s;
+    display: flex; align-items: center; gap: 5px;
+    padding: 22px 0;
+  }
+  nav > .nav-item > a::after {
+    content: ''; position: absolute; bottom: 16px; left: 0;
+    width: 0; height: 1px; background: var(--black); transition: width .3s ease;
+  }
+  nav > .nav-item > a:hover, nav > .nav-item > a.active { color: var(--black); }
+  nav > .nav-item > a:hover::after, nav > .nav-item > a.active::after { width: 100%; }
+  nav > .nav-item > a .chevron {
+    display: inline-block; width: 7px; height: 7px;
+    border-right: 1px solid currentColor; border-bottom: 1px solid currentColor;
+    transform: rotate(45deg) translateY(-2px);
+    transition: transform 0.2s; flex-shrink: 0;
+  }
+  .nav-item:hover > a .chevron { transform: rotate(-135deg) translateY(-2px); }
+
+  /* Mega Menu */
+  .mega-menu {
+    position: fixed;
+    top: calc(34px + 34px + 68px);
+    left: 0; right: 0;
+    background: var(--white);
+    border-bottom: 1px solid var(--grey-6);
+    padding: 48px 80px 56px;
+    opacity: 0; pointer-events: none;
+    transform: translateY(-8px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 90;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+  }
+  .nav-item:hover .mega-menu { opacity: 1; pointer-events: all; transform: translateY(0); }
+  .mega-menu-grid { display: grid; gap: 48px; align-items: start; }
+  .mega-menu-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .mega-menu-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .mega-menu-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .mega-col h5 {
+    font-family: var(--sans); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--black); margin-bottom: 20px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--grey-6);
+  }
+  .mega-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .mega-col ul li a {
+    font-family: var(--sans); font-size: 13px; font-weight: 400;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--grey-4); text-decoration: none;
+    transition: color .2s, padding-left .2s; display: block;
+  }
+  .mega-col ul li a:hover { color: var(--black); padding-left: 6px; }
+
+  /* Icon group */
+  .header-icons {
+    display: flex; align-items: center; gap: 4px; flex-shrink: 0;
+  }
+  .hdr-icon-btn {
+    position: relative;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    background: none; border: none; cursor: none;
+    color: var(--grey-3); padding: 8px 10px; transition: color .2s;
+  }
+  .hdr-icon-btn:hover { color: var(--black); }
+  .hdr-icon-btn svg { display: block; flex-shrink: 0; }
+  .hdr-icon-label {
+    font-family: var(--sans); font-size: 9px; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    line-height: 1; white-space: nowrap;
+  }
+  .hdr-icon-badge {
+    position: absolute; top: 4px; right: 4px;
+    width: 15px; height: 15px; border-radius: 50%;
+    background: var(--black); color: var(--white);
+    font-size: 8px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none;
+  }
+  .currency-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    background: none; border: none; cursor: none;
+    color: var(--grey-3); padding: 8px 10px; transition: color .2s;
+  }
+  .currency-btn:hover { color: var(--black); }
+  .currency-flag { font-size: 18px; line-height: 1; }
+  .currency-code {
+    font-family: var(--sans); font-size: 9px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .icon-divider {
+    width: 1px; height: 28px; background: var(--grey-6); margin: 0 6px;
+  }
+
+  /* Hamburger */
+  .hamburger {
+    display: none; flex-direction: column;
+    justify-content: center; align-items: center; gap: 5px;
+    width: 40px; height: 40px; background: none; border: none;
+    cursor: none; padding: 4px; flex-shrink: 0;
+  }
+  .hamburger span {
+    display: block; width: 22px; height: 1.5px; background: var(--black);
+    transition: transform .35s, opacity .25s, width .3s; transform-origin: center;
+  }
+  .hamburger.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .hamburger.active span:nth-child(2) { opacity: 0; width: 0; }
+  .hamburger.active span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  /* Mobile nav */
+  .mobile-nav {
+    display: none; position: fixed;
+    top: calc(28px + 56px); left: 0; right: 0;
+    background: rgba(248,248,246,0.97);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--grey-6);
+    z-index: 99; padding: 0 32px;
+    max-height: 0; overflow: hidden;
+    transition: max-height .45s cubic-bezier(.4,0,.2,1), padding .35s;
+  }
+  .mobile-nav.open { max-height: 400px; padding: 24px 32px 32px; }
+  .mobile-nav a {
+    display: block; font-family: var(--sans); font-size: 13px; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--grey-3); text-decoration: none;
+    padding: 14px 0; border-bottom: 1px solid var(--grey-7);
+    opacity: 0; transform: translateY(10px);
+    transition: color .2s, padding-left .2s, opacity .3s, transform .3s;
+  }
+  .mobile-nav a:last-child { border-bottom: none; }
+  .mobile-nav a:hover { color: var(--black); padding-left: 8px; }
+  .mobile-nav.open a { opacity: 1; transform: translateY(0); }
+  .mobile-nav.open a:nth-child(1) { transition-delay: .05s; }
+  .mobile-nav.open a:nth-child(2) { transition-delay: .10s; }
+  .mobile-nav.open a:nth-child(3) { transition-delay: .15s; }
+  .mobile-nav.open a:nth-child(4) { transition-delay: .20s; }
+  .mobile-nav.open a:nth-child(5) { transition-delay: .25s; }
+  .mobile-nav.open a:nth-child(6) { transition-delay: .30s; }
+
+  /* Page content offset */
+  .page-wrap { padding-top: 136px !important; }
+
+  /* Progress bar offset */
+  .progress-track { top: calc(34px + 102px) !important; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .promo-ticker { height: 28px; }
+    .promo-ticker-item { font-size: 9.5px; padding: 0 24px; }
+    header, #mainHeader { top: 28px; }
+    .header-top-row { display: none; }
+    .header-bottom-row { padding: 0 20px; height: 56px; }
+    .logo img { width: 36px; height: 36px; }
+    .logo-text { font-size: 18px; }
+    nav { display: none; }
+    .header-icons { display: none; }
+    .hamburger { display: flex !important; }
+    .mobile-nav { display: block; top: calc(28px + 56px); }
+    .page-wrap { padding-top: 84px !important; }
+  }
+
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- ============================================================
+     PROMO TICKER — infinite scrolling banner
+     ============================================================ -->
+<div class="promo-ticker" id="promoTicker">
+  <div class="promo-ticker-track">
+    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
+    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c2abaca4ad82a1b7b1b6adafabb1a7afa7b7a9eca1adaf">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
+    <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
+    <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
+    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b8d1d6ded7f8dbcdcbccd7d5d1cbddd5ddcdd396dbd7d5">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
+    <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
+    <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
+  </div>
+</div>
+
+<!-- ============================================================
+     HEADER — two-row: search on top, logo|nav|icons below
+     ============================================================ -->
+<header id="mainHeader">
+
+  <!-- ROW 1: Search bar -->
+  <div class="header-top-row">
+    <div class="search-wrap">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search products, designs, categories…"/>
+    </div>
+  </div>
+
+  <!-- ROW 2: Logo | Nav | Icons -->
+  <div class="header-bottom-row">
+
+    <a class="logo" href="{% url 'home-page' %}">
+      <img src="{% static 'icon.png' %}" alt="CustomiseMe UK Logo"/>
+      <!-- <span class="logo-text">CustomiseMe UK</span> -->
+    </a>
+
+    <nav>
+      <div class="nav-item"><a href="{% url 'home-page' %}">Home</a></div>
+
+      <div class="nav-item">
+        <a href="{% url 'shop-page' %}">Shop <span class="chevron"></span></a>
+        <div class="mega-menu">
+          <div class="mega-menu-grid cols-4">
+            <div class="mega-col">
+              <h5>Categories</h5>
+              <ul>
+                <li><a href="{% url 'shop-page' %}">All Products</a></li>
+                <li><a href="{% url 'shop-page' %}?cat=apparel">Apparel</a></li>
+                <li><a href="{% url 'shop-page' %}?cat=decorations">Decorations</a></li>
+                <li><a href="{% url 'shop-page' %}?cat=prints">Prints</a></li>
+                <li><a href="{% url 'shop-page' %}?cat=accessories">Accessories</a></li>
+              </ul>
+            </div>
+            <div class="mega-col">
+              <h5>Apparel</h5>
+              <ul>
+                <li><a href="{% url 'shop-page' %}?cat=tshirts">T-Shirts</a></li>
+                <li><a href="{% url 'shop-page' %}?cat=hoodies">Hoodies</a></li>
+                <li><a href="{% url 'shop-page' %}?cat=bags">Bags</a></li>
+              </ul>
+            </div>
+            <div class="mega-col">
+              <h5>Party Essentials</h5>
+              <ul>
+                <li><a href="{% url 'shop-page' %}?cat=banners">Vinyl Banners</a></li>
+                <li><a href="{% url 'shop-page' %}?cat=tableware">Plates, Cups, Utensils</a></li>
+                <li><a href="{% url 'shop-page' %}?cat=table-decor">Table Decor</a></li>
+                <li><a href="{% url 'shop-page' %}?cat=party-packs">Party Packs</a></li>
+                <li><a href="{% url 'shop-page' %}?cat=cake-decor">Cake Decor</a></li>
+              </ul>
+            </div>
+            <div class="mega-col">
+              <h5>Stickers &amp; Labels</h5>
+              <ul>
+                <li><a href="{% url 'shop-page' %}?cat=vinyl-stickers">Vinyl Stickers</a></li>
+                <li><a href="{% url 'shop-page' %}?cat=custom-labels">Custom Labels</a></li>
+                <li><a href="{% url 'shop-page' %}?cat=wall-decals">Wall Decals</a></li>
+                <li><a href="{% url 'shop-page' %}?cat=sticker-packs">Sticker Packs</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <div class="mega-menu">
+          <div class="mega-menu-grid cols-2">
+            <div class="mega-col">
+              <h5>Services</h5>
+              <ul><li><a href="{% url 'design-service-page' %}">Design Services</a></li></ul>
+            </div>
+            <div class="mega-col">
+              <h5>Resources</h5>
+              <ul>
+                <li><a href="{% url 'faq-page' %}">FAQs</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <a href="{% url 'premium-page' %}" class="active">Premium Services <span class="chevron"></span></a>
+        <div class="mega-menu">
+          <div class="mega-menu-grid cols-3">
+            <div class="mega-col">
+              <h5>Services</h5>
+              <ul>
+                <li><a href="{% url 'senditems-page' %}">Send Items In</a></li>
+                <li><a href="{% url 'subscriptions-page' %}">Subscriptions</a></li>
+              </ul>
+            </div>
+            <div class="mega-col">
+              <h5>Installation</h5>
+              <ul>
+                <li><a href="{% url 'installation-page' %}">Vinyl Installation</a></li>
+                <li><a href="{% url 'workshop-page' %}">Setup at Event</a></li>
+              </ul>
+            </div>
+            <div class="mega-col">
+              <h5>Workshops</h5>
+              <ul>
+                <li><a href="{% url 'workshop-page' %}">Group Workshop</a></li>
+                <li><a href="{% url 'premium-page' %}">Station Experience</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-item"><a href="{% url 'about-page' %}">About</a></div>
+      <!-- <div class="nav-item"><a href="{% url 'contact-page' %}">Contact</a></div> -->
+    </nav>
+
+    <div class="header-icons">
+      <button class="currency-btn" title="Change currency" aria-label="Currency: GBP">
+        <span class="currency-flag">🇬🇧</span>
+        <span class="currency-code">GBP £</span>
+      </button>
+      <div class="icon-divider"></div>
+      <button class="hdr-icon-btn" title="Saved items" aria-label="Saved items">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span class="hdr-icon-label">Saved</span>
+        <span class="hdr-icon-badge">{{wish_count}}</span>
+      </button>
+      <button class="hdr-icon-btn" title="Shopping bag" aria-label="Shopping bag">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span class="hdr-icon-label">Bag</span>
+        <span class="hdr-icon-badge">{{cart_count}}</span>
+      </button>
+      <button class="hdr-icon-btn" title="My account" aria-label="My account">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="hdr-icon-label">Account</span>
+      </button>
+    </div>
+
+      <button class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+
+
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav" aria-hidden="true">
+  <a href="{% url 'home-page' %}">Home</a>
+  <a href="{% url 'shop-page' %}">Shop</a>
+  <a href="{% url 'about-page' %}">About</a>
+</div>
+
+<div class="page-wrap">
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero">
+    <div class="hero-img"></div>
+    <div class="hero-tag">Master Craftsmanship</div>
+    <div class="hero-content">
+      <div class="hero-overline">The Workshop</div>
+      <h1 class="hero-title">The Art of<br/><em>Personalisation.</em></h1>
+      <p class="hero-desc">Where precision technology meets artisan dedication. Discover the journey of your custom creations from concept to creation.</p>
+    </div>
+  </section>
+
+  <!-- ═══ § INTRO ═══ -->
+  <section class="section-intro reveal">
+    <div class="intro-left">
+      <div class="section-overline">§ 01 — Our Standards</div>
+      <h2 class="intro-title">Driven by Quality &amp; <em>Precision</em></h2>
+      <p class="intro-body">Every piece that leaves our workshop is a testament to our commitment to excellence. We use state-of-the-art machinery and sustainable materials to ensure your designs are captured with exactness.</p>
+      <div class="intro-badge">
+        <div class="intro-badge-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        Certified Quality Control
+      </div>
+    </div>
+
+    <div class="intro-right">
+      <div class="intro-card reveal">
+        <div class="intro-card-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/>
+            <line x1="12" y1="22" x2="12" y2="15.5"/>
+            <polyline points="22 8.5 12 15.5 2 8.5"/>
+          </svg>
+        </div>
+        <div class="intro-card-title">Design Digitising</div>
+        <p class="intro-card-body">Translating your artwork into precise digital paths for embroidery and high-res print vectors.</p>
+      </div>
+      <div class="intro-card reveal">
+        <div class="intro-card-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="13.5" cy="6.5" r="2.5"/>
+            <circle cx="19" cy="17" r="2"/>
+            <circle cx="6" cy="17" r="3"/>
+            <path d="M13.5 9v2.5l5.5 5.5M6 14l5-5"/>
+          </svg>
+        </div>
+        <div class="intro-card-title">Colour Matching</div>
+        <p class="intro-card-body">Using Pantone matching systems to ensure your brand colours are rendered with perfect accuracy.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ § TECHNIQUE 01 — EMBROIDERY ═══ -->
+  <section class="section-technique">
+    <div class="technique-grid reveal">
+
+      <div class="technique-text">
+        <div class="technique-num">§ 02 — Technique 01</div>
+        <h2 class="technique-title">Premium<br/><em>Embroidery</em></h2>
+        <p class="technique-body">Our multi-head Tajima embroidery machines offer unrivalled detail. We use premium Madeira threads that are durable, colour-fast, and possess a high-end sheen that makes logos stand apart.</p>
+        <div class="technique-list">
+          <div class="technique-item">
+            <span class="technique-item-num">— 01</span>
+            <div>
+              <div class="technique-item-title">3D Puff Embroidery</div>
+              <div class="technique-item-body">Adding dimension to headwear and outerwear for a premium sculptural look and feel.</div>
+            </div>
+          </div>
+          <div class="technique-item">
+            <span class="technique-item-num">— 02</span>
+            <div>
+              <div class="technique-item-title">High Density Stitching</div>
+              <div class="technique-item-body">Up to 15,000 stitches per square inch for maximum detail and colour fidelity.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="technique-img">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC16Y8QS_Ijal2nZuV3lzVlfBHgiwLHTBbkaqf9jrgjvgB2yHwKgi5o5Qx236T70Lrudr10TucxmIocoBgJCdpedY0qcn4ZQm11uPYCYyySFLUXLIH-I1WCg0asaSPItBotedQ9nf6W-f1Mh3HZJ3tpESwnXfErCI2WVC6X5CxSr4zb0sH9dILaziVMRShISQKUOr1Coy-laNDAaTQBbNhtSKWtQMXyD194uccOhujCj3zVeVkVgymeUg_syVdo7QPT4V-xxdDtn8K4"
+             alt="Thread spools of various colours on a workshop wall"
+             style="aspect-ratio:16/11;"/>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ § TECHNIQUE 02 — PRINTING ═══ -->
+  <section class="section-technique" style="background:var(--grey-8);">
+    <div class="technique-grid reverse reveal">
+
+      <div class="technique-text">
+        <div class="technique-num">§ 03 — Technique 02</div>
+        <h2 class="technique-title">Digital &amp; Screen<br/><em>Printing</em></h2>
+        <p class="technique-body">From vintage-soft screen prints to high-definition Direct-to-Garment (DTG) technology, we select the right method for your specific design and fabric type.</p>
+
+        <div class="technique-data">
+          <div class="technique-data-cell">
+            <div class="technique-data-label">Eco-Inks</div>
+            <div class="technique-data-body">Water-based sustainable pigments, certified for skin contact.</div>
+          </div>
+          <div class="technique-data-cell">
+            <div class="technique-data-label">Soft-Touch</div>
+            <div class="technique-data-body">Prints that feel like part of the fabric — not on top of it.</div>
+          </div>
+        </div>
+
+        <a class="text-link" href="#">
+          Learn about Ink Types
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+
+      <div class="technique-img">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiniYlfYVY-m0jyKX6X3TGLIuGd0fW0z8zVafZxK8Lq0rVExqUejatGpWW7yqha3oLklqoabV50T92BORo-AOOo7EV6ZvIDC6nq7aBAQsbI25UGq5v3QUCkeAVdRHph6Evp6O8AkixVlecVEixvl4YV2MioZF6pWsu8SMpkm5vwFHADM-BMs7W657DxudXfeVNN5sSiSkrm2B9_iucMQ2w6ishG24uWlaS1VAZEmr2_cv7sCld5siFplQnqbVv86wCmW9_orNxOGAz"
+             alt="Silk screen printing frame with colourful ink"
+             style="aspect-ratio:1/1;"/>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ § GALLERY ═══ -->
+  <section class="section-gallery">
+    <div class="gallery-header reveal">
+      <div>
+        <div class="section-overline">§ 04 — Behind the Scenes</div>
+        <h2 class="gallery-title">In the <em>Workshop</em></h2>
+      </div>
+      <a class="gallery-link" href="#">
+        View Full Gallery
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+
+    <div class="gallery-grid reveal">
+      <div class="gallery-item">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCdmIzLz-fpzJJfc4gqqi0-mQu9ynwtrCQ7bJACmT3b97QfS7sPPpMEZa0PySXb2eHb-qPsJraUMz0IhyfroDEfRAbWw4Y_asA_Bhy_xdf9K1dtfroWR0slCGcgIp7CZn2Act-mWbxaFBqutIlpd3PDD7ZA75nvERC0i6uU4rs4hy7665l12mcAxb2F4pygCkI-3h-ahWbOK55Vpv_FQdP2ch29yK14gxKWTNUPclL8RBLQUgD7T9NjDwgGbHsgUXak_4ORURbX_8m"
+             alt="Industrial sewing machine detailing a jacket"/>
+      </div>
+      <div class="gallery-item">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOFvgkLIDwnJyfXlvcHR61vj4Ul3ojD9gN4ws97YicRUQkCkCbOPrJFONxikQaOgbKPZzw8lwD7fjoGxLCpmp8VlZBzkc7ltjllGK9JSrvD0aZR0i-f-dnNgJG9lTwIC9_nK4CKgznjdWi6Q6ihxUjUg7zLlMKlFOJEJ5m3YObssHb0iT0blr3rKv6vHkZQJVx5N76MO6wRSB9-3oS1_4VkVVJw-KBc_axuYNDCCcpHw2OwnMph1oYjocdTHveGnGBvok5xZRnrlyW"
+             alt="Stacked colourful garments ready for shipping"/>
+      </div>
+      <div class="gallery-item">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1QBHIq4hZPIifm6AhVhi0ouGqgbxEp0dXmcJtcg5Xt5osxhyIFymWI4MWcvifJZiZcbUhEj0oOdNaqGF33BAFsOFbagm4Xru41txaAdsBbZnpF-HtAtPNIhS8MpIRfRLbBRJSlrRmxnmjEIsRCYpnOOzFwIcAhbQoHL584Dj7O513h52kOKDa12nLeztYa2T2IUCyIIM9POfQ98Fd3PPY9poYdWMcvdF4GCoULAeSyBjp_k22BC8mA22O3fbF-L-LMqMKjo8gQA_f"
+             alt="Graphic designer working on logo vector"/>
+      </div>
+      <div class="gallery-item">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrYSbkeuJPYgeDz4oW9NV4svL4WHe8ekl6Kz-B2DrOyA8zP5SYzjILQscbU0HxISt6fcJPrEV6ffsNPjgrERgGybPGoc9aXF4a5CzQaydICcKzuFzO1H1N_Kkt8vueArk0pkNUGHUSCLC0tjfh75E7wYtagUqezdN6JrZLSLzrTj7fL17byB5XDq6KFW2uGmoZmUhkQBV9BqusKgxPIGYJ7pxv8UhrHoXndyGQcOGtyCP_lylobcM5WTF_rQEtrW5TiCrwZBm9hdnc"
+             alt="Heat press machine branding a garment"/>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ § EQUIPMENT ═══ -->
+  <section class="section-equipment">
+    <div class="equipment-inner reveal">
+      <div class="equipment-deco">§</div>
+      <div class="equipment-body">
+        <div class="equipment-overline">§ 05 — Arsenal</div>
+        <h2 class="equipment-title">Our Equipment<br/><em>Arsenal</em></h2>
+        <p class="equipment-desc">We invest in the best tools because great design deserves great execution — from Japanese embroidery technology to German screen printing units.</p>
+
+        <div class="equipment-grid">
+          <div class="equipment-card">
+            <div class="equipment-name">Tajima TMEZ-SC</div>
+            <div class="equipment-type">Industrial Embroidery</div>
+            <div class="equipment-num">01</div>
+          </div>
+          <div class="equipment-card">
+            <div class="equipment-name">M&amp;R Gauntlet III</div>
+            <div class="equipment-type">Automatic Screen Press</div>
+            <div class="equipment-num">02</div>
+          </div>
+          <div class="equipment-card">
+            <div class="equipment-name">Epson SureColor</div>
+            <div class="equipment-type">Direct to Garment</div>
+            <div class="equipment-num">03</div>
+          </div>
+          <div class="equipment-card">
+            <div class="equipment-name">Stahls' Hotronix</div>
+            <div class="equipment-type">Precision Heat Press</div>
+            <div class="equipment-num">04</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ § CTA ═══ -->
+  <section class="section-cta reveal">
+    <div class="cta-overline">§ 06 — Begin</div>
+    <h2 class="cta-title">Ready to start your <em>project?</em></h2>
+    <p class="cta-body">Upload your artwork and let our workshop team bring your vision to life with precision and care. Every order is a collaboration.</p>
+    <div class="cta-actions">
+      <a class="btn-primary" href="{% url 'design-service-page' %}">
+        <div class="btn-primary-inner">
+          Get a Quote
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </a>
+      <a class="btn-ghost" href="{% url 'contact-page' %}">Request Samples</a>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <p>Dedicated to creating meaningful, personalised items that tell your unique story. Every piece is handcrafted with love in our studio.</p>
+        <div class="footer-socials">
+          <a class="social-btn" href="#" aria-label="Facebook">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a class="social-btn" href="#" aria-label="Instagram">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+          <a class="social-btn" href="#" aria-label="Twitter">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.84 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+         <li><a href="{% url 'about-page' %}">About Us</a></li>
+        <li><a href="{% url 'shop-page' %}">Shop All</a></li>
+        </ul>
+      </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="{% url 'privacy-page' %}">Privacy Policy</a></li>
+      {% if user.is_authenticated %}
+        <li><a href="{% url 'senditems-page' %}">Request Form</a></li>
+      {% endif %}
+        <li><a href="{% url 'contact-page' %}">Contact</a></li>
+      </ul>
+    </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 CustomiseMe UK. All rights reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="{% url 'privacy-page' %}">Privacy</a>
+        <a href="{% url 'conditions-page' %}">Terms</a>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- /.page-wrap -->
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  /* ── Cursor ── */
+  const cursor = document.getElementById('cursor');
+  const ring   = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+  });
+  (function animRing() {
+    rx += (mx - rx) * .15; ry += (my - ry) * .15;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  })();
+  document.querySelectorAll('a, button, input').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.width='6px'; cursor.style.height='6px'; ring.style.width='52px'; ring.style.height='52px'; });
+    el.addEventListener('mouseleave', () => { cursor.style.width='10px'; cursor.style.height='10px'; ring.style.width='36px'; ring.style.height='36px'; });
+  });
+
+  /* ── Reading progress ── */
+  window.addEventListener('scroll', () => {
+    const max = document.body.scrollHeight - window.innerHeight;
+    document.getElementById('progressFill').style.width = (window.scrollY / max * 100) + '%';
+  });
+
+  /* ── Hamburger ── */
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobileNav');
+  hamburger.addEventListener('click', () => {
+    const open = mobileNav.classList.toggle('open');
+    hamburger.classList.toggle('active', open);
+    hamburger.setAttribute('aria-expanded', open);
+    mobileNav.setAttribute('aria-hidden', !open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  mobileNav.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      mobileNav.classList.remove('open'); hamburger.classList.remove('active');
+      hamburger.setAttribute('aria-expanded', 'false'); document.body.style.overflow = '';
+    });
+  });
+  document.addEventListener('click', e => {
+    if (!hamburger.contains(e.target) && !mobileNav.contains(e.target)) {
+      mobileNav.classList.remove('open'); hamburger.classList.remove('active');
+      hamburger.setAttribute('aria-expanded', 'false'); document.body.style.overflow = '';
+    }
+  });
+
+  /* ── Scroll reveal ── */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        entry.target.style.transitionDelay = (i % 3) * 0.1 + 's';
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

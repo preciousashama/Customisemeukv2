@@ -1,0 +1,692 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}CustomiseMe UK | Home{% endblock %}
+
+{% block nav_home %}class="active"{% endblock %}
+
+{% block extra_css %}
+<style>
+/* --- CURSOR --- */
+  
+  
+
+  /* =============================================
+     PROMO TICKER BANNER
+     ============================================= */
+  
+  
+    100% { transform: translateX(-50%); }
+  }
+  
+
+  /* =============================================
+     HEADER
+     ============================================= */
+  
+  #mainHeader.scrolled {
+    background: rgba(248,248,246,0.97);
+    border-bottom-color: var(--grey-6);
+  }
+  
+  #mainHeader.scrolled 
+  
+  
+  #mainHeader.scrolled 
+  #mainHeader.scrolled 
+  
+  #mainHeader.scrolled 
+  
+  #mainHeader.scrolled 
+  
+  #mainHeader.scrolled 
+  
+  
+  #mainHeader.scrolled 
+  
+  #mainHeader.scrolled 
+
+  /* Nav */
+  nav { display: flex; align-items: center; gap: 32px; position: relative; }
+  .nav-item { position: static; }
+  
+  #mainHeader.scrolled 
+  
+  #mainHeader.scrolled 
+  
+  #mainHeader.scrolled 
+
+
+  /* Icons */
+  .header-icons { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+  
+  
+  #mainHeader.scrolled 
+  #mainHeader.scrolled 
+  /* Account link variant */
+  .hdr-icon-btn.as-link { text-decoration: none; }
+  
+  
+  
+  #mainHeader.scrolled 
+  
+  
+  #mainHeader.scrolled 
+  #mainHeader.scrolled 
+  
+  
+  
+  #mainHeader.scrolled 
+
+  /* Hamburger */
+  
+  
+  #mainHeader.scrolled 
+  
+  
+  
+
+  /* Mobile nav */
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+  /* =============================================
+     HERO
+     ============================================= */
+  .hero { position: relative; min-height: 100vh; display: flex; align-items: center; overflow: hidden; }
+  .hero-bg { position: absolute; inset: 0; z-index: 0; }
+  .hero-bg img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: grayscale(20%); transform: scale(1.04); transition: transform 8s ease;
+  }
+  .hero:hover .hero-bg img { transform: scale(1); }
+  .hero-bg::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(105deg, rgba(10,10,10,0.72) 0%, rgba(10,10,10,0.48) 55%, rgba(10,10,10,0.18) 100%);
+  }
+  .hero-content { position: relative; z-index: 2; padding: 170px 80px 80px; max-width: 700px; }
+  .hero-overline {
+    font-family: var(--sans); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(255,255,255,0.65); margin-bottom: 28px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero-overline::before { content: ''; display: inline-block; width: 32px; height: 1px; background: rgba(255,255,255,0.4); }
+  h1 {
+    font-family: var(--serif); font-size: clamp(52px, 6.5vw, 96px); font-weight: 300;
+    line-height: 1.05; letter-spacing: -0.01em; color: var(--white); margin-bottom: 28px;
+    text-shadow: 0 2px 24px rgba(0,0,0,0.2);
+  }
+  h1 em { font-style: italic; color: rgba(255,255,255,0.75); }
+  .hero-desc { font-size: 15px; color: rgba(255,255,255,0.7); line-height: 1.75; max-width: 420px; margin-bottom: 48px; }
+  .hero-actions { display: flex; align-items: center; gap: 20px; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--white); color: var(--black);
+    font-family: var(--sans); font-size: 12px; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 16px 36px; border: none; cursor: none;
+    position: relative; overflow: hidden; transition: transform .2s;
+    text-decoration: none;
+  }
+  .btn-primary::after {
+    content: ''; position: absolute; inset: 0; background: var(--grey-7);
+    transform: translateX(-100%); transition: transform .35s ease;
+  }
+  .btn-primary:hover::after { transform: translateX(0); }
+  .btn-primary span { position: relative; z-index: 1; }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: none; color: var(--white);
+    font-family: var(--sans); font-size: 12px; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.45); padding: 16px 32px; cursor: none;
+    transition: border-color .2s, background .2s; text-decoration: none;
+  }
+  .btn-secondary:hover { border-color: var(--white); background: rgba(255,255,255,0.08); }
+  .hero-badge {
+    margin-top: 64px; display: inline-flex; align-items: center; gap: 12px;
+    border: 1px solid rgba(255,255,255,0.2); padding: 12px 20px;
+    background: rgba(255,255,255,0.08); backdrop-filter: blur(8px); width: fit-content;
+  }
+  .badge-avatars { display: flex; }
+  .badge-avatars span {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3); background: var(--grey-5); margin-left: -8px; display: block;
+  }
+  .badge-avatars span:first-child { margin-left: 0; }
+  .badge-text { font-size: 12px; color: rgba(255,255,255,0.75); font-weight: 400; }
+  .badge-text strong { color: var(--white); font-weight: 600; }
+  .hero-right-tag {
+    position: absolute; bottom: 48px; right: 80px; z-index: 2;
+    background: rgba(248,248,246,0.92); border: 1px solid rgba(212,212,212,0.5);
+    padding: 16px 24px; backdrop-filter: blur(12px);
+  }
+  .hero-right-tag p { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-4); }
+  .hero-right-tag h3 { font-family: var(--serif); font-size: 22px; font-weight: 400; margin-top: 2px; color: var(--black); }
+
+  /* Brands */
+  .brands-banner { background: var(--white); border-top: 1px solid var(--grey-7); border-bottom: 1px solid var(--grey-7); padding: 40px 80px; }
+  .brands-label { text-align: center; font-family: var(--sans); font-size: 10px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--grey-5); margin-bottom: 32px; }
+  .brands-track { display: grid; grid-template-columns: repeat(6, 1fr); gap: 32px; align-items: center; }
+  .brand-logo { display: flex; align-items: center; justify-content: center; padding: 12px 0; border: 1px solid var(--grey-7); background: var(--grey-8); transition: border-color .25s, background .25s; min-height: 64px; }
+  .brand-logo:hover { border-color: var(--grey-5); background: var(--white); }
+  .brand-logo span { font-family: var(--serif); font-size: 16px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--grey-5); font-style: italic; transition: color .25s; }
+  .brand-logo:hover span { color: var(--grey-2); }
+
+  /* Section header */
+  .section-label {
+    font-family: var(--sans); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--grey-4); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::before { content: ''; width: 24px; height: 1px; background: var(--grey-5); }
+  .section-title { font-family: var(--serif); font-size: clamp(32px, 3.5vw, 52px); font-weight: 300; letter-spacing: -0.01em; line-height: 1.15; }
+
+  /* Categories */
+  .categories { padding: 120px 80px; background: var(--white); }
+  .categories-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 64px; }
+  .view-all { font-family: var(--sans); font-size: 12px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--grey-3); text-decoration: none; display: flex; align-items: center; gap: 8px; transition: color .2s; }
+  .view-all:hover { color: var(--black); }
+  .view-all::after { content: '→'; }
+  .cats-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 24px; }
+  .cat-item { display: flex; flex-direction: column; align-items: center; gap: 16px; text-decoration: none; color: inherit; }
+  .cat-img-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; border-radius: 50%; border: 1px solid var(--grey-7); position: relative; background: var(--grey-8); transition: border-color .3s; }
+  .cat-item:hover .cat-img-wrap { border-color: var(--grey-3); }
+  .cat-img-wrap img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: filter .5s ease, transform .5s ease; }
+  .cat-item:hover .cat-img-wrap img { filter: grayscale(0%); transform: scale(1.05); }
+  .cat-name { font-family: var(--sans); font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-align: center; color: var(--grey-3); text-transform: uppercase; transition: color .2s; }
+  .cat-item:hover .cat-name { color: var(--black); }
+
+  /* Best sellers */
+  .bestsellers { padding: 120px 80px; background: var(--grey-8); }
+  .bestsellers-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 64px; }
+  .products-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+  .product-card { display: flex; flex-direction: column; position: relative; }
+  .product-img-wrap { aspect-ratio: 4/5; overflow: hidden; background: var(--grey-7); position: relative; }
+  .product-img-wrap img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(20%); transition: filter .6s ease, transform .6s ease; }
+  .product-card:hover .product-img-wrap img { filter: grayscale(0%); transform: scale(1.04); }
+  .product-cta {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(10,10,10,0.88); color: var(--white); text-align: center; padding: 16px;
+    font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+    transform: translateY(100%); opacity: 0; transition: transform .3s ease, opacity .3s ease;
+    backdrop-filter: blur(4px);
+  }
+  .product-card:hover .product-cta { transform: translateY(0); opacity: 1; }
+  .product-info { padding: 16px 0 0; display: flex; flex-direction: column; gap: 6px; }
+  .product-name { font-family: var(--serif); font-size: 18px; font-weight: 400; color: var(--black); }
+  .product-stars { display: flex; align-items: center; gap: 6px; }
+  .stars { display: flex; gap: 2px; color: var(--grey-3); font-size: 13px; }
+  .review-count { font-size: 11px; color: var(--grey-5); }
+  .product-price { font-family: var(--sans); font-size: 14px; font-weight: 500; color: var(--grey-2); }
+
+  /* Testimonials */
+  .testimonials { padding: 120px 80px; background: var(--black); color: var(--white); }
+  .testimonials .section-label { color: var(--grey-4); }
+  .testimonials .section-label::before { background: var(--grey-3); }
+  .testimonials .section-title { color: var(--white); }
+  .testimonials-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 72px; }
+  .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+  .testimonial-card { background: var(--grey-1); padding: 48px 40px; display: flex; flex-direction: column; gap: 24px; transition: background .2s; border: 1px solid transparent; }
+  .testimonial-card:hover { background: var(--grey-2); border-color: var(--grey-3); }
+  .t-quote { font-family: var(--serif); font-size: 22px; font-weight: 300; font-style: italic; line-height: 1.6; color: var(--grey-6); }
+  .t-author { display: flex; align-items: center; gap: 16px; margin-top: auto; }
+  .t-avatar { width: 44px; height: 44px; border-radius: 50%; overflow: hidden; border: 1px solid var(--grey-3); flex-shrink: 0; }
+  .t-avatar img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(40%); }
+  .t-name { font-family: var(--sans); font-size: 13px; font-weight: 500; color: var(--white); }
+  .t-role { font-size: 11px; color: var(--grey-4); letter-spacing: 0.06em; }
+  .t-stars { display: flex; gap: 3px; color: var(--grey-5); font-size: 13px; }
+
+  /* Instagram */
+  .instagram { padding: 120px 80px; background: var(--white); }
+  .instagram-header { text-align: center; margin-bottom: 64px; }
+  .instagram-header .section-label { justify-content: center; }
+  .instagram-header .section-label::before { display: none; }
+  .instagram-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+  .insta-cell { aspect-ratio: 1/1; overflow: hidden; position: relative; background: var(--grey-7); }
+  .insta-cell img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(50%); transition: filter .5s ease, transform .5s ease; }
+  .insta-cell:hover img { filter: grayscale(0%); transform: scale(1.06); }
+  .insta-overlay { position: absolute; inset: 0; background: rgba(10,10,10,0); display: flex; align-items: center; justify-content: center; transition: background .3s; }
+  .insta-cell:hover .insta-overlay { background: rgba(10,10,10,0.3); }
+  .insta-icon { color: var(--white); font-size: 24px; opacity: 0; transform: scale(0.8); transition: opacity .3s, transform .3s; }
+  .insta-cell:hover .insta-icon { opacity: 1; transform: scale(1); }
+
+  /* Newsletter */
+  .newsletter {
+    padding: 100px 80px; background: var(--grey-8);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    border-top: 1px solid var(--grey-6);
+  }
+  .newsletter-text .section-title { font-size: clamp(28px, 3vw, 44px); }
+  .newsletter-text p { font-size: 15px; color: var(--grey-3); line-height: 1.7; margin-top: 16px; }
+  .newsletter-form { display: flex; flex-direction: column; gap: 14px; }
+  .form-row { display: flex; border: 1px solid var(--grey-6); background: var(--white); overflow: hidden; transition: border-color .2s; }
+  .form-row:focus-within { border-color: var(--black); }
+  .form-row input {
+    flex: 1; background: none; border: none; outline: none; padding: 16px 20px;
+    font-family: var(--sans); font-size: 14px; color: var(--black); cursor: none;
+  }
+  .form-row input::placeholder { color: var(--grey-5); }
+  .form-row button { background: var(--black); color: var(--white); border: none; padding: 0 28px; font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; cursor: none; transition: background .2s; }
+  .form-row button:hover { background: var(--grey-2); }
+  .form-note { font-size: 11px; color: var(--grey-5); letter-spacing: 0.04em; }
+  /* Newsletter feedback states */
+  .newsletter-msg { font-size: 13px; padding: 10px 0; display: none; }
+  .newsletter-msg.success { color: #27ae60; display: block; }
+  .newsletter-msg.error   { color: #c0392b; display: block; }
+
+  /* Footer */
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+  /* Responsive */
+  
+  @media (max-width: 1100px) {
+.cats-grid { grid-template-columns: repeat(3, 1fr); }
+    .products-grid { grid-template-columns: repeat(2, 1fr); }
+    .instagram-grid { grid-template-columns: repeat(3, 1fr); }
+    
+    .brands-track { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 768px) {
+#mainHeader { top: 28px; }    .hero-content { padding: 120px 32px 60px; }
+    .hero-right-tag { display: none; }
+    .brands-banner { padding: 32px 24px; }
+    .brands-track { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .categories, .bestsellers, .testimonials, .instagram, .newsletter, 
+    .cats-grid { grid-template-columns: repeat(2, 1fr); }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .newsletter { grid-template-columns: 1fr; gap: 40px; }
+    
+    .instagram-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* Animations */
+   to { opacity: 1; transform: translateY(0); } }
+
+  /* ── HERO SLIDER ── */
+  /* The hero itself must be the positioning root */
+  .hero { position: relative; overflow: hidden; }
+
+  /* Slide track — all slides sit side-by-side horizontally */
+  .hero-track {
+    display: flex;
+    width: 100%; height: 100%;
+    position: absolute; inset: 0;
+    transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+    z-index: 0;
+  }
+
+  /* Each slide is exactly 100% wide so they line up in a row */
+  .hero-slide {
+    flex: 0 0 100%;
+    width: 100%; height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-slide img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: grayscale(20%);
+  }
+  /* Gradient overlay per slide */
+  .hero-slide::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(105deg,
+      rgba(10,10,10,0.72) 0%,
+      rgba(10,10,10,0.48) 55%,
+      rgba(10,10,10,0.18) 100%);
+  }
+
+  /* Dot indicators */
+  .slider-dots {
+    position: absolute; bottom: 32px; left: 80px;
+    display: flex; gap: 8px; z-index: 10;
+  }
+  .slider-dot {
+    width: 24px; height: 2px; background: rgba(255,255,255,0.35);
+    border: none; padding: 0; cursor: none;
+    transition: background .3s, width .3s;
+  }
+  .slider-dot.active { background: var(--white); width: 40px; }
+  @media (max-width: 768px) {
+    .slider-dots { left: 24px; bottom: 20px; }
+  }
+
+</style>
+{% endblock %}
+
+{% block content %}
+{# ── HERO ── #}
+<section class="hero">
+
+  <!-- ══ Background slides ══ -->
+  <div class="hero-track" id="heroTrack">
+    {% if slides %}
+      {% for slide in slides %}
+      <div class="hero-slide" data-slide="{{ forloop.counter0 }}">
+        <img src="{{ slide.image.url }}"
+             alt="{{ slide.alt_text|default:'CustomiseMe UK' }}"/>
+      </div>
+      {% endfor %}
+    {% else %}
+    {# Fallback: shown when no slides are uploaded in the admin #}
+    <div class="hero-slide">
+      <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAIx0YbsrqXpIKFp54IQ1Lts4PdiJV9FnD44bKTrNEoELUG_Xn8AhkVb8lXH6rPGnrgPF88L0Ov4fzWiGjQ5gT6GI2mMR3lHD_GEkn_mea605dVbp5PqQ_4iNuQIAbNBpMV6fVAtV0X_N3f4_mfMyeJUZLhkgOwqJz7SnHrtvmIJ53MdqkNRgvJtzGzwSnoHxGLbWhTlPLzNCrOEyIdYLubo7UNCU8f2Dtk_MM5sFc_EsK7wRBkR-6gZcqgnjII5YsLnnECDb92qeC"
+           alt="Custom embroidered hoodie — hero background"/>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Dot indicators (only when more than 1 slide) -->
+  {% if slides|length > 1 %}
+  <div class="slider-dots" id="sliderDots">
+    {% for slide in slides %}
+    <button class="slider-dot{% if forloop.first %} active{% endif %}"
+            data-dot="{{ forloop.counter0 }}"
+            aria-label="Go to slide {{ forloop.counter }}"></button>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- ══ Hero content ══ -->
+  <div class="hero-content">
+    <div class="hero-overline fade-up">Handcrafted Since 2018</div>
+    <h1 class="fade-up delay-1">
+      Create gifts<br/>that <em>last</em><br/>forever
+    </h1>
+    <p class="hero-desc fade-up delay-2">
+      Custom embroidered clothing and unique handcrafted gifts made specifically for your most meaningful moments.
+    </p>
+    <div class="hero-actions fade-up delay-3">
+      <a class="btn-primary" href="{% url 'shop-page' %}"><span>Customize Now</span></a>
+      {% comment %} <a class="btn-secondary" href="{% url 'shop-page' %}">Best Sellers</a> {% endcomment %}
+    </div>
+    {% comment %} <div class="hero-badge fade-up delay-4">
+      <div class="badge-avatars">
+        <span style="background:#9a9a9a;"></span>
+        <span style="background:#777777;"></span>
+        <span style="background:#555555;"></span>
+      </div>
+      <span class="badge-text"><strong>5,000+</strong> happy customers</span>
+    </div> {% endcomment %}
+  </div>
+
+  <div class="hero-right-tag">
+    <p>Featured Item</p>
+    <h3>{% if slides %}{{ slides.0.caption|default:"Custom Script Hoodie" }}{% else %}Custom Script Hoodie{% endif %}</h3>
+  </div>
+
+</section>
+
+
+{# ── BRANDS BANNER ── #}
+<section class="brands-banner">
+  <p class="brands-label">Trusted by leading brands</p>
+  <div class="brands-track">
+    <div class="brand-logo"><span>Primark</span></div>
+    <div class="brand-logo"><span>Next UK</span></div>
+    <div class="brand-logo"><span>Marks &amp; Co.</span></div>
+    <div class="brand-logo"><span>Selfridges</span></div>
+    <div class="brand-logo"><span>ASOS Pro</span></div>
+    <div class="brand-logo"><span>TK Maxx</span></div>
+  </div>
+</section>
+
+{# ── CATEGORIES ── #}
+<section class="categories">
+  <div class="categories-header">
+    <div>
+      <div class="section-label">Browse</div>
+      <h2 class="section-title">Shop by Category</h2>
+    </div>
+    <a href="{% url 'shop-page' %}" class="view-all">All Categories</a>
+  </div>
+  <div class="cats-grid">
+    <a class="cat-item" href="{% url 'shop-page' %}?cat=couple">
+      <div class="cat-img-wrap"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIy-aqJrKRRpKuZkuDLilc6F0akobCk8sC9F6dD_IE13Jm8GJXcc6m6yaQw_yIkkv2ZOLk5mM8PWeYxeB3h5tO_AcbJAsiLJTLQRDYEPaoDkULuDuhej34JNlodJYIXzCQ-VA2uixPlns9rGpqUT2VbxxQQMFxtEP8CuwZfJ0CK5D3ruPjG2wU2pfa37pEfMqb72X6eXaxAmevnf718OG2OilwE9oHYi0x4ohCrQTF-mgijxMa7ZvqVPzM4A2zVBpQKbvY5LxwWssY" alt="Couple Gifts"/></div>
+      <span class="cat-name">Couple Gifts</span>
+    </a>
+    <a class="cat-item" href="{% url 'shop-page' %}?cat=pet">
+      <div class="cat-img-wrap"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWeccVggREBKuAym2zBKqvzC8F87RRbrFZ99L-gHFwmlAC_64e9Jx4_RPIjz_SI0dnGKpbdS8TeSzjociKAtOFxU7nF49e27_z8oJQzsG4eHAjGIXyp7q8Tm7hp_4mMfFe53GJ8Mi4lwSBf1Lg0qv2wraiJqCYSgDQvkwjoQ3M9el85Gl16LjIBz1cZVZ8QyVxp1UwcuWL7O31oV86gbthHMrkZQlRU4LT6Hd7gWtfwc6J4CChe2niB25znEnetmDsnLAorhyl5vwj" alt="Pet Lovers"/></div>
+      <span class="cat-name">Pet Lovers</span>
+    </a>
+    <a class="cat-item" href="{% url 'shop-page' %}?cat=family">
+      <div class="cat-img-wrap"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCniIsfG0lrlSXyEHG9fVHb7z3muvPmxkBBKMkoS8JmBISquw0P_x88PG5gI-le5jfWBODFMJN0vLzg7vZH87GzFFXoH7VNE5dcmhQWVICMBx1rwsj1uvDfWhf64lbaBE2ea_bsX5Yzr8-CgJhEB7prfv6mjxrvCx6pYRyiNvx6Szq9BSJ8QHNH4gKY3YS3L1r9L0EiP__P3LBXQoaYxVngqZTPedG1cDcQ2ml7O--5nPO9Vq6eMmiM7gZ8h-POd7G7Urz6V0YpCIMq" alt="Family Gifts"/></div>
+      <span class="cat-name">Family Gifts</span>
+    </a>
+    <a class="cat-item" href="{% url 'shop-page' %}?cat=baby">
+      <div class="cat-img-wrap"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBe8qDuS8S_rkt1V0w6gXQLE1o6BCg8C4rEC8gkexFD0xDmBaTWBKYG8aym0mlU3ACokocyF1ZtJJZLSKBOz3ejNhBPRwCxfhFivVazbrux5mzNDMxwaBGJYojSeK4qXLqIKKsUaPo6jHY06k16yiLwkh_a-TeO8hvSPBHLTiJPvhPOc-LCdMPt0sHKlkEgHtcZD7pjJ-iTVtx5ktW9skH9DY6a7XW_7d80t4P6XXmRZ3wuIaYNydasoDqqw5z4vgEHd3I860bQ01zR" alt="Baby Gifts"/></div>
+      <span class="cat-name">Baby Gifts</span>
+    </a>
+    <a class="cat-item" href="{% url 'shop-page' %}?cat=birthday">
+      <div class="cat-img-wrap"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0XwYnrfIpv2UaHZfGY0iEJcTq2GGK1egqMQIai4t3nIbRLyW9mtZT6DpKEQnyrMNKwpUE1cI4v8VD3Q1YCzShaW3HDSBUfnaxI1vQAEYWHz-7qmSIIx-PmXXoogpMo-oiVl3gJZGqAUU4flJZj-PaHEDodfbTtcPhYx86BWlCSh1nulcVGOuP4BE3uU0-Oum2T_VZGXck3y4f_3MxdtHA8lmJV0hCGTuPFhm9Uy-iWfanT4gEQ6Xlg51NiAyy4E5n-p1qc9znCGrE" alt="Birthday Gifts"/></div>
+      <span class="cat-name">Birthday Gifts</span>
+    </a>
+    <a class="cat-item" href="{% url 'shop-page' %}?cat=anniversary">
+      <div class="cat-img-wrap"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzaKndGz_PB3oYmY_o6XGhVFFhgbzen9QvpwXYTjPD6i0QrgStvNwlCeP-A6LiQyZftfycdMUErowpXWxNqSoR8J45UcDaJN-R1M0Lg4GounffQgdjW7b3nlyE1uLpvbl9kiwf3uvvIWPR4m77Tj-QMbAH7V4RALYe7ydLs7MSmcHMlNvf2bzPzU7FQBSOtgICB0d9JPkEFbaDhDcazGeFQzlQ9ACL6DDYpFNoNYyG43PWU8iXIhvSLCTbVV-OgDq6KAbMc4no5MO0" alt="Anniversary Gifts"/></div>
+      <span class="cat-name">Anniversary</span>
+    </a>
+  </div>
+</section>
+
+{# ── BEST SELLERS ── #}
+<section class="bestsellers">
+  <div class="bestsellers-header">
+    <div>
+      <div class="section-label">Most Loved</div>
+      {% comment %} <h2 class="section-title">Best Sellers</h2> {% endcomment %}
+    </div>
+    <a href="{% url 'shop-page' %}" class="view-all">View All</a>
+  </div>
+  <div class="products-grid">
+    {% for p in featured %}
+    <div class="product-card" style="position:relative;">
+      <div class="product-img-wrap">
+        {% if p.image %}
+        <img src="{{ p.image.url }}" alt="{{ p.name }}"/>
+        {% else %}
+        <div style="width:100%;height:100%;background:var(--grey-8);display:flex;align-items:center;justify-content:center;aspect-ratio:4/5;">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="color:var(--grey-5)"><rect x="3" y="3" width="18" height="18"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+        {% endif %}
+        <a href="{% url 'product-page' p.slug %}" class="product-cta" style="text-decoration:none;">Customize Now</a>
+        {% if user.is_authenticated %}
+        <button class="js-wish-toggle"
+                data-product-id="{{ p.id }}"
+                aria-label="Save to wishlist"
+                style="position:absolute;top:10px;right:10px;background:rgba(248,248,246,.9);border:1px solid var(--grey-6);width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:none;z-index:3;">
+          <svg width="14" height="14" viewBox="0 0 24 24"
+               fill="{% if p.id|stringformat:'s' in wished_ids %}currentColor{% else %}none{% endif %}"
+               stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l7.84-7.84a5.5 5.5 0 000-7.78z"/>
+          </svg>
+        </button>
+        {% endif %}
+      </div>
+      <div class="product-info">
+        <a href="{% url 'product-page' p.slug %}" class="product-name" style="text-decoration:none;color:inherit;">{{ p.name }}</a>
+        <span class="product-price">£{{ p.price|floatformat:2 }}</span>
+      </div>
+    </div>
+    {% empty %}
+    <p style="color:var(--grey-4);font-size:14px;grid-column:1/-1;text-align:center;padding:40px 0;">No featured products yet.</p>
+    {% endfor %}
+  </div>
+</section>
+
+{# ── TESTIMONIALS ── #}
+<section class="testimonials">
+  <div class="testimonials-header">
+    <div>
+      <div class="section-label">Reviews</div>
+      <h2 class="section-title">Customer Love</h2>
+    </div>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card">
+      <div class="t-stars">★★★★★</div>
+      <p class="t-quote">"The embroidery quality is absolutely stunning. It made the perfect anniversary gift for my husband. He wears it everywhere!"</p>
+      <div class="t-author">
+        <div class="t-avatar"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBice4JWl0ebvD5ETvyX6jIYaweicIgcVQQYQa6YhYiZQ_bU9_RAjKbQxqy-yUyag9X7Vfwr0ui6AO4WalRJB-Peco8Fz61-zYJpk6vOZ23lvJNQvP84Vi01LPSF8Poa0HjHPa5VQQerJz5XavEFLjeL9lWbdgbNP3V79vnsbgZDvJ9m7lsuCCFoOjmhFf4VUPe6RBosslYMPrGBFxZZU2tcYW6GdK5D1opmDK4hqj-xBIWzcGOdwxQENUct1zWIBAA2heoo1F34ZyA" alt="Sarah"/></div>
+        <div><div class="t-name">Sarah Miller</div><div class="t-role">Verified Buyer</div></div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="t-stars">★★★★★</div>
+      <p class="t-quote">"I ordered a pet portrait sweatshirt and it looks exactly like my dog! The turnaround time was faster than expected too."</p>
+      <div class="t-author">
+        <div class="t-avatar"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsdn7W1DnU94pevmH4H2PliM9P4RSa2vK8N3VbhW48IlTBugOpqbDPKHTmPmDUZb9Ai2z3WMx95S3SjS4YJ1RtZoLv9UU7wgHJuMMBM6UT_kaVb7WGK89T14xFtsTENcSOabdNquuxNbfUqf7ntyJKBXl-XtmJXqYm2j0mTsAevPaIy_zgcw-7Y2Y8RK8hJJzkBIiKRRict5Xicf_1Dt63cMyE9_9OgZMNlxYJk5XZegqmmZ3IlNfCQQiZbgOFp6uJSHXdK7WzlDG4" alt="James"/></div>
+        <div><div class="t-name">James Lawson</div><div class="t-role">Verified Buyer</div></div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="t-stars">★★★★★</div>
+      <p class="t-quote">"Gifted a baby blanket to my sister and she cried. Such a meaningful piece. Beautifully packaged as well."</p>
+      <div class="t-author">
+        <div class="t-avatar"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCt7qRvf-5VTM3OixSyZG7OHe__BVRD2RhL-6iMh0wYtBVv_1hVgeAxyP_L397kmP36ZvOXxKmhhekRw9FeANvio-12Yv_Cep4S2wnSCsgOUvQMg7XRgmqY98vGT3L355ZlVg74nW2Jqoe2ZBSeXlx7wDVAn9tYgJFDcmZbHoIq12-MF-EEE2I4NwE8YHhjb4wXyM0-O5Pjbf3aoz-VFgdBibtPo_R0aDDnZrWq_ckGxHdWh_YwqRieWz72qAKpf_mDTfjhkbrRe9Bi" alt="Elena"/></div>
+        <div><div class="t-name">Elena Rodriguez</div><div class="t-role">Verified Buyer</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ── INSTAGRAM ── #}
+<section class="instagram">
+  <div class="instagram-header">
+    <div class="section-label">Social</div>
+    <h2 class="section-title">Follow @CustomiseMeUK</h2>
+    <p style="font-size:14px;color:var(--grey-4);margin-top:12px;">Tag us to be featured in our gallery</p>
+  </div>
+  <div class="instagram-grid">
+    <div class="insta-cell"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCybteGwphqswL-UR2FHF66guevFrDqhctPdyTrLjRKXL7xamAjQa84U4DhaPEhlGTBKsUJjbvsp8C6Oxvo0HbvIuURD0zY0VMEr6A1YA3Z_OrhS5-ST8OUZkEu9um71im35a070fhoz8gXITbvjqCa4-0J9uTx3pswXzSaldUeIVxumCEXkAos5kxGUsgJ7m6wPo3BNN_Um8QNWO65tXB-5Qb80dLrTZBqdqYpGLwQ1etyANylc-55WM8SUzC4I4vxO5p-RO3TS_BY" alt=""/><div class="insta-overlay"><span class="insta-icon">♡</span></div></div>
+    <div class="insta-cell"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNzrsGfX9Rc6R7Ovyt6O3q5AOdEUOpah5kUglXUgCT5rWegiuB86fAhydqkDkQ_csPzQ9mfRQeHvGEY6_Y3aW39HsMNgIa0036OgGHwxhqI1Z2Rt0nFrOuFjr2W0rHOTvrhGDUVrl0YTCebSt94JTugYoPxIgEClk7vgw04uvBP1TYnedh_sJf3jjAegcp57TkemXJC6I8ELsW0qSE_USCB9FaIE1GACr35oyJhTGgRK0efvE7ctELu8dcFNRaw9q5arn_cRXBE5oC" alt=""/><div class="insta-overlay"><span class="insta-icon">♡</span></div></div>
+    <div class="insta-cell"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPvR-ZERgKCplhXfQIp6iy_H0pQf7MbW9fq5avJNwjc8ykEfHZ6Web3xHN41VtYsF0c9kukbggkt0oZ9zt5dhvYkVrQzGAOqPA_5-NKrtbBgduyUykQH4qhWh_vxjtugeqNxcxEE840RMFJAAl-_c7dXCJtdvgdRvoVosfQpaB33DnT00d982ZQURNfcZelf9zc-aVn84KFdjfSQg-NoNRbC0xys4mgGVJ3dxIWQvqV3hhSbxQ3e0umw7SZaEgW6rtn4qHPHmOutg" alt=""/><div class="insta-overlay"><span class="insta-icon">♡</span></div></div>
+    <div class="insta-cell"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBea3HpZr1GORCRR_RApbAWjqZIjlLDOx0CwBMv0oUR1bLPEVb9Vh30feYT-6P7W8IudLCs-azNkBfq8nnWG7rJW0i1fJpd53Pro9Byj8MCilWb1v3eGJwEqWGFeE-udS354D7bCJAYcVEvpu_VtvSf7Bu6Zn2Wj0kYMA8yCJEVb-8MzmnKyqqdjLK7KLNfBansaWpCpNoEjHdH3joQr9MpL4Q001tlRZgldjvwsQj-f02cbb4JGuPupih0NHHlvuHkeP4ogdLJdbuR" alt=""/><div class="insta-overlay"><span class="insta-icon">♡</span></div></div>
+    <div class="insta-cell"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsvOJwoIzvAx1uJ-lMpq2qzpD42Cde4f7X6iLXef7OYMHdgwD28boghVwcpkonDlIoJHhPg2NMr5NZJACoXWHj0JL9-2q8boMvVP50NsxFPIND8oQxYoQVQqlraq71iBaT718KaUb_L7pfSFsG4S1blyO_FrPmUBVlkET5cPR3Z0MwlQ5kbyrLxQ2RZSr9lo6puvvYbWkmGgmIue58ib7UyYLNaS_gG8-gNEmoIUAJIMLu_-d9MGHDot3vSkvEyf4BfSTk6NG74obG" alt=""/><div class="insta-overlay"><span class="insta-icon">♡</span></div></div>
+    <div class="insta-cell"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyQrJx-J1HUQrDlri7GE9OO1pF_T4xZNNfGtqj-YUfJXWuDGwAbhGS3Kyr9PirrvgcEVs-Mazla1_jIwwE8Lef3XKceGsnNRuwxHyQ5Klfl9Ds_SQkiNOIzKnZCyFnkumW66HzCM5SCgjSXAX7DjXalPr5pFYk9YOddMFpe6FU9Qe9XRTgvYzWREeJZjxKeeKScf8rWJV43hNYjX-0Iw9jDtLYyblZLyJaoSrZU6iGvt-6Xhd-MATglpuTuQjERRSrDBs5p3R76cPq" alt=""/><div class="insta-overlay"><span class="insta-icon">♡</span></div></div>
+  </div>
+</section>
+
+{# ── NEWSLETTER ── #}
+<section class="newsletter">
+  <div class="newsletter-text">
+    <div class="section-label">Stay in Touch</div>
+    <h2 class="section-title">Get 10% off your first order</h2>
+    <p>Join our newsletter for exclusive offers, new arrivals, and behind-the-scenes studio stories.</p>
+  </div>
+  <div class="newsletter-form">
+    {# No Django form action needed — handled by newsletter.js via fetch() #}
+    <div class="form-row" id="newsletterRow">
+      <input type="email" id="newsletterEmail" placeholder="Your email address"/>
+      <button type="button" id="newsletterBtn">Subscribe</button>
+    </div>
+    <p class="newsletter-msg" id="newsletterMsg"></p>
+    <p class="form-note">By subscribing you agree to our Privacy Policy. Unsubscribe anytime.</p>
+  </div>
+</section>
+
+{# ── FOOTER ── #}
+
+{% block extra_js %}
+<script>
+/* ── Wishlist heart toggle ── */
+document.querySelectorAll('.js-wish-toggle').forEach(function(btn) {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    var self      = this;
+    var productId = self.dataset.productId;
+    var svg       = self.querySelector('svg');
+    fetch('/wishlist/toggle/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: JSON.stringify({ product_id: productId })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (svg) svg.setAttribute('fill', data.wishlisted ? 'currentColor' : 'none');
+      var wishBadge = document.getElementById('wishBadge');
+      if (wishBadge && data.wish_count !== undefined) {
+        wishBadge.textContent = data.wish_count;
+        wishBadge.style.display = data.wish_count > 0 ? 'flex' : 'none';
+      }
+    })
+    .catch(function(err) { console.error('Wishlist error:', err); });
+  });
+});
+
+/* ── Hero slider — horizontal slide ── */
+(function() {
+  var track   = document.getElementById('heroTrack');
+  var dots    = document.querySelectorAll('.slider-dot');
+  if (!track) return;
+
+  var slides  = track.querySelectorAll('.hero-slide');
+  if (slides.length <= 1) return;
+
+  var current  = 0;
+  var total    = slides.length;
+  var interval;
+
+  function goTo(n) {
+    current = (n + total) % total;
+    /* Slide the whole track left/right */
+    track.style.transform = 'translateX(-' + (current * 100) + '%)';
+    dots.forEach(function(d, i) {
+      d.classList.toggle('active', i === current);
+    });
+  }
+
+  function next()       { goTo(current + 1); }
+  function startTimer() { interval = setInterval(next, 5000); }
+  function resetTimer() { clearInterval(interval); startTimer(); }
+
+  /* Set initial track width so all slides sit side by side */
+  track.style.width = (slides.length * 100) + '%';
+  slides.forEach(function(s) {
+    s.style.width = (100 / slides.length) + '%';
+  });
+
+  startTimer();
+
+  dots.forEach(function(dot) {
+    dot.addEventListener('click', function() {
+      goTo(parseInt(this.dataset.dot));
+      resetTimer();
+    });
+  });
+
+  var hero = document.querySelector('.hero');
+  if (hero) {
+    hero.addEventListener('mouseenter', function() { clearInterval(interval); });
+    hero.addEventListener('mouseleave', startTimer);
+  }
+})();
+</script>
+{% endblock %}
+{% endblock %}

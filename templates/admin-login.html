@@ -1,0 +1,526 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CustomiseMe UK | Admin Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --black:  #0a0a0a; --white:  #f8f8f6;
+  --grey-1: #1a1a1a; --grey-2: #2e2e2e; --grey-3: #4a4a4a;
+  --grey-4: #888888; --grey-5: #b0b0b0; --grey-6: #d4d4d4;
+  --grey-7: #e8e8e6; --grey-8: #f2f2f0;
+  --accent: #c8a96e; --accent-dark: #a8893e;
+  --danger: #c0392b; --danger-bg: #fdf0ef;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans:  'DM Sans', system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  background: var(--white); color: var(--black);
+  font-family: var(--sans); font-size: 14px; line-height: 1.6;
+  min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+  overflow-x: hidden;
+}
+
+/* ── CURSOR ── */
+* { cursor: none; }
+#cursor {
+  position: fixed; top: 0; left: 0; width: 10px; height: 10px;
+  background: var(--black); border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: width .2s, height .2s;
+}
+#cursor-ring {
+  position: fixed; top: 0; left: 0; width: 36px; height: 36px;
+  border: 1px solid var(--black); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: width .3s, height .3s;
+}
+
+/* ── LEFT PANEL ── */
+.left-panel {
+  position: relative; overflow: hidden;
+  background: var(--black);
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+  padding: 48px 52px;
+  min-height: 100vh;
+}
+.left-bg {
+  position: absolute; inset: 0;
+  background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAhKVWHxLmBOKTnijgZ5JT1R3RNPUiA-OuU8X1n4Os4rTh73ucejMO_ebRKiPD5CAvf37FCsKQPo6bFMkjiFGXp7fWHg6wWINtHhaRTorWETdnOlfOb7h5j9EIOj-vzZULF2gPQRPpPuBUP_zAvDzojzySSbeY77YoOk9sEE9z1sz_s-EUVCA74gTBTzH-DAst0weDBffD5pPmNiyLObyrONZE_b4OUk_FRN4_8pPrBdtZo4L6ntpr7J2hYd0s0f6bse_mUNMzSjAHt');
+  background-size: cover; background-position: center;
+  filter: grayscale(100%); opacity: 0.22;
+}
+.left-panel::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg,
+    rgba(10,10,10,0.65) 0%, rgba(10,10,10,0.1) 40%,
+    rgba(10,10,10,0.1) 60%, rgba(10,10,10,0.72) 100%);
+  pointer-events: none;
+}
+.left-rule {
+  position: absolute; left: 52px; top: 50%; transform: translateY(-50%);
+  width: 1px; height: 30%; background: var(--grey-2); z-index: 1;
+}
+.left-top, .left-bottom { position: relative; z-index: 1; }
+.left-logo {
+  display: flex; align-items: center; gap: 14px;
+  text-decoration: none; color: var(--white);
+}
+.left-logo img { width: 48px; height: 48px; object-fit: contain; filter: invert(1); }
+.left-corner-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 9px; font-weight: 600; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--grey-5);
+  border: 1px solid var(--grey-2); padding: 6px 12px; margin-bottom: 28px;
+}
+.left-corner-tag::before { content: '✦'; font-size: 8px; color: var(--grey-4); }
+.left-quote {
+  font-family: var(--serif); font-size: clamp(26px, 2.4vw, 34px);
+  font-weight: 300; line-height: 1.22; color: var(--white); margin-bottom: 24px;
+  animation: fadeUp .8s ease both;
+}
+.left-quote em { font-style: italic; color: rgba(248,248,246,0.55); }
+.left-meta {
+  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--grey-4); animation: fadeUp .8s .15s ease both;
+}
+
+/* ── RIGHT PANEL ── */
+.right-panel {
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 60px 48px; background: var(--white);
+  min-height: 100vh; position: relative;
+}
+.right-inner { width: 100%; max-width: 400px; }
+.deco-star {
+  position: absolute; top: 36px; right: 40px;
+  font-size: 16px; color: var(--grey-6);
+  animation: spin 18s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── FORM HEADER ── */
+.form-overline {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--grey-5);
+  display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+  animation: fadeUp .6s .05s ease both;
+}
+.form-overline::before { content: ''; width: 20px; height: 1px; background: var(--grey-5); }
+.form-title {
+  font-family: var(--serif); font-size: clamp(32px, 3.2vw, 44px);
+  font-weight: 300; line-height: 1.05; color: var(--black); margin-bottom: 8px;
+  animation: fadeUp .6s .1s ease both;
+}
+.form-title em { font-style: italic; color: var(--grey-4); }
+.form-subtitle {
+  font-size: 13px; color: var(--grey-4); margin-bottom: 44px;
+  animation: fadeUp .6s .15s ease both;
+}
+
+/* ── DJANGO ALERT BANNERS ── */
+.alert {
+  padding: 12px 16px; margin-bottom: 24px; font-size: 12px;
+  display: flex; align-items: flex-start; gap: 10px;
+  animation: fadeUp .4s ease both;
+}
+.alert-error {
+  background: var(--danger-bg);
+  border: 1px solid rgba(192,57,43,0.25);
+  border-left: 3px solid var(--danger);
+  color: var(--danger);
+}
+.alert-success {
+  background: #f0fdf4;
+  border: 1px solid rgba(22,163,74,0.25);
+  border-left: 3px solid #16a34a;
+  color: #15803d;
+}
+.alert svg { flex-shrink: 0; margin-top: 1px; }
+
+/* ── FORM ── */
+form { display: flex; flex-direction: column; gap: 20px; }
+
+.field { display: flex; flex-direction: column; gap: 7px; animation: fadeUp .6s .2s ease both; }
+.field + .field { animation-delay: .25s; }
+.field label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--grey-3);
+}
+.field-wrap { position: relative; }
+.field-icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: var(--grey-5); pointer-events: none; display: flex; align-items: center;
+}
+.field-input {
+  width: 100%; background: var(--grey-8); border: 1px solid var(--grey-6);
+  padding: 13px 14px 13px 42px;
+  font-family: var(--sans); font-size: 13px; color: var(--black);
+  outline: none; border-radius: 0;
+  transition: border-color .2s, background .2s; cursor: none;
+}
+.field-input::placeholder { color: var(--grey-5); }
+.field-input:focus { border-color: var(--black); background: var(--white); }
+/* Django field error state */
+.field-input.input-error { border-color: var(--danger); background: var(--danger-bg); }
+.field-error-msg {
+  font-size: 11px; color: var(--danger);
+  display: flex; align-items: center; gap: 5px;
+}
+.field-error-msg::before { content: '⚠'; font-size: 10px; }
+
+.field-toggle {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: var(--grey-5);
+  display: flex; align-items: center; cursor: none;
+  transition: color .2s; padding: 4px;
+}
+.field-toggle:hover { color: var(--black); }
+
+/* ── FORM META ── */
+.form-meta {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; animation: fadeUp .6s .3s ease both;
+}
+.remember-label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: var(--grey-4); cursor: none;
+}
+.remember-check {
+  width: 14px; height: 14px; border: 1px solid var(--grey-5);
+  background: var(--grey-8); appearance: none; -webkit-appearance: none;
+  position: relative; cursor: none; flex-shrink: 0;
+  transition: background .15s, border-color .15s;
+}
+.remember-check:checked { background: var(--black); border-color: var(--black); }
+.remember-check:checked::after {
+  content: ''; position: absolute; left: 4px; top: 1.5px;
+  width: 5px; height: 8px; border: 1.5px solid var(--white);
+  border-top: none; border-left: none; transform: rotate(45deg);
+}
+
+/* ── SUBMIT BUTTON ── */
+.btn-submit {
+  width: 100%; padding: 15px 24px;
+  background: var(--black); color: var(--white);
+  font-family: var(--sans); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  border: none; cursor: none;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  position: relative; overflow: hidden;
+  animation: fadeUp .6s .35s ease both;
+  transition: opacity .2s;
+}
+.btn-submit::after {
+  content: ''; position: absolute; inset: 0;
+  background: var(--grey-2); transform: translateX(-100%);
+  transition: transform .35s ease;
+}
+.btn-submit:hover::after { transform: translateX(0); }
+.btn-submit-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; }
+.btn-submit.loading { opacity: 0.7; pointer-events: none; }
+.btn-submit .spinner {
+  width: 12px; height: 12px; border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: var(--white); border-radius: 50%;
+  animation: spin .6s linear infinite; display: none;
+}
+.btn-submit.loading .spinner { display: block; }
+.btn-submit.loading .btn-arrow { display: none; }
+
+/* ── DIVIDER & SECURITY ── */
+.form-divider {
+  display: flex; align-items: center; gap: 14px;
+  animation: fadeUp .6s .38s ease both;
+}
+.form-divider::before, .form-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--grey-7);
+}
+.form-divider span {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--grey-5); white-space: nowrap;
+}
+.security-row {
+  display: flex; align-items: center; justify-content: center; gap: 20px;
+  animation: fadeUp .6s .42s ease both;
+}
+.security-badge {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--grey-5);
+}
+.security-badge-icon {
+  width: 28px; height: 28px; border: 1px solid var(--grey-7);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--grey-4); flex-shrink: 0;
+}
+
+/* ── FOOTER ── */
+.right-footer {
+  position: absolute; bottom: 28px; left: 0; right: 0;
+  text-align: center; font-size: 11px; color: var(--grey-6); letter-spacing: 0.04em;
+}
+.right-footer a {
+  color: var(--grey-5); text-decoration: none; transition: color .2s; margin: 0 4px;
+}
+.right-footer a:hover { color: var(--black); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 860px) {
+  body { grid-template-columns: 1fr; }
+  .left-panel { display: none; }
+  .right-panel { padding: 48px 28px; min-height: 100vh; }
+  .right-inner { max-width: 100%; }
+}
+@media (max-width: 440px) {
+  .right-panel { padding: 36px 20px; }
+  .form-meta { flex-direction: column; align-items: flex-start; gap: 10px; }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- ═══ LEFT PANEL ═══ -->
+<div class="left-panel">
+  <div class="left-bg"></div>
+  <div class="left-rule"></div>
+
+  <div class="left-top">
+    <a class="left-logo" href="{% url 'home-page' %}">
+      <img src="{% static 'icon.png' %}" alt="CustomiseMe UK"/>
+    </a>
+  </div>
+
+  <div class="left-bottom">
+    <div class="left-corner-tag">Admin Portal</div>
+    <blockquote class="left-quote">
+      Every great store begins<br/>with <em>careful hands</em><br/>behind the scenes.
+    </blockquote>
+    <div class="left-meta">Handcrafted Since 2018 &nbsp;·&nbsp; CustomiseMe UK Collective</div>
+  </div>
+</div>
+
+<!-- ═══ RIGHT PANEL ═══ -->
+<div class="right-panel">
+  <span class="deco-star">✦</span>
+
+  <div class="right-inner">
+
+    <div class="form-overline">Admin Access</div>
+    <h1 class="form-title">Welcome <em>Back.</em></h1>
+    <p class="form-subtitle">Enter your administrative credentials to continue.</p>
+
+    {# ── Django error/success banners ── #}
+    {% if error %}
+    <div class="alert alert-error" role="alert">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      {{ error }}
+    </div>
+    {% endif %}
+
+    {% if messages %}
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}" role="alert">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ message }}
+      </div>
+      {% endfor %}
+    {% endif %}
+
+
+    <form method="POST" action="{% url 'admin-login-page' %}" id="loginForm" novalidate>
+      {% csrf_token %}
+
+      {# ── Email / Username ── #}
+      <div class="field">
+        <label for="id_email">Username or Email</label>
+        <div class="field-wrap">
+          <span class="field-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </span>
+          <input
+            class="field-input {% if form.email.errors %}input-error{% endif %}"
+            id="id_email" name="email" type="email"
+            placeholder="admin@customisemeuk.com"
+            autocomplete="email"
+            value="{{ form.email.value|default:'' }}"/>
+        </div>
+        {% if form.email.errors %}
+          {% for err in form.email.errors %}
+          <span class="field-error-msg">{{ err }}</span>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      {# ── Password ── #}
+      <div class="field">
+        <label for="id_password">Password</label>
+        <div class="field-wrap">
+          <span class="field-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0110 0v4"/>
+            </svg>
+          </span>
+          <input
+            class="field-input {% if form.password.errors %}input-error{% endif %}"
+            id="id_password" name="password" type="password"
+            placeholder="••••••••••"
+            autocomplete="current-password"
+            style="padding-right:44px;"/>
+          <button class="field-toggle" type="button" id="togglePwd" aria-label="Toggle password visibility">
+            <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+        {% if form.password.errors %}
+          {% for err in form.password.errors %}
+          <span class="field-error-msg">{{ err }}</span>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      {# ── Remember me ── #}
+      <div class="form-meta">
+        <label class="remember-label">
+          <input class="remember-check" type="checkbox" id="id_remember" name="remember"
+                 {% if form.remember.value %}checked{% endif %}/>
+          Remember this device
+        </label>
+      </div>
+
+      {# ── Submit ── #}
+      <button class="btn-submit" type="submit" id="submitBtn">
+        <div class="btn-submit-inner">
+          <span class="btn-label">Sign In to Dashboard</span>
+          <span class="spinner"></span>
+          <svg class="btn-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </div>
+      </button>
+
+      {# ── Security info ── #}
+      <div class="form-divider"><span>Security Info</span></div>
+      <div class="security-row">
+        <div class="security-badge">
+          <div class="security-badge-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <polyline points="9 12 11 14 15 10"/>
+            </svg>
+          </div>
+          2FA Enabled
+        </div>
+        <div class="security-badge">
+          <div class="security-badge-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0110 0v4"/>
+            </svg>
+          </div>
+          SSL Secure
+        </div>
+        <div class="security-badge">
+          <div class="security-badge-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          Session Timed
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+  <p class="right-footer">
+    © 2026 CustomiseMe UK. &nbsp;·&nbsp;
+    <a href="{% url 'privacy-page' %}">Privacy</a>
+    <a href="{% url 'conditions-page' %}">Terms</a>
+  </p>
+</div>
+
+<script>
+  /* ── Cursor ── */
+  const cursor = document.getElementById('cursor');
+  const ring   = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+  });
+  (function animRing() {
+    rx += (mx - rx) * .15; ry += (my - ry) * .15;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  })();
+  document.querySelectorAll('a, button, input, label').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width  = '6px';  cursor.style.height  = '6px';
+      ring.style.width    = '52px'; ring.style.height    = '52px';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width  = '10px'; cursor.style.height  = '10px';
+      ring.style.width    = '36px'; ring.style.height    = '36px';
+    });
+  });
+
+  /* ── Password toggle ── */
+  const toggleBtn = document.getElementById('togglePwd');
+  const pwdInput  = document.getElementById('id_password');
+  const eyeIcon   = document.getElementById('eyeIcon');
+  const eyeShow = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+  const eyeHide = `<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>`;
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      const show = pwdInput.type === 'password';
+      pwdInput.type = show ? 'text' : 'password';
+      eyeIcon.innerHTML = show ? eyeHide : eyeShow;
+    });
+  }
+
+  /* ── Submit loading state ── */
+  const loginForm  = document.getElementById('loginForm');
+  const submitBtn  = document.getElementById('submitBtn');
+  if (loginForm && submitBtn) {
+    loginForm.addEventListener('submit', () => {
+      submitBtn.classList.add('loading');
+      submitBtn.querySelector('.btn-label').textContent = 'Signing in…';
+    });
+  }
+</script>
+
+</body>
+</html>

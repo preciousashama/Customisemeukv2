@@ -1,0 +1,599 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}CustomiseMe UK | Shop{% endblock %}
+
+{% block nav_shop %}class="active"{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── PAGE HERO ── */
+  .page-hero {
+    padding-top: 72px;
+    background: #f5f5f5;
+    position: relative; overflow: hidden;
+  }
+  .page-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 40px,
+      rgba(200,169,110,0.08) 40px,
+      rgba(200,169,110,0.08) 41px
+    );
+  }
+  .page-hero-inner {
+    position: relative; z-index: 1;
+    max-width: 1280px; margin: 0 auto;
+    padding: 80px 80px 72px;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 40px;
+  }
+  .page-hero-overline {
+    font-family: var(--sans); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .page-hero-overline::before {
+    content: ''; display: inline-block; width: 28px; height: 1px; background: var(--accent);
+  }
+  .page-hero h1 {
+    font-family: var(--serif); font-size: clamp(48px, 5vw, 80px);
+    font-weight: 300; line-height: 1.05; letter-spacing: -0.01em; color: var(--black);
+  }
+  .page-hero h1 em { font-style: italic; color: var(--accent); }
+  .page-hero-sub {
+    margin-top: 20px; font-size: 14px; color: var(--grey-3);
+    max-width: 420px; line-height: 1.7;
+  }
+  .page-hero-stat { flex-shrink: 0; text-align: right; }
+  .page-hero-stat-num {
+    font-family: var(--serif); font-size: 64px; font-weight: 300;
+    line-height: 1; color: var(--black); letter-spacing: -0.02em;
+  }
+  .page-hero-stat-num span { color: var(--accent); }
+  .page-hero-stat-label {
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--grey-3); margin-top: 8px;
+  }
+
+/* ── MARQUEE ── */
+  .marquee-section {
+    border-bottom: 1px solid var(--grey-6);
+    overflow: hidden; padding: 16px 0;
+    background: var(--accent-light);
+  }
+  .marquee-track {
+    display: flex; gap: 56px; width: max-content;
+    animation: marquee 24s linear infinite;
+    white-space: nowrap;
+  }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .marquee-item {
+    font-family: var(--serif); font-size: 16px; font-weight: 300;
+    font-style: italic; color: var(--grey-3);
+    display: flex; align-items: center; gap: 20px;
+  }
+  .marquee-item::after { content: '\2726'; font-style: normal; font-size: 9px; color: var(--accent); }
+
+/* ── MAIN LAYOUT ── */
+  .shop-layout {
+    max-width: 1280px; margin: 0 auto;
+    padding: 64px 80px 100px;
+  }
+
+/* ── FILTER BAR ── */
+  .filter-bar {
+    position: sticky; top: 72px; z-index: 40;
+    background: rgba(248,248,246,0.96);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--grey-7);
+    padding: 16px 0;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    flex-wrap: wrap; margin-bottom: 52px;
+  }
+  .filter-chips { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .filter-chip {
+    font-family: var(--sans); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 8px 18px; border: 1px solid var(--grey-6);
+    background: transparent; color: var(--grey-3);
+    border-radius: 0; cursor: none; transition: all .2s;
+    text-decoration: none; display: inline-block;
+  }
+  .filter-chip:hover { border-color: var(--black); color: var(--black); }
+  .filter-chip.active { background: var(--black); color: var(--white); border-color: var(--black); }
+  .filter-divider { width: 1px; height: 20px; background: var(--grey-6); }
+  .sort-wrap { display: flex; align-items: center; gap: 10px; }
+  .sort-label {
+    font-family: var(--sans); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-4);
+  }
+  .sort-select {
+    appearance: none; background: none; border: none; outline: none;
+    font-family: var(--sans); font-size: 12px; font-weight: 500;
+    color: var(--black); letter-spacing: 0.06em; cursor: none;
+    padding-right: 16px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 0 center;
+  }
+
+/* ── PRODUCT GRID ── */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 48px 32px;
+  }
+  .product-card-featured { grid-column: span 2; }
+  .product-card-featured .product-img-wrap { aspect-ratio: 16/11; }
+  .product-card { display: flex; flex-direction: column; position: relative; }
+  .product-img-wrap {
+    aspect-ratio: 3/4; overflow: hidden;
+    background: var(--grey-7); position: relative;
+  }
+  .product-img-wrap img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: filter .6s ease, transform .6s ease;
+    filter: grayscale(15%);
+  }
+  .product-card:hover .product-img-wrap img { filter: grayscale(0%); transform: scale(1.04); }
+
+  .img-badge {
+    position: absolute; top: 16px; left: 16px;
+    font-family: var(--sans); font-size: 9px; font-weight: 600;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    background: var(--white); color: var(--black);
+    padding: 5px 10px; border: 1px solid var(--grey-6);
+    pointer-events: none;
+  }
+  .img-badge-new  { background: var(--accent); color: var(--black); border-color: var(--accent); }
+  .img-badge-sale { background: #27ae60; color: #fff; border-color: #27ae60; }
+  .img-badge-low  { background: #e67e22; color: #fff; border-color: #e67e22; }
+  .img-badge-oos  { background: #c0392b; color: #fff; border-color: #c0392b; }
+
+  /* Wishlist btn */
+  .wishlist-btn {
+    position: absolute; top: 16px; right: 16px;
+    width: 34px; height: 34px;
+    background: rgba(248,248,246,0.88); border: 1px solid var(--grey-6);
+    display: flex; align-items: center; justify-content: center;
+    cursor: none; opacity: 0;
+    transition: opacity .3s, background .2s;
+  }
+  .product-card:hover .wishlist-btn { opacity: 1; }
+  .wishlist-btn.wished { opacity: 1; background: var(--black); border-color: var(--black); }
+  .wishlist-btn svg { width: 16px; height: 16px; stroke: var(--grey-3); fill: none; stroke-width: 1.5; transition: stroke .2s, fill .2s; }
+  .wishlist-btn:hover svg, .wishlist-btn.wished svg { stroke: var(--white); fill: var(--white); }
+
+  /* Quick add overlay */
+  .quick-add {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(10,10,10,0.90); color: var(--white);
+    text-align: center; padding: 14px;
+    font-family: var(--sans); font-size: 10px; font-weight: 600;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    transform: translateY(100%); opacity: 0;
+    transition: transform .3s ease, opacity .3s ease;
+    backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    border: none; width: 100%; cursor: none;
+  }
+  .quick-add::before { content: '+'; font-size: 14px; font-weight: 300; }
+  .product-card:hover .quick-add { transform: translateY(0); opacity: 1; }
+  .quick-add:disabled { background: rgba(192,57,43,0.88); cursor: not-allowed; }
+  .quick-add:disabled::before { content: ''; }
+  .quick-add.adding { background: rgba(39,174,96,0.9); }
+  .quick-add.adding::before { content: '\2713'; }
+
+  .swatches { display: flex; gap: 5px; margin-top: 10px; }
+  .swatch {
+    width: 11px; height: 11px; border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.8);
+    outline: 1px solid var(--grey-5); transition: transform .2s;
+  }
+  .swatch:hover { transform: scale(1.3); }
+
+  .product-info { padding: 14px 0 0; }
+  .product-meta { display: flex; align-items: center; justify-content: space-between; }
+  .product-category {
+    font-family: var(--sans); font-size: 9px; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent);
+  }
+  .product-price { font-family: var(--sans); font-size: 13px; font-weight: 500; color: var(--grey-2); }
+  .product-price-orig { font-size: 11px; color: var(--grey-5); text-decoration: line-through; margin-left: 5px; }
+  .product-name {
+    font-family: var(--serif); font-size: 19px; font-weight: 400;
+    color: var(--black); margin-top: 4px; line-height: 1.25;
+    text-decoration: none; display: block;
+  }
+  .product-name:hover { color: var(--accent); }
+  .product-stars { display: flex; align-items: center; gap: 5px; margin-top: 6px; }
+  .stars { display: flex; gap: 1px; color: var(--accent); font-size: 11px; }
+  .review-count { font-size: 10px; color: var(--grey-5); }
+
+  /* Results header */
+  .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 36px; }
+  .results-count { font-size: 13px; color: var(--grey-4); }
+  .results-count strong { color: var(--black); }
+
+  /* Empty state */
+  .empty-state { grid-column: 1/-1; text-align: center; padding: 80px 24px; }
+  .empty-state svg { display: block; margin: 0 auto 20px; color: var(--grey-5); }
+  .empty-state h3 { font-family: var(--serif); font-size: 28px; font-weight: 300; margin-bottom: 10px; }
+  .empty-state p { font-size: 14px; color: var(--grey-4); margin-bottom: 28px; }
+  .empty-state a {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 28px; background: var(--black); color: var(--white);
+    font-family: var(--sans); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none;
+  }
+
+/* ── PAGINATION ── */
+  .pagination {
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+    margin-top: 80px; padding-top: 48px; border-top: 1px solid var(--grey-7);
+  }
+  .page-btn {
+    width: 42px; height: 42px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--grey-6);
+    background: transparent; color: var(--grey-3);
+    font-family: var(--sans); font-size: 13px; font-weight: 500;
+    cursor: none; transition: all .2s;
+  }
+  .page-btn:hover { border-color: var(--black); color: var(--black); }
+  .page-btn.active { background: var(--black); color: var(--white); border-color: var(--black); }
+  .page-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+  /* Cart toast */
+  #cartToast {
+    position: fixed; bottom: 28px; right: 28px;
+    background: var(--black); color: var(--white);
+    font-family: var(--sans); font-size: 12px; font-weight: 500; letter-spacing: 0.08em;
+    padding: 14px 20px; z-index: 9999;
+    transform: translateY(20px); opacity: 0;
+    transition: opacity .3s, transform .3s;
+    pointer-events: none; display: flex; align-items: center; gap: 10px;
+  }
+  #cartToast.show { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 1024px) {
+    .shop-layout { padding: 48px 32px 80px; }
+    .products-grid { grid-template-columns: repeat(3, 1fr); }
+    .product-card-featured { grid-column: span 3; }
+  }
+  @media (max-width: 768px) {
+    .page-hero-inner { padding: 60px 24px 48px; flex-direction: column; }
+    .page-hero-stat { text-align: left; }
+    .shop-layout { padding: 32px 20px 60px; }
+    .products-grid { grid-template-columns: repeat(2, 1fr); gap: 28px 16px; }
+    .product-card-featured { grid-column: span 2; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ═══ PAGE HERO ═══ -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-hero-text">
+      <div class="page-hero-overline fade-up">Handcrafted Collection</div>
+      <h1 class="fade-up d1">Personalized<br/><em>Gifts</em></h1>
+      <p class="page-hero-sub fade-up d2">Unique, handcrafted items tailored specifically for you and your loved ones. Every stitch tells a story.</p>
+    </div>
+    <div class="page-hero-stat fade-up d3">
+      {# Live product count from DB #}
+      <div class="page-hero-stat-num">{{ products.count }}<span>+</span></div>
+      <div class="page-hero-stat-label">Curated pieces</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ SHOP CONTENT ═══ -->
+<main class="shop-layout">
+
+
+  {% csrf_token %}
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="filter-chips">
+
+      
+      <a href="{% url 'shop-page' %}{% if search_query %}?q={{ search_query }}{% endif %}"
+         class="filter-chip{% if not active_cat %} active{% endif %}">
+        All Items
+      </a>
+
+      <div class="filter-divider"></div>
+
+      {# One chip per distinct category from the database #}
+      {% for cat in categories %}
+      <a href="{% url 'shop-page' %}?cat={{ cat }}{% if search_query %}&amp;q={{ search_query }}{% endif %}"
+         class="filter-chip{% if active_cat == cat %} active{% endif %}">
+        {{ cat }}
+      </a>
+      {% endfor %}
+
+    </div>
+    <div class="sort-wrap">
+      <span class="sort-label">Sort</span>
+      <select class="sort-select" id="sortSelect">
+        <option value=""           {% if not sort %}selected{% endif %}>A &#x2192; Z</option>
+        <option value="price_asc"  {% if sort == "price_asc"  %}selected{% endif %}>Price: Low &#x2192; High</option>
+        <option value="price_desc" {% if sort == "price_desc" %}selected{% endif %}>Price: High &#x2192; Low</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Results header -->
+  <div class="results-header">
+    <p class="results-count">
+      <strong>{{ products.count }}</strong>
+      product{{ products.count|pluralize }} found
+      {% if active_cat %}in <strong>{{ active_cat }}</strong>{% endif %}
+      {% if search_query %}matching &ldquo;<strong>{{ search_query }}</strong>&rdquo;{% endif %}
+    </p>
+    {% if active_cat or search_query %}
+    <a href="{% url 'shop-page' %}" class="filter-chip" style="font-size:10px;padding:6px 14px;">&#x2715; Clear</a>
+    {% endif %}
+  </div>
+
+  <!-- Product Grid -->
+  <div class="products-grid">
+
+    {% for p in products %}
+
+    <div class="product-card{% if forloop.first %} product-card-featured{% endif %}"
+         data-product-id="{{ p.id }}">
+
+      <div class="product-img-wrap">
+
+      
+        {% if p.image %}
+        <a href="{% url 'product-page' p.slug %}">
+          <img src="{{ p.image.url }}" alt="{{ p.name }}" loading="lazy"/>
+        </a>
+        {% else %}
+        <a href="{% url 'product-page' p.slug %}"
+           style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:var(--grey-8);">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"
+               style="color:var(--grey-5)">
+            <rect x="3" y="3" width="18" height="18"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </a>
+        {% endif %}
+
+       
+        {% if p.is_out_of_stock %}
+          <span class="img-badge img-badge-oos">Out of Stock</span>
+        {% elif p.is_low_stock %}
+          <span class="img-badge img-badge-low">Only {{ p.stock }} left</span>
+        {% elif p.is_on_sale %}
+          <span class="img-badge img-badge-sale">Sale</span>
+        {% elif forloop.first %}
+          <span class="img-badge img-badge-new">New</span>
+        {% else %}
+          <span class="img-badge">{{ p.category }}</span>
+        {% endif %}
+
+       
+        {% if user.is_authenticated %}
+        <button class="wishlist-btn js-wish-toggle{% if p.id|stringformat:'s' in wished_ids %} wished{% endif %}"
+                data-product-id="{{ p.id }}"
+                aria-label="Save {{ p.name }} to wishlist">
+          <svg viewBox="0 0 24 24">
+            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l7.84-7.84a5.5 5.5 0 000-7.78z"
+                  fill="{% if p.id|stringformat:'s' in wished_ids %}var(--white){% else %}none{% endif %}"/>
+          </svg>
+        </button>
+        {% endif %}
+
+        
+        {% if p.is_out_of_stock %}
+        <button class="quick-add" disabled>Out of Stock</button>
+        {% else %}
+        <button class="quick-add js-quick-add"
+                data-product-id="{{ p.id }}"
+                data-name="{{ p.name }}"
+                data-price="{{ p.price }}"
+                data-image="{% if p.image %}{{ p.image.url }}{% endif %}">
+          Add to Cart
+        </button>
+        {% endif %}
+
+      </div>
+
+      <div class="product-info">
+        <div class="product-meta">
+          <span class="product-category">{{ p.category }}</span>
+          <span class="product-price">
+            &pound;{{ p.price|floatformat:2 }}
+            {% if p.is_on_sale %}
+            <span class="product-price-orig">&pound;{{ p.compare_at_price|floatformat:2 }}</span>
+            {% endif %}
+          </span>
+        </div>
+        <a href="{% url 'product-page' p.slug %}" class="product-name">{{ p.name }}</a>
+      </div>
+
+    </div>
+
+    {% empty %}
+    <div class="empty-state">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <path d="M16 10a4 4 0 01-8 0"/>
+      </svg>
+      <h3>No products found</h3>
+      {% if active_cat or search_query %}
+      <p>Try removing the filter or searching for something else.</p>
+      <a href="{% url 'shop-page' %}">View all products</a>
+      {% else %}
+      <p>Our shop is being stocked &mdash; check back soon.</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+  </div>
+
+  {% if products.count > 0 %}
+  <div class="pagination">
+    <button class="page-btn" aria-label="Previous">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <button class="page-btn active">1</button>
+    <button class="page-btn" aria-label="Next">
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+  {% endif %}
+
+</main>
+
+
+<div id="cartToast">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+  <span id="cartToastMsg">Added to cart</span>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  'use strict';
+
+  var CSRF_TOKEN   = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  var CART_URL     = "{% url 'cart-page' %}";
+  var WISHLIST_URL = "{% url 'wishlist-page' %}";
+
+  /* ── Toast ── */
+  var toastTimer;
+  function showToast(msg, isError) {
+    var toast = document.getElementById('cartToast');
+    document.getElementById('cartToastMsg').textContent = msg;
+    toast.style.background = isError ? '#c0392b' : 'var(--black)';
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 2400);
+  }
+
+  /* ── Quick-add to cart ── */
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.js-quick-add');
+    if (!btn || btn.disabled) return;
+
+    var pid   = btn.dataset.productId;
+    var name  = btn.dataset.name;
+    var price = btn.dataset.price;
+    var image = btn.dataset.image || '';
+
+    btn.textContent = 'Adding…';
+    btn.classList.add('adding');
+    btn.disabled = true;
+
+    fetch(CART_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': CSRF_TOKEN,
+      },
+      body: new URLSearchParams({
+        action:     'add_item',
+        product_id: pid,
+        name:       name,
+        price:      price,
+        image_url:  image,
+        variant:    '',
+      }),
+    })
+    .then(function (r) { return r.json(); })
+    .then(function () {
+      showToast('✓ ' + name + ' added to cart');
+      setTimeout(function () {
+        btn.textContent = 'Add to Cart';
+        btn.classList.remove('adding');
+        btn.disabled = false;
+      }, 1400);
+    })
+    .catch(function () {
+      showToast('Could not add item — please try again.', true);
+      btn.textContent = 'Add to Cart';
+      btn.classList.remove('adding');
+      btn.disabled = false;
+    });
+  });
+
+  /* ── Wishlist heart toggle ── */
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.js-wish-toggle');
+    if (!btn) return;
+
+    var pid  = btn.dataset.productId;
+    var path = btn.querySelector('path');
+
+    fetch(WISHLIST_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': CSRF_TOKEN,
+      },
+      body: new URLSearchParams({ action: 'toggle', product_id: pid }),
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (data.state === 'added') {
+        btn.classList.add('wished');
+        if (path) path.setAttribute('fill', 'var(--white)');
+        showToast('♥ Saved to wishlist');
+      } else {
+        btn.classList.remove('wished');
+        if (path) path.setAttribute('fill', 'none');
+        showToast('Removed from wishlist');
+      }
+    });
+  });
+
+  /* ── Sort select — appends ?sort= to current URL ── */
+  var sortSel = document.getElementById('sortSelect');
+  if (sortSel) {
+    sortSel.addEventListener('change', function () {
+      var url = new URL(window.location.href);
+      if (this.value) { url.searchParams.set('sort', this.value); }
+      else { url.searchParams.delete('sort'); }
+      window.location.href = url.toString();
+    });
+  }
+
+  /* ── Scroll fade-in ── */
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.product-card').forEach(function (el, i) {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.55s ease ' + (i * 0.06) + 's, transform 0.55s ease ' + (i * 0.06) + 's';
+    obs.observe(el);
+  });
+
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,486 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CustomiseMe UK | Subscriptions</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --black: #0a0a0a; --white: #f8f8f6;
+    --grey-1: #1a1a1a; --grey-2: #2e2e2e; --grey-3: #4a4a4a;
+    --grey-4: #888888; --grey-5: #b0b0b0; --grey-6: #d4d4d4;
+    --grey-7: #e8e8e6; --grey-8: #f2f2f0;
+    --accent: #c8a96e; --accent-dark: #a8893e; --accent-light: #f0e4c8;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--white); color: var(--black); font-family: var(--sans); font-size: 15px; line-height: 1.6; overflow-x: hidden; }
+  * { cursor: none; }
+  #cursor { position: fixed; top: 0; left: 0; width: 10px; height: 10px; background: var(--black); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width .2s, height .2s; }
+  #cursor-ring { position: fixed; top: 0; left: 0; width: 36px; height: 36px; border: 1px solid var(--black); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .3s, height .3s; }
+
+  /* PAGE HERO — #f5f5f5 bg, black text, gold accents */
+  .page-hero { background: #f5f5f5; position: relative; overflow: hidden; }
+  .page-hero::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, transparent, transparent 40px, rgba(200,169,110,0.08) 40px, rgba(200,169,110,0.08) 41px); }
+  .page-hero-inner { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 120px 80px 72px; display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
+  .page-hero-overline { font-family: var(--sans); font-size: 11px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+  .page-hero-overline::before { content: ''; display: inline-block; width: 28px; height: 1px; background: var(--accent); }
+  .page-hero h1 { font-family: var(--serif); font-size: clamp(48px, 5vw, 80px); font-weight: 300; line-height: 1.05; letter-spacing: -0.01em; color: var(--black); }
+  .page-hero h1 em { font-style: italic; color: var(--accent); }
+  .page-hero-sub { margin-top: 20px; font-size: 14px; color: var(--grey-3); max-width: 420px; line-height: 1.7; }
+  .page-hero-stat { flex-shrink: 0; text-align: right; }
+  .page-hero-stat-num { font-family: var(--serif); font-size: 64px; font-weight: 300; line-height: 1; color: var(--black); letter-spacing: -0.02em; }
+  .page-hero-stat-num span { color: var(--accent); }
+  .page-hero-stat-label { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--grey-3); margin-top: 8px; }
+
+  /* PROMO TICKER */
+  .promo-ticker { position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: var(--black); height: 34px; overflow: hidden; display: flex; align-items: center; }
+  .promo-ticker-track { display: flex; align-items: center; white-space: nowrap; animation: ticker 40s linear infinite; will-change: transform; }
+  .promo-ticker-track:hover { animation-play-state: paused; }
+  @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  .promo-ticker-item { display: inline-flex; align-items: center; gap: 32px; font-family: var(--sans); font-size: 10.5px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.85); padding: 0 40px; }
+  .promo-ticker-item .dot { display: inline-block; width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.35); flex-shrink: 0; }
+
+  /* HEADER */
+  header, #mainHeader { position: fixed; top: 34px; left: 0; right: 0; z-index: 100; background: rgba(248,248,246,0.96); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--grey-6); display: flex; flex-direction: column; }
+  .header-top-row { display: flex; align-items: center; justify-content: center; padding: 8px 48px; border-bottom: 1px solid var(--grey-7); }
+  .search-wrap { display: flex; align-items: center; gap: 10px; border: 1px solid var(--grey-6); padding: 6px 16px; background: var(--grey-8); width: 460px; transition: border-color 0.3s, background 0.3s, width 0.3s; }
+  .search-wrap:focus-within { border-color: var(--black); background: var(--white); width: 520px; }
+  .search-wrap input { background: none; border: none; outline: none; font-family: var(--sans); font-size: 12px; color: var(--black); flex: 1; cursor: none; letter-spacing: 0.04em; }
+  .search-wrap input::placeholder { color: var(--grey-5); }
+  .search-icon { color: var(--grey-4); flex-shrink: 0; }
+  .header-bottom-row { display: flex; align-items: center; justify-content: space-between; padding: 0 48px; height: 68px; }
+  .logo { display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; flex-shrink: 0; }
+  .logo img { width: 48px; height: 48px; object-fit: contain; }
+  .logo-text { font-family: var(--serif); font-size: 24px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--black); }
+  nav { display: flex; align-items: center; gap: 32px; position: relative; }
+  .nav-item { position: static; }
+  nav > .nav-item > a { font-family: var(--sans); font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-3); text-decoration: none; position: relative; transition: color .2s; display: flex; align-items: center; gap: 5px; padding: 22px 0; }
+  nav > .nav-item > a::after { content: ''; position: absolute; bottom: 16px; left: 0; width: 0; height: 1px; background: var(--black); transition: width .3s; }
+  nav > .nav-item > a:hover, nav > .nav-item > a.active { color: var(--black); }
+  nav > .nav-item > a:hover::after, nav > .nav-item > a.active::after { width: 100%; }
+  nav > .nav-item > a .chevron { display: inline-block; width: 7px; height: 7px; border-right: 1px solid currentColor; border-bottom: 1px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform 0.2s; flex-shrink: 0; }
+  .nav-item:hover > a .chevron { transform: rotate(-135deg) translateY(-2px); }
+  .mega-menu { position: fixed; top: calc(34px + 34px + 68px); left: 0; right: 0; background: var(--white); border-bottom: 1px solid var(--grey-6); padding: 48px 80px 56px; opacity: 0; pointer-events: none; transform: translateY(-8px); transition: opacity 0.25s, transform 0.25s; z-index: 90; box-shadow: 0 20px 60px rgba(0,0,0,0.08); }
+  .nav-item:hover .mega-menu { opacity: 1; pointer-events: all; transform: translateY(0); }
+  .mega-menu-grid { display: grid; gap: 48px; align-items: start; }
+  .mega-menu-grid.cols-4 { grid-template-columns: repeat(4,1fr); }
+  .mega-menu-grid.cols-2 { grid-template-columns: repeat(2,1fr); }
+  .mega-menu-grid.cols-3 { grid-template-columns: repeat(3,1fr); }
+  .mega-col h5 { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--black); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--grey-6); }
+  .mega-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .mega-col ul li a { font-family: var(--sans); font-size: 13px; font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase; color: var(--grey-4); text-decoration: none; transition: color .2s, padding-left .2s; display: block; }
+  .mega-col ul li a:hover { color: var(--black); padding-left: 6px; }
+  .header-icons { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+  .hdr-icon-btn { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; cursor: none; color: var(--grey-3); padding: 8px 10px; transition: color .2s; }
+  .hdr-icon-btn:hover { color: var(--black); }
+  .hdr-icon-btn svg { display: block; flex-shrink: 0; }
+  .hdr-icon-label { font-family: var(--sans); font-size: 9px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1; white-space: nowrap; }
+  .hdr-icon-badge { position: absolute; top: 4px; right: 4px; width: 15px; height: 15px; border-radius: 50%; background: var(--black); color: var(--white); font-size: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+  .currency-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; cursor: none; color: var(--grey-3); padding: 8px 10px; transition: color .2s; }
+  .currency-btn:hover { color: var(--black); }
+  .currency-flag { font-size: 18px; line-height: 1; }
+  .currency-code { font-family: var(--sans); font-size: 9px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+  .icon-divider { width: 1px; height: 28px; background: var(--grey-6); margin: 0 6px; }
+  .hamburger { display: none; flex-direction: column; justify-content: center; align-items: center; gap: 5px; width: 40px; height: 40px; background: none; border: none; cursor: none; padding: 4px; flex-shrink: 0; }
+  .hamburger span { display: block; width: 22px; height: 1.5px; background: var(--black); transition: transform .35s, opacity .25s, width .3s; transform-origin: center; }
+  .hamburger.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .hamburger.active span:nth-child(2) { opacity: 0; width: 0; }
+  .hamburger.active span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+  .mobile-nav { display: none; position: fixed; top: calc(28px + 56px); left: 0; right: 0; background: rgba(248,248,246,0.97); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--grey-6); z-index: 99; padding: 0 32px; max-height: 0; overflow: hidden; transition: max-height .45s cubic-bezier(.4,0,.2,1), padding .35s; }
+  .mobile-nav.open { max-height: 400px; padding: 24px 32px 32px; }
+  .mobile-nav a { display: block; font-family: var(--sans); font-size: 13px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--grey-3); text-decoration: none; padding: 14px 0; border-bottom: 1px solid var(--grey-7); opacity: 0; transform: translateY(10px); transition: color .2s, padding-left .2s, opacity .3s, transform .3s; }
+  .mobile-nav a:last-child { border-bottom: none; }
+  .mobile-nav a:hover { color: var(--black); padding-left: 8px; }
+  .mobile-nav.open a { opacity: 1; transform: translateY(0); }
+  .mobile-nav.open a:nth-child(1) { transition-delay: .05s; }
+  .mobile-nav.open a:nth-child(2) { transition-delay: .10s; }
+  .mobile-nav.open a:nth-child(3) { transition-delay: .15s; }
+  .mobile-nav.open a:nth-child(4) { transition-delay: .20s; }
+  .mobile-nav.open a:nth-child(5) { transition-delay: .25s; }
+  .mobile-nav.open a:nth-child(6) { transition-delay: .30s; }
+
+  /* NEWSLETTER — #f5f5f5, black text, gold accents */
+  .newsletter { background: #f5f5f5; position: relative; overflow: hidden; }
+  .newsletter::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 60px, rgba(200,169,110,0.1) 60px, rgba(200,169,110,0.1) 61px); }
+  .newsletter-inner { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 100px 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .nl-overline { font-family: var(--sans); font-size: 11px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+  .nl-overline::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+  .nl-title { font-family: var(--serif); font-size: clamp(32px,3vw,50px); font-weight: 300; line-height: 1.15; color: var(--black); }
+  .nl-title em { font-style: italic; color: var(--accent); }
+  .nl-desc { font-size: 14px; color: var(--grey-3); line-height: 1.7; margin-top: 16px; }
+  .nl-form { display: flex; flex-direction: column; gap: 14px; }
+  .nl-row { display: flex; border: 1px solid var(--grey-6); background: var(--white); overflow: hidden; transition: border-color .2s; }
+  .nl-row:focus-within { border-color: var(--accent); }
+  .nl-row input { flex: 1; background: none; border: none; outline: none; padding: 16px 20px; font-family: var(--sans); font-size: 14px; color: var(--black); cursor: none; }
+  .nl-row input::placeholder { color: var(--grey-5); }
+  .nl-row button { background: var(--accent); color: var(--black); border: none; padding: 0 28px; font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; cursor: none; transition: background .2s; }
+  .nl-row button:hover { background: var(--accent-dark); color: var(--white); }
+  .nl-note { font-size: 11px; color: var(--grey-3); }
+
+  /* FOOTER */
+  footer { background: var(--black); color: var(--white); border-top: 1px solid var(--grey-2); padding: 80px 80px 40px; }
+  .footer-top { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 60px; padding-bottom: 64px; border-bottom: 1px solid var(--grey-2); }
+  .footer-brand p { font-size: 13px; color: var(--grey-4); line-height: 1.7; margin-top: 20px; max-width: 260px; }
+  .footer-socials { display: flex; gap: 12px; margin-top: 28px; }
+  .social-btn { width: 36px; height: 36px; border: 1px solid var(--grey-2); display: flex; align-items: center; justify-content: center; color: var(--grey-4); text-decoration: none; transition: border-color .2s, color .2s; }
+  .social-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .footer-col h4 { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--grey-5); margin-bottom: 24px; }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  .footer-col ul li a { font-size: 13px; color: var(--grey-4); text-decoration: none; transition: color .2s; }
+  .footer-col ul li a:hover { color: var(--accent); }
+  .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 32px; gap: 16px; flex-wrap: wrap; }
+  .footer-bottom p { font-size: 12px; color: var(--grey-4); }
+  .footer-bottom-links { display: flex; gap: 24px; }
+  .footer-bottom-links a { font-size: 12px; color: var(--grey-4); text-decoration: none; transition: color .2s; }
+  .footer-bottom-links a:hover { color: var(--accent); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .promo-ticker { height: 28px; } .promo-ticker-item { font-size: 9.5px; padding: 0 24px; }
+    header, #mainHeader { top: 28px; }
+    .header-top-row { display: none; }
+    .header-bottom-row { padding: 0 20px; height: 56px; }
+    .logo img { width: 36px; height: 36px; } .logo-text { font-size: 18px; }
+    nav { display: none; } .header-icons { display: none; }
+    .hamburger { display: flex !important; }
+    .mobile-nav { display: block; top: calc(28px + 56px); }
+    .page-hero-inner { padding: 100px 24px 56px; flex-direction: column; gap: 32px; }
+    .page-hero-stat { text-align: left; }
+    .newsletter-inner { padding: 72px 24px; grid-template-columns: 1fr; gap: 40px; }
+    footer { padding: 64px 24px 32px; } .footer-top { grid-template-columns: 1fr; gap: 32px; }
+  }
+
+  /* ── SUBSCRIPTIONS ── */
+  .subs-coming { text-align: center; padding: 100px 80px 80px; background: var(--white); }
+  .subs-coming-badge { display: inline-flex; align-items: center; gap: 10px; background: var(--accent-light); border: 1px solid var(--accent); padding: 8px 20px; margin-bottom: 40px; }
+  .subs-coming-badge span { font-family: var(--sans); font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent-dark); }
+  .subs-coming h2 { font-family: var(--serif); font-size: clamp(52px, 6vw, 96px); font-weight: 300; letter-spacing: -0.02em; color: var(--black); line-height: 1; }
+  .subs-coming h2 em { font-style: italic; color: var(--accent); }
+  .subs-divider { width: 64px; height: 1px; background: var(--black); margin: 36px auto; }
+  .subs-coming-desc { font-size: 16px; color: var(--grey-3); line-height: 1.8; max-width: 560px; margin: 0 auto 48px; }
+  .subs-notify-form { display: flex; justify-content: center; gap: 0; max-width: 480px; margin: 0 auto 16px; border: 1px solid var(--grey-6); background: var(--white); overflow: hidden; transition: border-color .2s; }
+  .subs-notify-form:focus-within { border-color: var(--accent); }
+  .subs-notify-form input { flex: 1; background: none; border: none; outline: none; padding: 16px 20px; font-family: var(--sans); font-size: 14px; color: var(--black); cursor: none; }
+  .subs-notify-form input::placeholder { color: var(--grey-5); }
+  .subs-notify-form button { background: var(--black); color: var(--white); border: none; padding: 0 28px; font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; cursor: none; transition: background .2s; white-space: nowrap; }
+  .subs-notify-form button:hover { background: var(--accent); color: var(--black); }
+  .subs-form-note { font-size: 11px; color: var(--grey-4); }
+  /* Preview cards */
+  .subs-preview { background: #f5f5f5; padding: 100px 80px; }
+  .subs-preview-label { text-align: center; font-family: var(--sans); font-size: 10px; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 16px; }
+  .subs-preview-label::before, .subs-preview-label::after { content: ''; flex: 1; max-width: 60px; height: 1px; background: var(--accent); }
+  .subs-preview-title { text-align: center; font-family: var(--serif); font-size: clamp(32px,3.5vw,52px); font-weight: 300; color: var(--black); margin-bottom: 64px; }
+  .subs-preview-title em { font-style: italic; color: var(--accent); }
+  .subs-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .subs-card { background: var(--white); border: 1px solid var(--grey-7); padding: 48px 40px 40px; display: flex; flex-direction: column; position: relative; transition: border-color .25s, box-shadow .25s; }
+  .subs-card:hover { border-color: var(--grey-5); box-shadow: 0 12px 40px rgba(0,0,0,0.06); }
+  .subs-card.featured { border-color: var(--accent); }
+  .subs-card-badge { position: absolute; top: -1px; left: 40px; background: var(--accent); color: var(--black); font-family: var(--sans); font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; padding: 5px 14px; }
+  .subs-card-tier { font-family: var(--sans); font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+  .subs-card-name { font-family: var(--serif); font-size: 30px; font-weight: 300; color: var(--black); margin-bottom: 8px; }
+  .subs-card-price { font-family: var(--serif); font-size: 48px; font-weight: 300; color: var(--black); line-height: 1; margin-bottom: 4px; }
+  .subs-card-price span { font-family: var(--sans); font-size: 13px; font-weight: 400; color: var(--grey-4); vertical-align: middle; }
+  .subs-card-price em { font-family: var(--sans); font-style: normal; font-size: 14px; }
+  .subs-card-desc { font-size: 13px; color: var(--grey-3); line-height: 1.7; margin: 20px 0 28px; border-top: 1px solid var(--grey-7); padding-top: 20px; }
+  .subs-card-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px; flex: 1; }
+  .subs-card-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--grey-3); }
+  .subs-card-features li::before { content: ''; width: 16px; height: 16px; border: 1px solid var(--accent); background: var(--accent-light); flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; }
+  .subs-card-features li.included::before { background: var(--accent); background-image: url("data:image/svg+xml,%3Csvg width='10' height='8' viewBox='0 0 10 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4L3.5 6.5L9 1' stroke='white' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: center; }
+  .subs-card-features li.excluded { opacity: .45; }
+  .btn-notify { display: block; width: 100%; padding: 15px; background: var(--grey-7); color: var(--black); font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; border: none; cursor: none; text-align: center; transition: background .2s, color .2s; }
+  .btn-notify:hover { background: var(--black); color: var(--white); }
+  .subs-card.featured .btn-notify { background: var(--accent); }
+  .subs-card.featured .btn-notify:hover { background: var(--accent-dark); color: var(--white); }
+  /* Perks strip */
+  .subs-perks { padding: 80px 80px; background: var(--black); display: grid; grid-template-columns: repeat(4,1fr); gap: 40px; }
+  .subs-perk { display: flex; flex-direction: column; gap: 16px; }
+  .subs-perk-icon { width: 48px; height: 48px; border: 1px solid var(--grey-2); display: flex; align-items: center; justify-content: center; color: var(--accent); }
+  .subs-perk h4 { font-family: var(--serif); font-size: 20px; font-weight: 400; color: var(--white); }
+  .subs-perk p { font-size: 13px; color: var(--grey-4); line-height: 1.7; }
+  @media (max-width: 900px) { .subs-cards { grid-template-columns: 1fr; } .subs-perks { grid-template-columns: 1fr 1fr; gap: 32px; } }
+  @media (max-width: 768px) { .subs-coming { padding: 72px 24px 64px; } .subs-preview { padding: 72px 24px; } .subs-perks { padding: 64px 24px; grid-template-columns: 1fr; } }
+
+</style>
+</head>
+<body>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="promo-ticker" id="promoTicker">
+  <div class="promo-ticker-track">
+    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
+    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1a73747c755a796f696e757773697f777f6f7134797577">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
+    <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
+    <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
+    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="01686f676e41627472756e6c6872646c64746a2f626e6c">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
+    <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
+    <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
+  </div>
+</div>
+<header id="mainHeader">
+  <div class="header-top-row">
+    <div class="search-wrap">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search products, designs, categories…"/>
+    </div>
+  </div>
+  <div class="header-bottom-row">
+    <a class="logo" href="{% url 'home-page' %}">
+      <img src="{% static 'icon.png' %}" alt="CustomiseMe UK Logo"/>
+      <!-- <span class="logo-text">CustomiseMe UK</span> -->
+    </a>
+    <nav>
+      <div class="nav-item"><a href="{% url 'home-page' %}">Home</a></div>
+      <div class="nav-item">
+        <a href="{% url 'shop-page' %}">Shop <span class="chevron"></span></a>
+        <div class="mega-menu"><div class="mega-menu-grid cols-4">
+          <div class="mega-col"><h5>Categories</h5><ul><li><a href="{% url 'shop-page' %}">All Products</a></li><li><a href="{% url 'shop-page' %}?cat=apparel">Apparel</a></li><li><a href="{% url 'shop-page' %}?cat=decorations">Decorations</a></li><li><a href="{% url 'shop-page' %}?cat=prints">Prints</a></li><li><a href="{% url 'shop-page' %}?cat=accessories">Accessories</a></li></ul></div>
+          <div class="mega-col"><h5>Apparel</h5><ul><li><a href="{% url 'shop-page' %}?cat=tshirts">T-Shirts</a></li><li><a href="{% url 'shop-page' %}?cat=hoodies">Hoodies</a></li><li><a href="{% url 'shop-page' %}?cat=bags">Bags</a></li></ul></div>
+          <div class="mega-col"><h5>Party Essentials</h5><ul><li><a href="{% url 'shop-page' %}?cat=banners">Vinyl Banners</a></li><li><a href="{% url 'shop-page' %}?cat=tableware">Plates, Cups, Utensils</a></li><li><a href="{% url 'shop-page' %}?cat=table-decor">Table Decor</a></li><li><a href="{% url 'shop-page' %}?cat=party-packs">Party Packs</a></li><li><a href="{% url 'shop-page' %}?cat=cake-decor">Cake Decor</a></li></ul></div>
+          <div class="mega-col"><h5>Stickers &amp; Labels</h5><ul><li><a href="{% url 'shop-page' %}?cat=vinyl-stickers">Vinyl Stickers</a></li><li><a href="{% url 'shop-page' %}?cat=custom-labels">Custom Labels</a></li><li><a href="{% url 'shop-page' %}?cat=wall-decals">Wall Decals</a></li><li><a href="{% url 'shop-page' %}?cat=sticker-packs">Sticker Packs</a></li></ul></div>
+        </div></div>
+      </div>
+      <div class="nav-item">
+        <a href="{% url 'design-studio-page' %}">Design Studio <span class="chevron"></span></a>
+        <div class="mega-menu"><div class="mega-menu-grid cols-2">
+          <div class="mega-col"><h5>Services</h5><ul><li><a href="{% url 'design-service-page' %}">Design Services</a></li></ul></div>
+          <div class="mega-col"><h5>Resources</h5><ul><li><a href="{% url 'design-studio-page' %}#resources">Design Templates</a></li><li><a href="{% url 'faq-page' %}">FAQs</a></li></ul></div>
+        </div></div>
+      </div>
+      <div class="nav-item">
+        <a href="{% url 'premium-page' %}">Premium Services <span class="chevron"></span></a>
+        <div class="mega-menu"><div class="mega-menu-grid cols-3">
+          <div class="mega-col"><h5>Services</h5><ul><li><a href="{% url 'senditems-page' %}">Send Items In</a></li><li><a href="{% url 'subscriptions-page' %}">Subscriptions</a></li></ul></div>
+          <div class="mega-col"><h5>Installation</h5><ul><li><a href="{% url 'installation-page' %}">Vinyl Installation</a></li><li><a href="{% url 'workshop-page' %}">Setup at Event</a></li></ul></div>
+          <div class="mega-col"><h5>Workshops</h5><ul><li><a href="{% url 'workshop-page' %}">Group Workshop</a></li><li><a href="{% url 'premium-page' %}">Station Experience</a></li></ul></div>
+        </div></div>
+      </div>
+      <div class="nav-item"><a href="{% url 'about-page' %}">About</a></div>
+      <!-- <div class="nav-item"><a href="{% url 'contact-page' %}">Contact</a></div> -->
+    </nav>
+    <div class="header-icons">
+      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">🇬🇧</span><span class="currency-code">GBP £</span></button>
+      <div class="icon-divider"></div>
+      <button class="hdr-icon-btn" aria-label="Saved items">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span class="hdr-icon-label">Saved</span><span class="hdr-icon-badge">3</span>
+      </button>
+      <button class="hdr-icon-btn" aria-label="Shopping bag">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span class="hdr-icon-label">Bag</span><span class="hdr-icon-badge">2</span>
+      </button>
+      <button class="hdr-icon-btn" aria-label="My account">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="hdr-icon-label">Account</span>
+      </button>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<div class="mobile-nav" id="mobileNav" aria-hidden="true">
+  <a href="{% url 'home-page' %}">Home</a>
+  <a href="{% url 'shop-page' %}">Shop</a>
+  <a href="{% url 'design-studio-page' %}">Design Studio</a>
+  <a href="{% url 'premium-page' %}">Premium Services</a>
+  <a href="{% url 'about-page' %}">About</a>
+  <!-- <a href="{% url 'contact-page' %}">Contact</a> -->
+</div>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-hero-text">
+      <div class="page-hero-overline">Premium Membership</div>
+      <h1>Exclusive<br/><em>Subscriptions</em></h1>
+      <p class="page-hero-sub">Exclusive membership plans coming soon — premium designs and custom merchandise delivered right to your door, every month.</p>
+    </div>
+    <div class="page-hero-stat">
+      <div class="page-hero-stat-num">3<span>+</span></div>
+      <div class="page-hero-stat-label">Plans Coming</div>
+    </div>
+  </div>
+</section>
+
+<!-- COMING SOON -->
+<div class="subs-coming">
+  <div class="subs-coming-badge">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <span>Launching Soon</span>
+  </div>
+  <h2>Coming <em>Soon</em></h2>
+  <div class="subs-divider"></div>
+  <p class="subs-coming-desc">We're crafting something special for our members. Stay tuned for exclusive subscription plans that will bring premium designs and custom merchandise right to your door.</p>
+  <!-- <div class="subs-notify-form">
+    <input type="email" placeholder="Enter your email to get notified…"/>
+    <button type="button">Notify Me</button>
+  </div> -->
+  <!-- <p class="subs-form-note">No spam — just a single email when we launch. Unsubscribe anytime.</p> -->
+</div>
+
+<!-- PLAN PREVIEWS -->
+<!-- <div class="subs-preview">
+  <div class="subs-preview-label">Sneak Peek</div>
+  <h2 class="subs-preview-title">Plans Being <em>Crafted</em></h2>
+  <div class="subs-cards">
+    <div class="subs-card reveal">
+      <div class="subs-card-tier">Starter</div>
+      <div class="subs-card-name">Essential</div>
+      <div class="subs-card-price"><em>£</em>19<span>/month</span></div>
+      <p class="subs-card-desc">Perfect for individuals who want a monthly custom piece without the fuss.</p>
+      <ul class="subs-card-features">
+        <li class="included">1 custom item per month</li>
+        <li class="included">Free UK standard delivery</li>
+        <li class="included">Member-only designs</li>
+        <li class="excluded">Priority production queue</li>
+        <li class="excluded">Dedicated account manager</li>
+      </ul>
+      <button class="btn-notify">Notify When Live</button>
+    </div>
+    <div class="subs-card featured reveal">
+      <div class="subs-card-badge">Most Popular</div>
+      <div class="subs-card-tier">Studio</div>
+      <div class="subs-card-name">Creative</div>
+      <div class="subs-card-price"><em>£</em>39<span>/month</span></div>
+      <p class="subs-card-desc">For creatives and gift-givers who love variety and exclusive early access.</p>
+      <ul class="subs-card-features">
+        <li class="included">3 custom items per month</li>
+        <li class="included">Free UK express delivery</li>
+        <li class="included">Exclusive member designs</li>
+        <li class="included">Priority production queue</li>
+        <li class="excluded">Dedicated account manager</li>
+      </ul>
+      <button class="btn-notify">Notify When Live</button>
+    </div>
+    <div class="subs-card reveal">
+      <div class="subs-card-tier">Business</div>
+      <div class="subs-card-name">Corporate</div>
+      <div class="subs-card-price"><em>£</em>89<span>/month</span></div>
+      <p class="subs-card-desc">Designed for businesses wanting branded merchandise on a rolling basis.</p>
+      <ul class="subs-card-features">
+        <li class="included">10 custom items per month</li>
+        <li class="included">Free UK express delivery</li>
+        <li class="included">Exclusive member designs</li>
+        <li class="included">Priority production queue</li>
+        <li class="included">Dedicated account manager</li>
+      </ul>
+      <button class="btn-notify">Notify When Live</button>
+    </div>
+  </div>
+</div> -->
+
+<!-- PERKS -->
+<!-- <div class="subs-perks">
+  <div class="subs-perk reveal">
+    <div class="subs-perk-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </div>
+    <h4>Curated Monthly</h4>
+    <p>Every month our designers curate a fresh collection exclusively for members — never available in the public shop.</p>
+  </div>
+  <div class="subs-perk reveal">
+    <div class="subs-perk-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <h4>Priority Production</h4>
+    <p>Members skip the queue. Your orders are processed first, ensuring faster turnaround on every item.</p>
+  </div>
+  <div class="subs-perk reveal">
+    <div class="subs-perk-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+    </div>
+    <h4>Member Discounts</h4>
+    <p>Enjoy 15–25% off all additional purchases beyond your monthly allocation, for the life of your membership.</p>
+  </div>
+  <div class="subs-perk reveal">
+    <div class="subs-perk-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+    </div>
+    <h4>Free Delivery Always</h4>
+    <p>All subscription orders ship free within the UK. No thresholds, no surprises — just your items at your door.</p>
+  </div>
+</div> -->
+
+<!-- <section class="newsletter">
+  <div class="newsletter-inner">
+    <div>
+      <div class="nl-overline">Stay in Touch</div>
+      <h2 class="nl-title">Get <em>10% off</em><br/>your first order</h2>
+      <p class="nl-desc">Join our newsletter for exclusive offers, new arrivals, and behind-the-scenes studio stories.</p>
+    </div>
+    <div class="nl-form">
+      <div class="nl-row">
+        <input type="email" placeholder="Your email address"/>
+        <button type="button">Subscribe</button>
+      </div>
+      <p class="nl-note">By subscribing you agree to our Privacy Policy. Unsubscribe anytime.</p>
+    </div>
+  </div>
+</section> -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <!-- <a class="logo" href="{% url 'home-page' %}"><img src="{% static 'icon.png' %}" alt="" style="filter:invert(1);width:36px;height:36px;"/></a> -->
+      <p>Dedicated to creating meaningful, personalised items that tell your unique story. Every piece is handcrafted with love in our studio.</p>
+      <div class="footer-socials">
+        <a class="social-btn" href="#" aria-label="Facebook"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+        <a class="social-btn" href="#" aria-label="Instagram"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+        <a class="social-btn" href="#" aria-label="Twitter"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.84 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg></a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="{% url 'about-page' %}">About Us</a></li><li><a href="{% url 'shop-page' %}">Shop All</a></li>
+    {% if user.is_authenticated %}
+      <li><a href="{% url 'design-studio-page' %}">Design Studio</a></li>
+    {% endif %}
+      <li><a href="{% url 'faq-page' %}">FAQs</a></li></ul></div>
+    <div class="footer-col"><h4>Services</h4><ul>
+    {% if user.is_authenticated %}
+      <li><a href="{% url 'senditems-page' %}">Send Items In</a></li>
+    {% endif %}
+      <li><a href="{% url 'subscriptions-page' %}">Subscriptions</a></li><li><a href="{% url 'installation-page' %}">Vinyl Installation</a></li><li><a href="{% url 'workshop-page' %}">Group Workshop</a></li></ul></div>
+    <div class="footer-col"><h4>Legal</h4><ul><li><a href="{% url 'privacy-page' %}">Privacy Policy</a></li><li><a href="{% url 'conditions-page' %}">Terms</a></li><li><a href="{% url 'contact-page' %}">Contact</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 CustomiseMe UK. All rights reserved.</p>
+    <div class="footer-bottom-links"><a href="{% url 'privacy-page' %}">Privacy</a><a href="{% url 'conditions-page' %}">Terms</a></div>
+  </div>
+</footer>
+
+<script>
+const cursor=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+(function loop(){rx+=(mx-rx)*.15;ry+=(my-ry)*.15;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+document.querySelectorAll('a,button,input,select,textarea').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cursor.style.width='6px';cursor.style.height='6px';ring.style.width='52px';ring.style.height='52px';});
+  el.addEventListener('mouseleave',()=>{cursor.style.width='10px';cursor.style.height='10px';ring.style.width='36px';ring.style.height='36px';});
+});
+const hb=document.getElementById('hamburger'),mn=document.getElementById('mobileNav');
+if(hb&&mn){
+  hb.addEventListener('click',()=>{const o=mn.classList.toggle('open');hb.classList.toggle('active',o);hb.setAttribute('aria-expanded',o);mn.setAttribute('aria-hidden',!o);document.body.style.overflow=o?'hidden':'';});
+  mn.querySelectorAll('a').forEach(l=>l.addEventListener('click',()=>{mn.classList.remove('open');hb.classList.remove('active');hb.setAttribute('aria-expanded','false');mn.setAttribute('aria-hidden','true');document.body.style.overflow='';}));
+  document.addEventListener('click',e=>{if(!hb.contains(e.target)&&!mn.contains(e.target)){mn.classList.remove('open');hb.classList.remove('active');hb.setAttribute('aria-expanded','false');mn.setAttribute('aria-hidden','true');document.body.style.overflow='';}});
+}
+/* scroll reveal */
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.style.opacity='1';
+      e.target.style.transform='translateY(0)';
+      e.target.style.transition='opacity 0.6s ease, transform 0.6s ease';
+      obs.unobserve(e.target);
+    }
+  });
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>{el.style.opacity='0';el.style.transform='translateY(24px)';obs.observe(el);});
+
+</script>
+</body>
+</html>

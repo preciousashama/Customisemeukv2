@@ -1,0 +1,1045 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CustomiseMe UK | Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--black:#0a0a0a;--white:#f8f8f6;--grey-1:#1a1a1a;--grey-2:#2e2e2e;--grey-3:#4a4a4a;--grey-4:#888888;--grey-5:#b0b0b0;--grey-6:#d4d4d4;--grey-7:#e8e8e6;--grey-8:#f2f2f0;--accent:#c8a96e;--accent-dark:#a8893e;--serif:'Cormorant Garamond',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;--danger:#c0392b;--success:#27ae60;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{height:100%;}
+body{background:var(--white);color:var(--black);font-family:var(--sans);font-size:14px;line-height:1.6;overflow-x:hidden;min-height:100vh;display:flex;}
+
+/* CURSOR */
+*{cursor:none;}
+#cursor{position:fixed;top:0;left:0;width:10px;height:10px;background:var(--black);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s;}
+#cursor-ring{position:fixed;top:0;left:0;width:36px;height:36px;border:1px solid var(--black);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .3s,height .3s;}
+
+/* DJANGO MESSAGES */
+.django-messages{position:fixed;bottom:28px;right:28px;z-index:9000;display:flex;flex-direction:column;gap:10px;pointer-events:none;}
+.django-msg{background:var(--black);color:var(--white);font-family:var(--sans);font-size:12px;font-weight:500;letter-spacing:0.06em;padding:12px 20px;display:flex;align-items:center;gap:10px;min-width:240px;pointer-events:auto;animation:slideInMsg .35s ease forwards;}
+.django-msg.success{border-left:3px solid #4ade80;}
+.django-msg.error{border-left:3px solid #f87171;}
+.django-msg.warning{border-left:3px solid #facc15;}
+@keyframes slideInMsg{from{transform:translateX(110%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+
+/* SIDEBAR */
+aside{width:240px;flex-shrink:0;border-right:1px solid var(--grey-7);background:var(--white);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+.sidebar-brand{padding:20px 22px 16px;border-bottom:1px solid var(--grey-7);}
+.sidebar-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;}
+.sidebar-logo img{width:44px;height:44px;object-fit:contain;}
+.sidebar-nav{flex:1;padding:20px 14px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;}
+.nav-link{display:flex;align-items:center;gap:12px;padding:10px 12px;font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--grey-4);text-decoration:none;border:1px solid transparent;transition:color .2s,border-color .2s,background .2s;}
+.nav-link:hover{color:var(--black);background:var(--grey-8);}
+.nav-link.active{color:var(--black);border-color:var(--grey-6);background:var(--white);font-weight:600;}
+.nav-link svg{flex-shrink:0;}
+.sidebar-user{padding:14px 16px;border-top:1px solid var(--grey-7);}
+.sidebar-user-info{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.user-avatar{width:36px;height:36px;border-radius:50%;border:1px solid var(--grey-6);flex-shrink:0;background:var(--grey-2);display:flex;align-items:center;justify-content:center;color:var(--white);font-family:var(--sans);font-size:13px;font-weight:600;}
+.user-name{font-size:12px;font-weight:600;color:var(--black);}
+.user-role{font-size:10px;color:var(--grey-5);letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px;}
+.sidebar-logout{display:flex;align-items:center;gap:8px;width:100%;padding:8px 12px;background:none;border:1px solid var(--grey-7);color:var(--grey-4);font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;cursor:none;transition:border-color .2s,color .2s;}
+.sidebar-logout:hover{border-color:var(--danger);color:var(--danger);}
+
+/* MOBILE TOP BAR */
+.mobile-topbar{display:none;position:fixed;top:0;left:0;right:0;z-index:200;height:60px;padding:0 20px;background:rgba(248,248,246,0.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--grey-7);align-items:center;justify-content:space-between;}
+.mobile-topbar .sidebar-logo img{width:32px;height:32px;}
+.mobile-menu-btn{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:40px;height:40px;background:none;border:none;cursor:none;padding:4px;}
+.mobile-menu-btn span{display:block;width:20px;height:1.5px;background:var(--black);transition:transform .3s,opacity .2s,width .3s;transform-origin:center;}
+.mobile-menu-btn.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+.mobile-menu-btn.open span:nth-child(2){opacity:0;width:0;}
+.mobile-menu-btn.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+.mobile-drawer{display:none;position:fixed;top:60px;left:0;right:0;bottom:0;background:rgba(248,248,246,0.98);backdrop-filter:blur(16px);z-index:199;flex-direction:column;transform:translateX(-100%);transition:transform .35s cubic-bezier(.4,0,.2,1);overflow-y:auto;}
+.mobile-drawer.open{transform:translateX(0);}
+.mobile-drawer-nav{padding:24px 20px;display:flex;flex-direction:column;gap:2px;flex:1;}
+.mobile-drawer-nav .nav-link{font-size:13px;padding:14px 16px;border-bottom:1px solid var(--grey-7);border-left:none;border-right:none;border-top:none;}
+.mobile-drawer-nav .nav-link:last-child{border-bottom:none;}
+.mobile-drawer-user{padding:20px;border-top:1px solid var(--grey-7);}
+.mobile-drawer-user-info{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.mobile-drawer-logout{display:flex;align-items:center;gap:8px;width:100%;padding:12px 16px;background:none;border:1px solid var(--grey-7);color:var(--grey-4);font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;cursor:none;transition:border-color .2s,color .2s;}
+.mobile-drawer-logout:hover{border-color:var(--danger);color:var(--danger);}
+
+/* MAIN */
+main{flex:1;overflow-y:auto;background:var(--white);display:flex;flex-direction:column;}
+.main-header{padding:48px 48px 0;border-bottom:1px solid var(--grey-7);}
+.main-overline{font-size:10px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--grey-4);display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.main-overline::before{content:'';width:20px;height:1px;background:var(--grey-5);}
+.main-title{font-family:var(--serif);font-size:clamp(32px,3vw,44px);font-weight:300;line-height:1.05;margin-bottom:8px;}
+.main-subtitle{font-size:13px;color:var(--grey-4);max-width:480px;margin-bottom:28px;}
+
+/* TAB BAR */
+.tab-bar{display:flex;gap:0;border-top:1px solid var(--grey-7);overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.tab-btn{flex-shrink:0;padding:14px 24px;font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--grey-4);text-decoration:none;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;white-space:nowrap;display:flex;align-items:center;gap:8px;}
+.tab-btn:hover{color:var(--black);}
+.tab-btn.active{color:var(--black);border-bottom-color:var(--black);}
+.tab-badge{font-size:9px;font-weight:700;padding:2px 6px;background:var(--grey-7);color:var(--grey-3);border-radius:9px;min-width:18px;text-align:center;}
+.tab-btn.active .tab-badge{background:var(--black);color:var(--white);}
+
+/* TAB PANELS */
+.tab-panel{display:none;padding:40px 48px;border-bottom:1px solid var(--grey-7);}
+.tab-panel.active{display:block;}
+
+/* SECTION HEADING */
+.section-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:28px;flex-wrap:wrap;}
+.section-num{font-family:var(--serif);font-size:12px;color:var(--grey-5);letter-spacing:0.06em;margin-bottom:4px;}
+.section-title{font-family:var(--serif);font-size:24px;font-weight:400;}
+.section-sub{font-size:12px;color:var(--grey-4);margin-top:3px;}
+
+/* STAT CARDS */
+.stats-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--grey-7);border:1px solid var(--grey-7);margin-bottom:0;}
+.stat-card{background:var(--white);padding:24px 28px;}
+.stat-label{font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--grey-5);margin-bottom:10px;}
+.stat-num{font-family:var(--serif);font-size:40px;font-weight:300;line-height:1;color:var(--black);margin-bottom:4px;}
+.stat-sub{font-size:11px;color:var(--grey-4);}
+
+/* BUTTONS */
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:var(--black);color:var(--white);font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;border:none;cursor:none;position:relative;overflow:hidden;white-space:nowrap;text-decoration:none;}
+.btn-primary::after{content:'';position:absolute;inset:0;background:var(--grey-2);transform:translateX(-100%);transition:transform .35s ease;}
+.btn-primary:hover::after{transform:translateX(0);}
+.btn-inner{position:relative;z-index:1;display:flex;align-items:center;gap:8px;}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:none;color:var(--grey-3);font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;border:1px solid var(--grey-6);cursor:none;transition:border-color .2s,color .2s;text-decoration:none;}
+.btn-ghost:hover{border-color:var(--grey-3);color:var(--black);}
+.btn-danger-outline{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:none;color:var(--danger);font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;border:1px solid var(--danger);cursor:none;transition:background .2s,color .2s;}
+.btn-danger-outline:hover{background:var(--danger);color:var(--white);}
+.btn-icon{width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:none;border:1px solid var(--grey-7);color:var(--grey-4);cursor:none;flex-shrink:0;transition:border-color .2s,color .2s;text-decoration:none;}
+.btn-icon:hover{border-color:var(--grey-3);color:var(--black);}
+.btn-icon.danger:hover{border-color:var(--danger);color:var(--danger);}
+
+/* INLINE FORM PANEL */
+.form-panel{background:var(--grey-8);border:1px solid var(--grey-6);padding:28px 32px;margin-bottom:32px;}
+.form-panel-title{font-family:var(--serif);font-size:18px;font-weight:400;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--grey-6);display:flex;align-items:center;justify-content:space-between;}
+.form-panel-cancel{font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--grey-4);text-decoration:none;transition:color .2s;}
+.form-panel-cancel:hover{color:var(--black);}
+.form-row-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--grey-3);}
+.field input,.field textarea,.field select{background:var(--white);border:1px solid var(--grey-6);padding:10px 13px;font-family:var(--sans);font-size:13px;color:var(--black);outline:none;transition:border-color .2s;border-radius:0;width:100%;cursor:none;}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--black);}
+.field textarea{resize:vertical;min-height:76px;line-height:1.6;}
+.field select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:34px;}
+.field-hint{font-size:11px;color:var(--grey-5);}
+.field-error-msg{font-size:11px;color:var(--danger);display:flex;align-items:center;gap:4px;}
+.field-error-msg::before{content:'⚠';}
+.field.has-error input,.field.has-error textarea,.field.has-error select{border-color:var(--danger);}
+
+/* FILE INPUT */
+.file-input-wrap{position:relative;}
+.file-input-label{display:flex;align-items:center;gap:10px;padding:10px 13px;background:var(--white);border:1px solid var(--grey-6);cursor:none;transition:border-color .2s;font-size:13px;color:var(--grey-4);}
+.file-input-label:hover{border-color:var(--grey-3);color:var(--black);}
+.file-input-label input[type=file]{position:absolute;inset:0;opacity:0;width:100%;cursor:none;}
+.img-thumb-preview{width:100%;max-height:140px;object-fit:cover;border:1px solid var(--grey-6);margin-top:6px;display:none;}
+.img-thumb-preview.show{display:block;}
+.img-current{display:flex;align-items:center;gap:10px;margin-top:6px;font-size:11px;color:var(--grey-4);}
+.img-current img{width:48px;height:48px;object-fit:cover;border:1px solid var(--grey-6);}
+.form-actions{display:flex;gap:10px;align-items:center;margin-top:20px;padding-top:20px;border-top:1px solid var(--grey-6);}
+
+/* ORDER TABLE */
+.data-table{width:100%;border-collapse:collapse;border:1px solid var(--grey-7);}
+.data-table thead{background:var(--grey-8);border-bottom:1px solid var(--grey-7);}
+.data-table th{padding:13px 20px;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--grey-4);text-align:left;}
+.data-table th.r{text-align:right;}
+.data-table tbody tr{border-bottom:1px solid var(--grey-7);transition:background .15s;}
+.data-table tbody tr:last-child{border-bottom:none;}
+.data-table tbody tr:hover{background:var(--grey-8);}
+.data-table td{padding:15px 20px;font-size:13px;color:var(--black);vertical-align:middle;}
+.data-table td.r{text-align:right;}
+.order-id{font-family:var(--serif);font-size:16px;font-weight:400;}
+.order-date{color:var(--grey-4);font-size:12px;}
+.order-total{font-weight:600;}
+.status-badge{font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;padding:5px 10px;border:1px solid;white-space:nowrap;display:inline-block;}
+.status-processing{border-color:var(--grey-5);color:var(--grey-3);background:var(--grey-8);}
+.status-shipped{border-color:var(--grey-4);color:var(--grey-2);background:var(--grey-7);}
+.status-delivered{border-color:var(--black);color:var(--black);background:var(--white);}
+.empty-row td{text-align:center!important;padding:40px;color:var(--grey-5);font-size:13px;font-style:italic;}
+
+/* CAROUSEL GRID */
+.carousel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--grey-7);border:1px solid var(--grey-7);}
+.carousel-card{background:var(--white);overflow:hidden;}
+.carousel-img{position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--grey-7);}
+.carousel-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(25%);transition:filter .4s,transform .5s;}
+.carousel-card:hover .carousel-img img{filter:grayscale(0%);transform:scale(1.04);}
+.slide-num{position:absolute;top:10px;right:10px;font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:4px 8px;background:rgba(10,10,10,0.7);color:var(--white);backdrop-filter:blur(4px);}
+.carousel-body{padding:16px 18px 18px;}
+.carousel-title{font-family:var(--serif);font-size:18px;font-weight:400;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.carousel-sub{font-size:12px;color:var(--grey-4);margin-bottom:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.carousel-actions{display:flex;gap:8px;}
+.btn-edit{flex:1;padding:9px 12px;background:none;color:var(--grey-3);font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;border:1px solid var(--grey-6);cursor:none;transition:border-color .2s,color .2s,background .2s;text-decoration:none;display:flex;align-items:center;justify-content:center;}
+.btn-edit:hover{border-color:var(--grey-3);color:var(--black);background:var(--grey-8);}
+
+/* PRODUCT TABLE */
+.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+.search-form{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--grey-6);padding-bottom:2px;}
+.search-form input{background:none;border:none;outline:none;font-family:var(--sans);font-size:12px;color:var(--black);width:200px;cursor:none;}
+.search-form input::placeholder{color:var(--grey-5);}
+.search-form button{background:none;border:none;padding:0;color:var(--grey-4);cursor:none;display:flex;align-items:center;}
+.product-table{width:100%;border-collapse:collapse;border:1px solid var(--grey-7);}
+.product-table thead{background:var(--grey-8);border-bottom:1px solid var(--grey-7);}
+.product-table th{padding:13px 20px;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--grey-4);text-align:left;}
+.product-table th.r{text-align:right;}
+.product-table tbody tr{border-bottom:1px solid var(--grey-7);transition:background .15s;}
+.product-table tbody tr:last-child{border-bottom:none;}
+.product-table tbody tr:hover{background:var(--grey-8);}
+.product-table td{padding:14px 20px;font-size:13px;vertical-align:middle;}
+.product-table td.r{text-align:right;}
+.product-cell{display:flex;align-items:center;gap:14px;}
+.product-thumb{width:46px;height:46px;flex-shrink:0;border:1px solid var(--grey-7);object-fit:cover;filter:grayscale(20%);transition:filter .3s;}
+tr:hover .product-thumb{filter:grayscale(0%);}
+.product-thumb-placeholder{width:46px;height:46px;flex-shrink:0;border:1px solid var(--grey-7);background:var(--grey-8);display:flex;align-items:center;justify-content:center;color:var(--grey-5);}
+.product-name{font-weight:600;font-size:13px;color:var(--black);}
+.product-sku{font-size:11px;color:var(--grey-5);letter-spacing:0.04em;margin-top:1px;}
+.stock-ok{font-size:13px;color:var(--grey-3);}
+.stock-low{font-size:13px;color:var(--danger);font-weight:600;}
+.product-price{font-family:var(--serif);font-size:16px;font-weight:400;color:var(--black);}
+.product-actions{display:flex;gap:8px;justify-content:flex-end;}
+
+/* DESIGN SUBMISSIONS */
+.submissions-table{width:100%;border-collapse:collapse;border:1px solid var(--grey-7);}
+.submissions-table thead{background:var(--grey-8);border-bottom:1px solid var(--grey-7);}
+.submissions-table th{padding:13px 20px;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--grey-4);text-align:left;}
+.submissions-table tbody tr{border-bottom:1px solid var(--grey-7);transition:background .15s;}
+.submissions-table tbody tr:last-child{border-bottom:none;}
+.submissions-table tbody tr:hover{background:var(--grey-8);}
+.submissions-table td{padding:16px 20px;font-size:13px;vertical-align:top;}
+.sub-user{font-weight:600;font-size:13px;color:var(--black);}
+.sub-email{font-size:11px;color:var(--grey-5);margin-top:1px;}
+.sub-service{font-size:12px;color:var(--grey-3);font-weight:500;}
+.sub-date{font-size:12px;color:var(--grey-4);}
+.sub-note{font-size:12px;color:var(--grey-3);line-height:1.5;max-width:200px;}
+/* Design submission status badges */
+.sub-status{font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;padding:4px 9px;border:1px solid;white-space:nowrap;display:inline-block;}
+.sub-status.pending{border-color:var(--grey-5);color:var(--grey-3);background:var(--grey-8);}
+.sub-status.in_review{border-color:#b45309;color:#92400e;background:#fef3c7;}
+.sub-status.in_progress{border-color:#1d4ed8;color:#1e40af;background:#dbeafe;}
+.sub-status.completed{border-color:var(--success);color:#14532d;background:#dcfce7;}
+.sub-status.rejected{border-color:var(--danger);color:#7f1d1d;background:#fee2e2;}
+/* File attachment pills */
+.file-list{display:flex;flex-direction:column;gap:6px;}
+.file-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--grey-3);text-decoration:none;border:1px solid var(--grey-6);padding:4px 10px;background:var(--grey-8);transition:border-color .2s,color .2s;white-space:nowrap;}
+.file-pill:hover{border-color:var(--grey-3);color:var(--black);}
+.file-pill svg{flex-shrink:0;color:var(--grey-4);}
+/* Status update inline form */
+.status-form{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.status-select{background:var(--grey-8);border:1px solid var(--grey-6);padding:6px 10px;font-family:var(--sans);font-size:11px;color:var(--black);outline:none;cursor:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='8' height='5' viewBox='0 0 8 5' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%23888' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;}
+.status-select:focus{border-color:var(--black);}
+.btn-small{padding:6px 12px;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;border:none;cursor:none;background:var(--black);color:var(--white);white-space:nowrap;transition:background .2s;}
+.btn-small:hover{background:var(--grey-2);}
+/* Note toggle */
+.sub-note-toggle{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey-4);background:none;border:none;cursor:none;padding:0;transition:color .2s;display:flex;align-items:center;gap:4px;}
+.sub-note-toggle:hover{color:var(--black);}
+.sub-note-panel{display:none;margin-top:8px;}
+.sub-note-panel.open{display:block;}
+.sub-note-input{width:100%;background:var(--white);border:1px solid var(--grey-6);padding:8px 10px;font-family:var(--sans);font-size:12px;color:var(--black);outline:none;resize:vertical;min-height:60px;line-height:1.5;cursor:none;}
+.sub-note-input:focus{border-color:var(--black);}
+
+/* DELETE INLINE FORM */
+.delete-form{display:inline;}
+
+/* FOOTER */
+footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-top:auto;}
+.footer-top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:60px;padding-bottom:64px;border-bottom:1px solid var(--grey-2);}
+.footer-brand p{font-size:13px;color:var(--grey-4);line-height:1.7;max-width:260px;}
+.footer-socials{display:flex;gap:12px;margin-top:28px;}
+.social-btn{width:36px;height:36px;border:1px solid var(--grey-2);display:flex;align-items:center;justify-content:center;color:var(--grey-4);text-decoration:none;transition:border-color .2s,color .2s;}
+.social-btn:hover{border-color:var(--accent);color:var(--accent);}
+.footer-col h4{font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--grey-5);margin-bottom:24px;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:14px;}
+.footer-col ul li a{font-size:13px;color:var(--grey-4);text-decoration:none;transition:color .2s;}
+.footer-col ul li a:hover{color:var(--accent);}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:32px;gap:16px;flex-wrap:wrap;}
+.footer-bottom p{font-size:12px;color:var(--grey-4);}
+.footer-bottom-links{display:flex;gap:24px;}
+.footer-bottom-links a{font-size:12px;color:var(--grey-4);text-decoration:none;transition:color .2s;}
+.footer-bottom-links a:hover{color:var(--accent);}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  body{flex-direction:column;}
+  aside{display:none;}
+  .mobile-topbar{display:flex;}
+  .mobile-drawer{display:flex;}
+  main{padding-top:60px;}
+  .main-header,.tab-panel{padding-left:20px;padding-right:20px;}
+  .main-header{padding-top:32px;}
+  .stats-strip{grid-template-columns:repeat(2,1fr);}
+  .carousel-grid{grid-template-columns:repeat(2,1fr);}
+  .form-row-grid{grid-template-columns:1fr;}
+  footer{padding:48px 20px 28px;}
+  .footer-top{grid-template-columns:1fr 1fr;gap:36px;padding-bottom:40px;}
+}
+@media(max-width:600px){
+  .stats-strip{grid-template-columns:1fr 1fr;}
+  .carousel-grid{grid-template-columns:1fr;}
+  .data-table,.data-table thead,.data-table tbody,.data-table th,.data-table td,.data-table tr,
+  .product-table,.product-table thead,.product-table tbody,.product-table th,.product-table td,.product-table tr,
+  .submissions-table,.submissions-table thead,.submissions-table tbody,.submissions-table th,.submissions-table td,.submissions-table tr
+  {display:block;}
+  .data-table thead,.product-table thead,.submissions-table thead{display:none;}
+  .data-table tbody tr,.product-table tbody tr,.submissions-table tbody tr{border:1px solid var(--grey-7);margin-bottom:12px;padding:16px;}
+  .data-table td,.submissions-table td{padding:4px 0;}
+  .product-table td{padding:6px 0;}
+  .product-actions,.product-actions{justify-content:flex-start;}
+  .footer-top{grid-template-columns:1fr;gap:28px;}
+}
+/* SEND ITEM REQUESTS */
+.send-req-table { width:100%; border-collapse:collapse; border:1px solid var(--grey-7); }
+.send-req-table thead { background:var(--grey-8); border-bottom:1px solid var(--grey-7); }
+.send-req-table th { padding:13px 20px; font-size:10px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--grey-4); text-align:left; }
+.send-req-table tbody tr { border-bottom:1px solid var(--grey-7); transition:background .15s; }
+.send-req-table tbody tr:last-child { border-bottom:none; }
+.send-req-table tbody tr:hover { background:var(--grey-8); }
+.send-req-table td { padding:16px 20px; font-size:13px; vertical-align:top; }
+.req-name { font-weight:600; font-size:13px; color:var(--black); }
+.req-email { font-size:11px; color:var(--grey-5); margin-top:1px; }
+.req-items { font-size:12px; color:var(--grey-3); line-height:1.5; max-width:200px; }
+.req-date { font-size:12px; color:var(--grey-4); white-space:nowrap; }
+.req-status { font-size:9px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; padding:4px 9px; border:1px solid; white-space:nowrap; display:inline-block; }
+.req-status.pending    { border-color:var(--grey-5); color:var(--grey-3); background:var(--grey-8); }
+.req-status.quoted     { border-color:#b45309; color:#92400e; background:#fef3c7; }
+.req-status.confirmed  { border-color:#1d4ed8; color:#1e40af; background:#dbeafe; }
+.req-status.in_work    { border-color:#7c3aed; color:#5b21b6; background:#ede9fe; }
+.req-status.shipped    { border-color:#0369a1; color:#075985; background:#e0f2fe; }
+.req-status.complete   { border-color:var(--success); color:#14532d; background:#dcfce7; }
+.req-status.cancelled  { border-color:var(--danger); color:#7f1d1d; background:#fee2e2; }
+.req-detail-toggle { font-size:10px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--grey-4); background:none; border:none; cursor:none; padding:0; transition:color .2s; display:flex; align-items:center; gap:4px; margin-top:6px; }
+.req-detail-toggle:hover { color:var(--black); }
+.req-detail-panel { display:none; margin-top:8px; padding:10px 12px; background:var(--grey-8); border:1px solid var(--grey-7); font-size:12px; color:var(--grey-3); line-height:1.6; }
+.req-detail-panel.open { display:block; }
+@media(max-width:600px) {
+  .send-req-table, .send-req-table thead, .send-req-table tbody, .send-req-table th, .send-req-table td, .send-req-table tr { display:block; }
+  .send-req-table thead { display:none; }
+  .send-req-table tbody tr { border:1px solid var(--grey-7); margin-bottom:12px; padding:16px; }
+  .send-req-table td { padding:4px 0; }
+}
+
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+{# ── Django messages ── #}
+{% if messages %}
+<div class="django-messages" role="status" aria-live="polite">
+  {% for message in messages %}
+  <div class="django-msg {{ message.tags }}">
+    {% if message.tags == 'success' %}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+    {% else %}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>{% endif %}
+    {{ message }}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- MOBILE TOP BAR -->
+<div class="mobile-topbar" id="mobileTopbar">
+  <a class="sidebar-logo" href="{% url 'home-page' %}"><img src="{% static 'icon.png' %}" alt="CustomiseMe UK"/></a>
+  <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open navigation" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+
+<!-- MOBILE DRAWER -->
+<div class="mobile-drawer" id="mobileDrawer" aria-hidden="true">
+  <nav class="mobile-drawer-nav">
+    <a class="nav-link {% if active_tab == 'orders' %}active{% endif %}" href="?tab=orders">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Orders
+    </a>
+    <a class="nav-link {% if active_tab == 'carousel' %}active{% endif %}" href="?tab=carousel">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Carousel
+    </a>
+    <a class="nav-link {% if active_tab == 'products' %}active{% endif %}" href="?tab=products">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>Products
+    </a>
+    <a class="nav-link {% if active_tab == 'designs' %}active{% endif %}" href="?tab=designs">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Design Service Uploads
+    </a>
+    <a class="nav-link {% if active_tab == 'send_requests' %}active{% endif %}" href="?tab=send_requests">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Send Item Requests
+    </a>
+  </nav>
+  <div class="mobile-drawer-user">
+    <div class="mobile-drawer-user-info">
+      <div class="user-avatar">{{ current_admin.get_full_name|default:current_admin.email|slice:":2"|upper }}</div>
+      <div><div class="user-name">{{ current_admin.get_full_name|default:current_admin.email }}</div><div class="user-role">Admin</div></div>
+    </div>
+    <form method="POST" action="{% url 'logout' %}" style="margin:0;">
+      {% csrf_token %}
+      <button type="submit" class="mobile-drawer-logout">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Log Out
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<aside>
+  <div class="sidebar-brand">
+    <a class="sidebar-logo" href="{% url 'home-page' %}"><img src="{% static 'icon.png' %}" alt="CustomiseMe UK"/></a>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-link {% if active_tab == 'orders' %}active{% endif %}" href="?tab=orders">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Orders
+    </a>
+    <a class="nav-link {% if active_tab == 'carousel' %}active{% endif %}" href="?tab=carousel">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Carousel
+    </a>
+    <a class="nav-link {% if active_tab == 'products' %}active{% endif %}" href="?tab=products">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>Products
+    </a>
+    <a class="nav-link {% if active_tab == 'designs' %}active{% endif %}" href="?tab=designs">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Design Service Uploads
+      {% if design_submissions %}<span class="tab-badge">{{ design_submissions|length }}</span>{% endif %}
+    </a>
+    <a class="nav-link {% if active_tab == 'send_requests' %}active{% endif %}" href="?tab=send_requests">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Send Item Requests
+      {% if send_item_requests %}<span class="tab-badge">{{ send_item_requests|length }}</span>{% endif %}
+    </a>
+    <a class="nav-link" href="{% url 'home-page' %}">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>View Store
+    </a>
+  </nav>
+  <div class="sidebar-user">
+    <div class="sidebar-user-info">
+      <div class="user-avatar">{{ current_admin.get_full_name|default:current_admin.email|slice:":2"|upper }}</div>
+      <div>
+        <div class="user-name">{{ current_admin.get_full_name|default:current_admin.email }}</div>
+        <div class="user-role" title="{{ current_admin.email }}">{{ current_admin.email }}</div>
+      </div>
+    </div>
+    <form method="POST" action="{% url 'logout' %}" style="margin:0;">
+      {% csrf_token %}
+      <button type="submit" class="sidebar-logout">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Log Out
+      </button>
+    </form>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main>
+
+  <!-- Page header + stat strip + tab bar -->
+  <div class="main-header">
+    <div class="main-overline">Admin Panel</div>
+    <h1 class="main-title">Store <em style="font-style:italic;color:var(--grey-3);">Management</em></h1>
+    <p class="main-subtitle">Manage orders, carousel, products and customer design uploads.</p>
+
+   
+    <div class="stats-strip">
+      <div class="stat-card"><div class="stat-label">Total Customers</div><div class="stat-num">{{ stats.total_customers }}</div><div class="stat-sub">Registered accounts</div></div>
+      <div class="stat-card"><div class="stat-label">Verified</div><div class="stat-num">{{ stats.verified_customers }}</div><div class="stat-sub">Email confirmed</div></div>
+      <div class="stat-card"><div class="stat-label">Unverified</div><div class="stat-num">{{ stats.unverified_customers }}</div><div class="stat-sub">Pending verification</div></div>
+      <div class="stat-card"><div class="stat-label">Admin Users</div><div class="stat-num">{{ stats.total_admins }}</div><div class="stat-sub">Staff accounts</div></div>
+    </div>
+
+   
+    <div class="tab-bar" role="tablist">
+      <a class="tab-btn {% if active_tab == 'orders' %}active{% endif %}" href="?tab=orders" role="tab">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        Orders <span class="tab-badge">{{ recent_orders|length }}</span>
+      </a>
+      <a class="tab-btn {% if active_tab == 'carousel' %}active{% endif %}" href="?tab=carousel" role="tab">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+        Carousel <span class="tab-badge">{{ slides|length }}</span>
+      </a>
+      <a class="tab-btn {% if active_tab == 'products' %}active{% endif %}" href="?tab=products" role="tab">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+        Products <span class="tab-badge">{{ products|length }}</span>
+      </a>
+      <a class="tab-btn {% if active_tab == 'designs' %}active{% endif %}" href="?tab=designs" role="tab">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Design Uploads <span class="tab-badge">{{ design_submissions|length }}</span>
+      </a>
+      <a class="tab-btn {% if active_tab == 'send_requests' %}active{% endif %}" href="?tab=send_requests" role="tab">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Send Requests <span class="tab-badge">{{ send_item_requests|length }}</span>
+      </a>
+    </div>
+  </div>
+
+
+  <div class="tab-panel {% if active_tab == 'orders' %}active{% endif %}" id="tab-orders" role="tabpanel">
+    <div class="section-heading">
+      <div><div class="section-num">§ 01</div><div class="section-title">Recent Orders</div></div>
+    </div>
+    <table class="data-table">
+      <thead><tr><th>Order ID</th><th>Customer</th><th>Date</th><th>Total</th><th>Status</th><th class="r">Actions</th></tr></thead>
+      <tbody>
+        {% for order in recent_orders %}
+        <tr>
+          <td data-label="Order ID"><span class="order-id">#{{ order.order_number|default:order.id }}</span></td>
+          <td data-label="Customer">{{ order.customer.get_full_name|default:order.customer.email }}</td>
+          <td data-label="Date"><span class="order-date">{{ order.created_at|date:"d M Y" }}</span></td>
+          <td data-label="Total"><span class="order-total">£{{ order.total|floatformat:2 }}</span></td>
+          <td data-label="Status"><span class="status-badge status-{{ order.status|lower }}">{{ order.status }}</span></td>
+          <td class="r" data-label="Actions">
+            <a class="btn-icon" href="{% url 'admin-order-detail' order.id %}" title="View order">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr class="empty-row"><td colspan="6">No orders yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  
+  <div class="tab-panel {% if active_tab == 'carousel' %}active{% endif %}" id="tab-carousel" role="tabpanel">
+
+    <div class="section-heading">
+      <div><div class="section-num">§ 02</div><div class="section-title">Homepage Carousel</div><div class="section-sub">Uploaded images display as full-bleed hero slides.</div></div>
+      {% if not edit_slide %}<a class="btn-primary" href="?tab=carousel&add_slide=1"><div class="btn-inner"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Slide</div></a>{% endif %}
+    </div>
+
+    
+    {% if request.GET.add_slide or edit_slide %}
+    <div class="form-panel">
+      <div class="form-panel-title">
+        {% if edit_slide %}Edit Slide — {{ edit_slide.title }}{% else %}New Carousel Slide{% endif %}
+        <a class="form-panel-cancel" href="?tab=carousel">✕ Cancel</a>
+      </div>
+      <form method="POST" enctype="multipart/form-data" action="{% url 'admin-page' %}">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="{% if edit_slide %}edit_slide{% else %}add_slide{% endif %}"/>
+        {% if edit_slide %}<input type="hidden" name="slide_id" value="{{ edit_slide.id }}"/>{% endif %}
+
+        <div class="field {% if form_errors.slide_title %}has-error{% endif %}" style="margin-bottom:16px;">
+          <label for="slide_title">Slide Title</label>
+          <input type="text" id="slide_title" name="slide_title" placeholder="e.g. Autumn Collection 2024"
+                 value="{{ edit_slide.title|default:'' }}"/>
+          {% if form_errors.slide_title %}<span class="field-error-msg">{{ form_errors.slide_title }}</span>{% endif %}
+        </div>
+
+        <div class="field" style="margin-bottom:16px;">
+          <label for="slide_subtitle">Subtitle</label>
+          <input type="text" id="slide_subtitle" name="slide_subtitle" placeholder="Short supporting text shown on the slide"
+                 value="{{ edit_slide.subtitle|default:'' }}"/>
+        </div>
+
+        <div class="field {% if form_errors.slide_image %}has-error{% endif %}">
+          <label>Slide Image {% if not edit_slide %}<span style="color:var(--danger);">*</span>{% endif %}</label>
+          {% if edit_slide and edit_slide.image %}
+          <div class="img-current">
+            <img src="{{ edit_slide.image.url }}" alt="Current slide image"/>
+            <span>Current image — upload a new file to replace it.</span>
+          </div>
+          {% endif %}
+          <div class="file-input-wrap">
+            <label class="file-input-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+              <span id="slideFileLabel">Choose image (JPEG / PNG / WebP, max 8 MB)</span>
+              <input type="file" name="slide_image" accept="image/jpeg,image/png,image/webp,image/gif" id="slideImageInput"/>
+            </label>
+          </div>
+          <img class="img-thumb-preview" id="slideThumb" src="" alt="Preview"/>
+          {% if form_errors.slide_image %}<span class="field-error-msg">{{ form_errors.slide_image }}</span>{% endif %}
+          <span class="field-hint">Recommended: 1920 × 800 px or wider. Landscape orientation only.</span>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary"><div class="btn-inner">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            {% if edit_slide %}Save Changes{% else %}Add Slide{% endif %}
+          </div></button>
+          <a class="btn-ghost" href="?tab=carousel">Cancel</a>
+        </div>
+      </form>
+    </div>
+    {% endif %}
+
+    
+    <div class="carousel-grid">
+      {% for slide in slides %}
+      <div class="carousel-card">
+        <div class="carousel-img">
+          {% if slide.image %}<img src="{{ slide.image.url }}" alt="{{ slide.title }}"/>{% endif %}
+          <span class="slide-num">Slide {{ forloop.counter }}</span>
+        </div>
+        <div class="carousel-body">
+          <div class="carousel-title">{{ slide.title }}</div>
+          <div class="carousel-sub">{{ slide.subtitle }}</div>
+          <div class="carousel-actions">
+            <a class="btn-edit" href="?tab=carousel&edit_slide={{ slide.id }}">Edit</a>
+            <form method="POST" action="{% url 'admin-page' %}" class="delete-form"
+                  onsubmit="return confirm('Remove slide {{ forloop.counter }}: {{ slide.title }}?')">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="delete_slide"/>
+              <input type="hidden" name="slide_id" value="{{ slide.id }}"/>
+              <button type="submit" class="btn-icon danger" title="Delete slide">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div style="grid-column:1/-1;padding:48px;text-align:center;color:var(--grey-5);font-size:13px;font-style:italic;background:var(--white);">
+        No carousel slides yet. Add your first one above.
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+
+  <div class="tab-panel {% if active_tab == 'products' %}active{% endif %}" id="tab-products" role="tabpanel">
+
+    <div class="section-heading">
+      <div>
+        <div class="section-num">§ 03</div>
+        <div class="section-title">Product Inventory</div>
+        {% if search_query %}<div class="section-sub">Results for "{{ search_query }}" — <a href="?tab=products" style="color:var(--grey-4);text-decoration:underline;">clear</a></div>{% endif %}
+      </div>
+      <div class="toolbar">
+        <form class="search-form" method="GET" action="{% url 'admin-page' %}">
+          <input type="hidden" name="tab" value="products"/>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" name="q" value="{{ search_query }}" placeholder="Search products…" autocomplete="off"/>
+          <button type="submit" aria-label="Search"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        </form>
+        {% if not edit_product %}<a class="btn-primary" href="?tab=products&add_product=1"><div class="btn-inner"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Product</div></a>{% endif %}
+      </div>
+    </div>
+
+    
+    {% if request.GET.add_product or edit_product %}
+    <div class="form-panel">
+      <div class="form-panel-title">
+        {% if edit_product %}Edit — {{ edit_product.name }}{% else %}New Product{% endif %}
+        <a class="form-panel-cancel" href="?tab=products">✕ Cancel</a>
+      </div>
+      <form method="POST" enctype="multipart/form-data" action="{% url 'admin-page' %}">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="{% if edit_product %}edit_product{% else %}add_product{% endif %}"/>
+        {% if edit_product %}<input type="hidden" name="product_id" value="{{ edit_product.id }}"/>{% endif %}
+
+        {# Image row #}
+        <div class="field {% if form_errors.product_image %}has-error{% endif %}" style="margin-bottom:16px;">
+          <label>Product Image</label>
+          {% if edit_product and edit_product.image %}
+          <div class="img-current">
+            <img src="{{ edit_product.image.url }}" alt="{{ edit_product.name }}"/>
+            <span>Current image — upload a new file to replace it.</span>
+          </div>
+          {% endif %}
+          <div class="file-input-wrap">
+            <label class="file-input-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+              <span id="productFileLabel">Choose image (JPEG / PNG / WebP, max 8 MB)</span>
+              <input type="file" name="product_image" accept="image/jpeg,image/png,image/webp,image/gif" id="productImageInput"/>
+            </label>
+          </div>
+          <img class="img-thumb-preview" id="productThumb" src="" alt="Preview"/>
+          {% if form_errors.product_image %}<span class="field-error-msg">{{ form_errors.product_image }}</span>{% endif %}
+        </div>
+
+        {# Name + SKU #}
+        <div class="form-row-grid" style="margin-bottom:16px;">
+          <div class="field {% if form_errors.product_name %}has-error{% endif %}">
+            <label for="product_name">Product Name <span style="color:var(--danger);">*</span></label>
+            <input type="text" id="product_name" name="product_name" placeholder="e.g. Custom Embroidered Hoodie"
+                   value="{{ edit_product.name|default:'' }}"/>
+            {% if form_errors.product_name %}<span class="field-error-msg">{{ form_errors.product_name }}</span>{% endif %}
+          </div>
+          <div class="field {% if form_errors.product_sku %}has-error{% endif %}">
+            <label for="product_sku">SKU <span style="color:var(--danger);">*</span></label>
+            <input type="text" id="product_sku" name="product_sku" placeholder="e.g. EMB-HD-01"
+                   value="{{ edit_product.sku|default:'' }}"/>
+            {% if form_errors.product_sku %}<span class="field-error-msg">{{ form_errors.product_sku }}</span>{% endif %}
+          </div>
+        </div>
+
+        {# Price + Stock #}
+        <div class="form-row-grid" style="margin-bottom:16px;">
+          <div class="field {% if form_errors.product_price %}has-error{% endif %}">
+            <label for="product_price">Price (£) <span style="color:var(--danger);">*</span></label>
+            <input type="number" id="product_price" name="product_price" placeholder="0.00" min="0" step="0.01"
+                   value="{{ edit_product.price|default:'' }}"/>
+            {% if form_errors.product_price %}<span class="field-error-msg">{{ form_errors.product_price }}</span>{% endif %}
+          </div>
+          <div class="field {% if form_errors.product_stock %}has-error{% endif %}">
+            <label for="product_stock">Stock (units) <span style="color:var(--danger);">*</span></label>
+            <input type="number" id="product_stock" name="product_stock" placeholder="0" min="0"
+                   value="{{ edit_product.stock|default:'' }}"/>
+            {% if form_errors.product_stock %}<span class="field-error-msg">{{ form_errors.product_stock }}</span>{% endif %}
+          </div>
+        </div>
+
+        {# Category + Description #}
+        <div class="form-row-grid" style="margin-bottom:16px;">
+          <div class="field">
+            <label for="product_category">Category</label>
+            <select id="product_category" name="product_category">
+              <option value="">Select category…</option>
+              <option {% if edit_product.category == "Apparel" %}selected{% endif %}>Apparel</option>
+              <option {% if edit_product.category == "Accessories" %}selected{% endif %}>Accessories</option>
+              <option {% if edit_product.category == "Party Essentials" %}selected{% endif %}>Party Essentials</option>
+              <option {% if edit_product.category == "Stickers & Labels" %}selected{% endif %}>Stickers &amp; Labels</option>
+              <option {% if edit_product.category == "Gifts" %}selected{% endif %}>Gifts</option>
+              <option {% if edit_product.category == "Other" %}selected{% endif %}>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="product_description">Description</label>
+            <textarea id="product_description" name="product_description" placeholder="Brief product description…">{{ edit_product.description|default:'' }}</textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary"><div class="btn-inner">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            {% if edit_product %}Save Changes{% else %}Add Product{% endif %}
+          </div></button>
+          <a class="btn-ghost" href="?tab=products">Cancel</a>
+        </div>
+      </form>
+    </div>
+    {% endif %}
+
+ 
+    <table class="product-table">
+      <thead><tr><th style="width:50%">Product Details</th><th>Stock</th><th>Price</th><th class="r">Actions</th></tr></thead>
+      <tbody>
+        {% for product in products %}
+        <tr>
+          <td data-label="Product">
+            <div class="product-cell">
+              {% if product.image %}<img class="product-thumb" src="{{ product.image.url }}" alt="{{ product.name }}"/>
+              {% else %}<div class="product-thumb-placeholder"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>{% endif %}
+              <div><div class="product-name">{{ product.name }}</div><div class="product-sku">SKU: {{ product.sku }}</div></div>
+            </div>
+          </td>
+          <td data-label="Stock">
+            <span class="{% if product.stock <= 5 %}stock-low{% else %}stock-ok{% endif %}">
+              {{ product.stock }} unit{{ product.stock|pluralize }}{% if product.stock <= 5 and product.stock > 0 %} — low{% endif %}
+            </span>
+          </td>
+          <td data-label="Price"><span class="product-price">£{{ product.price|floatformat:2 }}</span></td>
+          <td class="r" data-label="Actions">
+            <div class="product-actions">
+              <a class="btn-icon" href="?tab=products&edit_product={{ product.id }}" title="Edit">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </a>
+              <form method="POST" action="{% url 'admin-page' %}" class="delete-form"
+                    onsubmit="return confirm('Delete {{ product.name }}? This cannot be undone.')">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete_product"/>
+                <input type="hidden" name="product_id" value="{{ product.id }}"/>
+                <button type="submit" class="btn-icon danger" title="Delete">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr class="empty-row">
+          <td colspan="4">{% if search_query %}No products match "{{ search_query }}".{% else %}No products yet — add your first one above.{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="tab-panel {% if active_tab == 'designs' %}active{% endif %}" id="tab-designs" role="tabpanel">
+
+    <div class="section-heading">
+      <div>
+        <div class="section-num">§ 04</div>
+        <div class="section-title">Design Submissions</div>
+        <div class="section-sub">Files and briefs uploaded by customers for custom design requests.</div>
+      </div>
+    </div>
+
+    <table class="submissions-table">
+      <thead>
+        <tr>
+          <th style="width:22%">Customer</th>
+          <th style="width:16%">Service</th>
+          <th style="width:12%">Date</th>
+          <th style="width:16%">Files</th>
+          <th style="width:14%">Status</th>
+          <th>Update / Note</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sub in design_submissions %}
+        <tr>
+          <td>
+            <div class="sub-user">{{ sub.user.get_full_name|default:sub.user.email }}</div>
+            <div class="sub-email">{{ sub.user.email }}</div>
+          </td>
+          <td><div class="sub-service">{{ sub.service_type|default:"Custom Design" }}</div></td>
+          <td><div class="sub-date">{{ sub.created_at|date:"d M Y" }}</div></td>
+          <td>
+            <div class="file-list">
+              {% for file in sub.files.all %}
+              <a class="file-pill" href="{{ file.file.url }}" target="_blank" rel="noopener">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                {{ file.original_filename|default:"File"|truncatechars:22 }}
+              </a>
+              {% empty %}
+              <span style="font-size:12px;color:var(--grey-5);font-style:italic;">No files</span>
+              {% endfor %}
+              {% if sub.brief_text %}
+              <details style="margin-top:4px;">
+                <summary style="font-size:11px;color:var(--grey-4);cursor:none;list-style:none;">Brief ▸</summary>
+                <p style="font-size:12px;color:var(--grey-3);margin-top:4px;line-height:1.5;">{{ sub.brief_text|truncatechars:200 }}</p>
+              </details>
+              {% endif %}
+            </div>
+          </td>
+          <td><span class="sub-status {{ sub.status }}">{{ sub.get_status_display|default:sub.status }}</span></td>
+          <td>
+            {# Inline status update — POST back to same dashboard view #}
+            <form method="POST" action="{% url 'admin-page' %}" id="subForm{{ sub.id }}">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="update_submission_status"/>
+              <input type="hidden" name="submission_id" value="{{ sub.id }}"/>
+              <div class="status-form">
+                <select name="submission_status" class="status-select" aria-label="Status">
+                  <option value="pending"     {% if sub.status == 'pending'      %}selected{% endif %}>Pending</option>
+                  <option value="in_review"   {% if sub.status == 'in_review'    %}selected{% endif %}>In Review</option>
+                  <option value="in_progress" {% if sub.status == 'in_progress'  %}selected{% endif %}>In Progress</option>
+                  <option value="completed"   {% if sub.status == 'completed'    %}selected{% endif %}>Completed</option>
+                  <option value="rejected"    {% if sub.status == 'rejected'     %}selected{% endif %}>Rejected</option>
+                </select>
+                <button type="submit" class="btn-small">Save</button>
+              </div>
+              {# Admin note toggle #}
+              <button type="button" class="sub-note-toggle" data-sub-id="{{ sub.id }}" style="margin-top:8px;">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                {% if sub.admin_note %}Edit Note{% else %}Add Note{% endif %}
+              </button>
+              <div class="sub-note-panel {% if sub.admin_note %}open{% endif %}" id="notePanel{{ sub.id }}">
+                <textarea class="sub-note-input" name="admin_note" placeholder="Internal note (not visible to customer)…" style="margin-top:6px;">{{ sub.admin_note|default:'' }}</textarea>
+              </div>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr class="empty-row"><td colspan="6">No design submissions yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══ § 05 SEND ITEM REQUESTS ══ -->
+  <div class="tab-panel {% if active_tab == 'send_requests' %}active{% endif %}" id="tab-send-requests" role="tabpanel">
+
+    <div class="section-heading">
+      <div>
+        <div class="section-num">§ 05</div>
+        <div class="section-title">Send Item Requests</div>
+        <div class="section-sub">Customisation requests where customers ship their own garments to the studio.</div>
+      </div>
+    </div>
+
+    <table class="send-req-table">
+      <thead>
+        <tr>
+          <th style="width:20%">Customer</th>
+          <th style="width:22%">Items</th>
+          <th style="width:8%">Qty</th>
+          <th style="width:11%">Deadline</th>
+          <th style="width:11%">Submitted</th>
+          <th style="width:10%">Status</th>
+          <th>Update</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for req in send_item_requests %}
+        <tr>
+          {# Customer ─────────────────── #}
+          <td>
+            <div class="req-name">{{ req.full_name }}</div>
+            <div class="req-email">{{ req.email }}</div>
+            {% if req.phone %}<div class="req-email">{{ req.phone }}</div>{% endif %}
+          </td>
+
+          {# Items description ─────────── #}
+          <td>
+            <div class="req-items">{{ req.items_description|truncatechars:80 }}</div>
+            {% if req.custom_details %}
+            <button type="button" class="req-detail-toggle" data-req-id="{{ req.id }}">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Design Brief
+            </button>
+            <div class="req-detail-panel" id="reqDetail{{ req.id }}">
+              <strong style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey-4);">Customisation Details</strong>
+              <p style="margin-top:4px;">{{ req.custom_details }}</p>
+              {% if req.admin_notes %}
+              <strong style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey-4);display:block;margin-top:8px;">Admin Notes</strong>
+              <p style="margin-top:4px;">{{ req.admin_notes }}</p>
+              {% endif %}
+            </div>
+            {% endif %}
+            {# Uploaded artwork files #}
+            {% if req.files.exists %}
+            <div class="file-list" style="margin-top:8px;">
+              {% for f in req.files.all %}
+              <a class="file-pill" href="{{ f.file.url }}" target="_blank" rel="noopener">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                {{ f.original_filename|default:"File"|truncatechars:22 }}
+              </a>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </td>
+
+          {# Qty ────────────────────────── #}
+          <td><span class="req-date">{{ req.quantity|default:"—" }}</span></td>
+
+          {# Deadline ───────────────────── #}
+          <td><span class="req-date">{% if req.deadline %}{{ req.deadline|date:"d M Y" }}{% else %}—{% endif %}</span></td>
+
+          {# Submitted ──────────────────── #}
+          <td><span class="req-date">{{ req.created_at|date:"d M Y" }}</span></td>
+
+          {# Status badge ───────────────── #}
+          <td><span class="req-status {{ req.status }}">{{ req.get_status_display }}</span></td>
+
+          {# Inline update form ─────────── #}
+          <td>
+            <form method="POST" action="{% url 'admin-page' %}" id="reqForm{{ req.id }}">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="update_send_request_status"/>
+              <input type="hidden" name="send_request_id" value="{{ req.id }}"/>
+              <div class="status-form">
+                <select name="send_request_status" class="status-select" aria-label="Status">
+                  <option value="pending"   {% if req.status == 'pending'   %}selected{% endif %}>Pending</option>
+                  <option value="quoted"    {% if req.status == 'quoted'    %}selected{% endif %}>Quoted</option>
+                  <option value="confirmed" {% if req.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                  <option value="in_work"   {% if req.status == 'in_work'   %}selected{% endif %}>In Production</option>
+                  <option value="shipped"   {% if req.status == 'shipped'   %}selected{% endif %}>Shipped Back</option>
+                  <option value="complete"  {% if req.status == 'complete'  %}selected{% endif %}>Complete</option>
+                  <option value="cancelled" {% if req.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                </select>
+                <button type="submit" class="btn-small">Save</button>
+              </div>
+              {# Admin notes toggle #}
+              <button type="button" class="sub-note-toggle" data-req-id="{{ req.id }}" style="margin-top:8px;">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                {% if req.admin_notes %}Edit Note{% else %}Add Note{% endif %}
+              </button>
+              <div class="sub-note-panel {% if req.admin_notes %}open{% endif %}" id="reqNotePanel{{ req.id }}">
+                <textarea class="sub-note-input" name="admin_notes" placeholder="Internal note (not visible to customer)…" style="margin-top:6px;">{{ req.admin_notes|default:'' }}</textarea>
+                {% if req.quoted_price %}
+                <div style="font-size:11px;color:var(--grey-4);margin-top:6px;">Quoted: £{{ req.quoted_price }}</div>
+                {% endif %}
+                <div class="field" style="margin-top:8px;">
+                  <label style="font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--grey-3);">Quote (£)</label>
+                  <input type="number" name="quoted_price" step="0.01" min="0"
+                         value="{{ req.quoted_price|default:'' }}"
+                         placeholder="e.g. 45.00"
+                         style="background:var(--white);border:1px solid var(--grey-6);padding:8px 10px;font-family:var(--sans);font-size:12px;color:var(--black);outline:none;width:100%;cursor:none;"/>
+                </div>
+              </div>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr class="empty-row"><td colspan="7">No send item requests yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <p>Dedicated to creating meaningful, personalised items that tell your unique story. Every piece is handcrafted with love in our studio.</p>
+        <div class="footer-socials">
+          <a class="social-btn" href="#" aria-label="Facebook"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+          <a class="social-btn" href="#" aria-label="Instagram"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+          <a class="social-btn" href="#" aria-label="TikTok"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.84 4.84 0 01-1.01-.06z"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col"><h4>Quick Links</h4><ul>
+        <li><a href="{% url 'about-page' %}">About Us</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Customer Care</h4><ul>
+        <li><a href="{% url 'contact-page' %}">Contact Support</a></li>
+        <li><a href="{% url 'faq-page' %}">FAQs</a></li>
+      </ul></div>
+    </div>
+  </footer>
+</main>
+
+<script>
+/* ── Cursor ── */
+const cursor=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+(function animateRing(){rx+=(mx-rx)*.15;ry+=(my-ry)*.15;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animateRing);})();
+function attachCursor(){document.querySelectorAll('a,button,input,select,textarea,summary').forEach(el=>{el.addEventListener('mouseenter',()=>{cursor.style.width='6px';cursor.style.height='6px';ring.style.width='52px';ring.style.height='52px';});el.addEventListener('mouseleave',()=>{cursor.style.width='10px';cursor.style.height='10px';ring.style.width='36px';ring.style.height='36px';});});}
+attachCursor();
+
+/* ── Auto-dismiss Django messages after 4 s ── */
+document.querySelectorAll('.django-msg').forEach(msg=>{
+  setTimeout(()=>{msg.style.transition='opacity .4s';msg.style.opacity='0';setTimeout(()=>msg.remove(),400);},4000);
+});
+
+/* ── Image preview for slide & product uploads ── */
+function wirePreview(inputId, thumbId, labelId){
+  const input=document.getElementById(inputId);
+  if(!input)return;
+  input.addEventListener('change',()=>{
+    const f=input.files[0];
+    if(!f)return;
+    document.getElementById(labelId).textContent=f.name;
+    const thumb=document.getElementById(thumbId);
+    thumb.src=URL.createObjectURL(f);
+    thumb.classList.add('show');
+  });
+}
+wirePreview('slideImageInput','slideThumb','slideFileLabel');
+wirePreview('productImageInput','productThumb','productFileLabel');
+
+/* ── Design submission note toggle (data-sub-id, no inline JS) ── */
+document.addEventListener('click', function(e){
+  const reqBtn = e.target.closest('.req-detail-toggle');
+  if(reqBtn){
+    const id = reqBtn.dataset.reqId;
+    const panel = document.getElementById('reqDetail' + id);
+    if(panel) panel.classList.toggle('open');
+    return;
+  }
+  // Admin notes toggle for send requests
+  const reqNoteBtn = e.target.closest('.sub-note-toggle[data-req-id]');
+  if(reqNoteBtn){
+    const id = reqNoteBtn.dataset.reqId;
+    const panel = document.getElementById('reqNotePanel' + id);
+    if(panel) panel.classList.toggle('open');
+  }
+});
+/* ── Design submission note toggle (data-sub-id, no inline JS) ── */
+document.addEventListener('click', function(e){
+  const btn = e.target.closest('.sub-note-toggle');
+  if(!btn) return;
+  const id = btn.dataset.subId;
+  const panel = document.getElementById('notePanel' + id);
+  if(panel) panel.classList.toggle('open');
+});
+
+/* ── Mobile drawer ── */
+const menuBtn=document.getElementById('mobileMenuBtn'),drawer=document.getElementById('mobileDrawer');
+if(menuBtn&&drawer){
+  function closeDrawer(){drawer.classList.remove('open');menuBtn.classList.remove('open');menuBtn.setAttribute('aria-expanded','false');drawer.setAttribute('aria-hidden','true');document.body.style.overflow='';}
+  menuBtn.addEventListener('click',()=>{const o=drawer.classList.toggle('open');menuBtn.classList.toggle('open',o);menuBtn.setAttribute('aria-expanded',o);drawer.setAttribute('aria-hidden',!o);document.body.style.overflow=o?'hidden':'';});
+  drawer.querySelectorAll('.nav-link').forEach(l=>l.addEventListener('click',closeDrawer));
+  document.addEventListener('click',e=>{if(!menuBtn.contains(e.target)&&!drawer.contains(e.target))closeDrawer();});
+}
+</script>
+
+</body>
+</html>

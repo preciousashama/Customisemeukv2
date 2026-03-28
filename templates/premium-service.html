@@ -1,0 +1,747 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CustomiseMe UK | Premium Services</title>
+<meta name="description" content="Explore our premium services including custom send-ins, subscriptions, vinyl installation, event setup, and creative workshops."/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --black: #0a0a0a; --white: #f8f8f6;
+    --grey-1: #1a1a1a; --grey-2: #2e2e2e; --grey-3: #4a4a4a;
+    --grey-4: #888888; --grey-5: #b0b0b0; --grey-6: #d4d4d4;
+    --grey-7: #e8e8e6; --grey-8: #f2f2f0;
+    --accent: #c8a96e; --accent-dark: #a8893e; --accent-light: #f0e4c8;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--white); color: var(--black); font-family: var(--sans); font-size: 15px; line-height: 1.6; overflow-x: hidden; }
+  * { cursor: none; }
+  #cursor { position: fixed; top: 0; left: 0; width: 10px; height: 10px; background: var(--black); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width .2s, height .2s; }
+  #cursor-ring { position: fixed; top: 0; left: 0; width: 36px; height: 36px; border: 1px solid var(--black); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .3s, height .3s; }
+
+  /* PAGE HERO — #f5f5f5 bg, black text, gold accents */
+  .page-hero { background: #f5f5f5; position: relative; overflow: hidden; }
+  .page-hero::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, transparent, transparent 40px, rgba(200,169,110,0.08) 40px, rgba(200,169,110,0.08) 41px); }
+  .page-hero-inner { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 120px 80px 72px; display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
+  .page-hero-overline { font-family: var(--sans); font-size: 11px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+  .page-hero-overline::before { content: ''; display: inline-block; width: 28px; height: 1px; background: var(--accent); }
+  .page-hero h1 { font-family: var(--serif); font-size: clamp(48px, 5vw, 80px); font-weight: 300; line-height: 1.05; letter-spacing: -0.01em; color: var(--black); }
+  .page-hero h1 em { font-style: italic; color: var(--accent); }
+  .page-hero-sub { margin-top: 20px; font-size: 14px; color: var(--grey-3); max-width: 420px; line-height: 1.7; }
+  .page-hero-stat { flex-shrink: 0; text-align: right; }
+  .page-hero-stat-num { font-family: var(--serif); font-size: 64px; font-weight: 300; line-height: 1; color: var(--black); letter-spacing: -0.02em; }
+  .page-hero-stat-num span { color: var(--accent); }
+  .page-hero-stat-label { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--grey-3); margin-top: 8px; }
+
+  /* PROMO TICKER */
+  .promo-ticker { position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: var(--black); height: 34px; overflow: hidden; display: flex; align-items: center; }
+  .promo-ticker-track { display: flex; align-items: center; white-space: nowrap; animation: ticker 40s linear infinite; will-change: transform; }
+  .promo-ticker-track:hover { animation-play-state: paused; }
+  @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  .promo-ticker-item { display: inline-flex; align-items: center; gap: 32px; font-family: var(--sans); font-size: 10.5px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.85); padding: 0 40px; }
+  .promo-ticker-item .dot { display: inline-block; width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.35); flex-shrink: 0; }
+
+  /* HEADER */
+  header, #mainHeader { position: fixed; top: 34px; left: 0; right: 0; z-index: 100; background: rgba(248,248,246,0.96); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--grey-6); display: flex; flex-direction: column; }
+  .header-top-row { display: flex; align-items: center; justify-content: center; padding: 8px 48px; border-bottom: 1px solid var(--grey-7); }
+  .search-wrap { display: flex; align-items: center; gap: 10px; border: 1px solid var(--grey-6); padding: 6px 16px; background: var(--grey-8); width: 460px; transition: border-color 0.3s, background 0.3s, width 0.3s; }
+  .search-wrap:focus-within { border-color: var(--black); background: var(--white); width: 520px; }
+  .search-wrap input { background: none; border: none; outline: none; font-family: var(--sans); font-size: 12px; color: var(--black); flex: 1; cursor: none; letter-spacing: 0.04em; }
+  .search-wrap input::placeholder { color: var(--grey-5); }
+  .search-icon { color: var(--grey-4); flex-shrink: 0; }
+  .header-bottom-row { display: flex; align-items: center; justify-content: space-between; padding: 0 48px; height: 68px; }
+  .logo { display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; flex-shrink: 0; }
+  .logo img { width: 48px; height: 48px; object-fit: contain; }
+  .logo-text { font-family: var(--serif); font-size: 24px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--black); }
+  nav { display: flex; align-items: center; gap: 32px; position: relative; }
+  .nav-item { position: static; }
+  nav > .nav-item > a { font-family: var(--sans); font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-3); text-decoration: none; position: relative; transition: color .2s; display: flex; align-items: center; gap: 5px; padding: 22px 0; }
+  nav > .nav-item > a::after { content: ''; position: absolute; bottom: 16px; left: 0; width: 0; height: 1px; background: var(--black); transition: width .3s; }
+  nav > .nav-item > a:hover, nav > .nav-item > a.active { color: var(--black); }
+  nav > .nav-item > a:hover::after, nav > .nav-item > a.active::after { width: 100%; }
+  nav > .nav-item > a .chevron { display: inline-block; width: 7px; height: 7px; border-right: 1px solid currentColor; border-bottom: 1px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform 0.2s; flex-shrink: 0; }
+  .nav-item:hover > a .chevron { transform: rotate(-135deg) translateY(-2px); }
+  .mega-menu { position: fixed; top: calc(34px + 34px + 68px); left: 0; right: 0; background: var(--white); border-bottom: 1px solid var(--grey-6); padding: 48px 80px 56px; opacity: 0; pointer-events: none; transform: translateY(-8px); transition: opacity 0.25s, transform 0.25s; z-index: 90; box-shadow: 0 20px 60px rgba(0,0,0,0.08); }
+  .nav-item:hover .mega-menu { opacity: 1; pointer-events: all; transform: translateY(0); }
+  .mega-menu-grid { display: grid; gap: 48px; align-items: start; }
+  .mega-menu-grid.cols-4 { grid-template-columns: repeat(4,1fr); }
+  .mega-menu-grid.cols-2 { grid-template-columns: repeat(2,1fr); }
+  .mega-menu-grid.cols-3 { grid-template-columns: repeat(3,1fr); }
+  .mega-col h5 { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--black); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--grey-6); }
+  .mega-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .mega-col ul li a { font-family: var(--sans); font-size: 13px; font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase; color: var(--grey-4); text-decoration: none; transition: color .2s, padding-left .2s; display: block; }
+  .mega-col ul li a:hover { color: var(--black); padding-left: 6px; }
+  .header-icons { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+  .hdr-icon-btn { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; cursor: none; color: var(--grey-3); padding: 8px 10px; transition: color .2s; }
+  .hdr-icon-btn:hover { color: var(--black); }
+  .hdr-icon-btn svg { display: block; flex-shrink: 0; }
+  .hdr-icon-label { font-family: var(--sans); font-size: 9px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1; white-space: nowrap; }
+  .hdr-icon-badge { position: absolute; top: 4px; right: 4px; width: 15px; height: 15px; border-radius: 50%; background: var(--black); color: var(--white); font-size: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+  .currency-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; cursor: none; color: var(--grey-3); padding: 8px 10px; transition: color .2s; }
+  .currency-btn:hover { color: var(--black); }
+  .currency-flag { font-size: 18px; line-height: 1; }
+  .currency-code { font-family: var(--sans); font-size: 9px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+  .icon-divider { width: 1px; height: 28px; background: var(--grey-6); margin: 0 6px; }
+  .hamburger { display: none; flex-direction: column; justify-content: center; align-items: center; gap: 5px; width: 40px; height: 40px; background: none; border: none; cursor: none; padding: 4px; flex-shrink: 0; }
+  .hamburger span { display: block; width: 22px; height: 1.5px; background: var(--black); transition: transform .35s, opacity .25s, width .3s; transform-origin: center; }
+  .hamburger.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .hamburger.active span:nth-child(2) { opacity: 0; width: 0; }
+  .hamburger.active span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+  .mobile-nav { display: none; position: fixed; top: calc(28px + 56px); left: 0; right: 0; background: rgba(248,248,246,0.97); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--grey-6); z-index: 99; padding: 0 32px; max-height: 0; overflow: hidden; transition: max-height .45s cubic-bezier(.4,0,.2,1), padding .35s; }
+  .mobile-nav.open { max-height: 400px; padding: 24px 32px 32px; }
+  .mobile-nav a { display: block; font-family: var(--sans); font-size: 13px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--grey-3); text-decoration: none; padding: 14px 0; border-bottom: 1px solid var(--grey-7); opacity: 0; transform: translateY(10px); transition: color .2s, padding-left .2s, opacity .3s, transform .3s; }
+  .mobile-nav a:last-child { border-bottom: none; }
+  .mobile-nav a:hover { color: var(--black); padding-left: 8px; }
+  .mobile-nav.open a { opacity: 1; transform: translateY(0); }
+  .mobile-nav.open a:nth-child(1) { transition-delay: .05s; }
+  .mobile-nav.open a:nth-child(2) { transition-delay: .10s; }
+  .mobile-nav.open a:nth-child(3) { transition-delay: .15s; }
+  .mobile-nav.open a:nth-child(4) { transition-delay: .20s; }
+  .mobile-nav.open a:nth-child(5) { transition-delay: .25s; }
+  .mobile-nav.open a:nth-child(6) { transition-delay: .30s; }
+
+  /* NEWSLETTER — #f5f5f5, black text, gold accents */
+  .newsletter { background: #f5f5f5; position: relative; overflow: hidden; }
+  .newsletter::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 60px, rgba(200,169,110,0.1) 60px, rgba(200,169,110,0.1) 61px); }
+  .newsletter-inner { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 100px 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .nl-overline { font-family: var(--sans); font-size: 11px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+  .nl-overline::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+  .nl-title { font-family: var(--serif); font-size: clamp(32px,3vw,50px); font-weight: 300; line-height: 1.15; color: var(--black); }
+  .nl-title em { font-style: italic; color: var(--accent); }
+  .nl-desc { font-size: 14px; color: var(--grey-3); line-height: 1.7; margin-top: 16px; }
+  .nl-form { display: flex; flex-direction: column; gap: 14px; }
+  .nl-row { display: flex; border: 1px solid var(--grey-6); background: var(--white); overflow: hidden; transition: border-color .2s; }
+  .nl-row:focus-within { border-color: var(--accent); }
+  .nl-row input { flex: 1; background: none; border: none; outline: none; padding: 16px 20px; font-family: var(--sans); font-size: 14px; color: var(--black); cursor: none; }
+  .nl-row input::placeholder { color: var(--grey-5); }
+  .nl-row button { background: var(--accent); color: var(--black); border: none; padding: 0 28px; font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; cursor: none; transition: background .2s; }
+  .nl-row button:hover { background: var(--accent-dark); color: var(--white); }
+  .nl-note { font-size: 11px; color: var(--grey-3); }
+
+  /* FOOTER */
+  footer { background: var(--black); color: var(--white); border-top: 1px solid var(--grey-2); padding: 80px 80px 40px; }
+  .footer-top { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 60px; padding-bottom: 64px; border-bottom: 1px solid var(--grey-2); }
+  .footer-brand p { font-size: 13px; color: var(--grey-4); line-height: 1.7; margin-top: 20px; max-width: 260px; }
+  .footer-socials { display: flex; gap: 12px; margin-top: 28px; }
+  .social-btn { width: 36px; height: 36px; border: 1px solid var(--grey-2); display: flex; align-items: center; justify-content: center; color: var(--grey-4); text-decoration: none; transition: border-color .2s, color .2s; }
+  .social-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .footer-col h4 { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--grey-5); margin-bottom: 24px; }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  .footer-col ul li a { font-size: 13px; color: var(--grey-4); text-decoration: none; transition: color .2s; }
+  .footer-col ul li a:hover { color: var(--accent); }
+  .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 32px; gap: 16px; flex-wrap: wrap; }
+  .footer-bottom p { font-size: 12px; color: var(--grey-4); }
+  .footer-bottom-links { display: flex; gap: 24px; }
+  .footer-bottom-links a { font-size: 12px; color: var(--grey-4); text-decoration: none; transition: color .2s; }
+  .footer-bottom-links a:hover { color: var(--accent); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .promo-ticker { height: 28px; } .promo-ticker-item { font-size: 9.5px; padding: 0 24px; }
+    header, #mainHeader { top: 28px; }
+    .header-top-row { display: none; }
+    .header-bottom-row { padding: 0 20px; height: 56px; }
+    .logo img { width: 36px; height: 36px; } .logo-text { font-size: 18px; }
+    nav { display: none; } .header-icons { display: none; }
+    .hamburger { display: flex !important; }
+    .mobile-nav { display: block; top: calc(28px + 56px); }
+    .page-hero-inner { padding: 100px 24px 56px; flex-direction: column; gap: 32px; }
+    .page-hero-stat { text-align: left; }
+    .newsletter-inner { padding: 72px 24px; grid-template-columns: 1fr; gap: 40px; }
+    footer { padding: 64px 24px 32px; } .footer-top { grid-template-columns: 1fr; gap: 32px; }
+  }
+
+  /* ── PREMIUM SERVICES ── */
+
+  /* Page hero — #f5f5f5, black text, gold accent line */
+  .page-hero {
+    background: #f5f5f5; position: relative; overflow: hidden;
+  }
+  .page-hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(-45deg, transparent, transparent 40px,
+      rgba(200,169,110,0.08) 40px, rgba(200,169,110,0.08) 41px);
+  }
+  .page-hero-inner {
+    position: relative; z-index: 1; max-width: 1280px; margin: 0 auto;
+    padding: 120px 80px 72px;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 40px;
+  }
+  .page-hero-overline {
+    font-family: var(--sans); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .page-hero-overline::before { content: ''; width: 28px; height: 1px; background: var(--accent); }
+  .page-hero h1 {
+    font-family: var(--serif); font-size: clamp(48px,5vw,80px);
+    font-weight: 300; line-height: 1.05; letter-spacing: -0.01em; color: var(--black);
+  }
+  .page-hero h1 em { font-style: italic; color: var(--accent); }
+  .page-hero-sub { margin-top: 20px; font-size: 14px; color: var(--grey-3); max-width: 420px; line-height: 1.7; }
+  .page-hero-stat { flex-shrink: 0; text-align: right; }
+  .page-hero-stat-num { font-family: var(--serif); font-size: 64px; font-weight: 300; line-height: 1; color: var(--black); }
+  .page-hero-stat-num span { color: var(--accent); }
+  .page-hero-stat-label { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--grey-3); margin-top: 8px; }
+
+  /* Marquee strip */
+  .marquee-section {
+    border-bottom: 1px solid var(--grey-6); overflow: hidden; padding: 16px 0;
+    background: var(--accent-light);
+  }
+  .marquee-track { display: flex; gap: 56px; width: max-content; animation: marquee 28s linear infinite; white-space: nowrap; }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .marquee-item {
+    font-family: var(--serif); font-size: 16px; font-weight: 300;
+    font-style: italic; color: var(--grey-3);
+    display: flex; align-items: center; gap: 20px;
+  }
+  .marquee-item::after { content: '✦'; font-style: normal; font-size: 9px; color: var(--accent); }
+
+  /* ── Section label & title ── */
+  .section-label {
+    font-family: var(--sans); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent);
+    display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+  }
+  .section-label::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+  .section-title {
+    font-family: var(--serif); font-size: clamp(32px,3.5vw,52px);
+    font-weight: 300; color: var(--black); line-height: 1.15;
+  }
+  .section-title em { font-style: italic; color: var(--accent); }
+
+  /* ── 4 SERVICE CARDS ── */
+  .services-section { padding: 100px 80px; background: var(--white); }
+  .services-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; }
+  .svc-card {
+    border: 1px solid var(--grey-7); padding: 44px 36px 40px;
+    display: flex; flex-direction: column; gap: 0;
+    position: relative; background: var(--white);
+    transition: border-color .25s, box-shadow .25s;
+  }
+  .svc-card:hover { border-color: var(--grey-5); box-shadow: 0 12px 40px rgba(0,0,0,0.07); }
+  .svc-icon {
+    width: 52px; height: 52px; border: 1px solid var(--grey-7);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent); margin-bottom: 24px;
+    transition: background .2s, border-color .2s;
+  }
+  .svc-card:hover .svc-icon { background: var(--accent-light); border-color: var(--accent); }
+  .svc-card-name {
+    font-family: var(--sans); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--black);
+    margin-bottom: 14px;
+  }
+  .svc-card-desc { font-size: 13px; color: var(--grey-3); line-height: 1.75; margin-bottom: 24px; }
+  .svc-card-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 36px; flex: 1; }
+  .svc-card-features li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 12px; color: var(--grey-3); line-height: 1.5;
+  }
+  .svc-card-features li::before {
+    content: ''; width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px;
+    background: var(--accent-light); border: 1px solid var(--accent);
+    background-image: url("data:image/svg+xml,%3Csvg width='9' height='7' viewBox='0 0 9 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3.5L3 5.5L8 1' stroke='%23a8893e' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: center;
+  }
+  .btn-svc {
+    display: block; width: 100%; padding: 14px; text-align: center;
+    font-family: var(--sans); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    border: 1px solid var(--black); background: transparent; color: var(--black);
+    cursor: none; text-decoration: none; transition: background .2s, color .2s; margin-top: auto;
+  }
+  .btn-svc:hover { background: var(--black); color: var(--white); }
+  .btn-svc.gold { background: var(--accent); border-color: var(--accent); color: var(--black); }
+  .btn-svc.gold:hover { background: var(--accent-dark); border-color: var(--accent-dark); color: var(--white); }
+
+  /* ── WORKSHOPS ── */
+  .workshops-section { padding: 0 80px 100px; background: var(--white); }
+  .workshops-wrap {
+    border: 1px solid var(--grey-7); padding: 64px 64px 56px;
+    position: relative; background: #f5f5f5;
+  }
+  .workshops-header { text-align: center; margin-bottom: 56px; }
+  .workshops-grid { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 0 48px; }
+  .workshop-item { display: flex; flex-direction: column; gap: 0; }
+  .workshop-num {
+    font-family: var(--serif); font-size: 56px; font-weight: 300;
+    color: var(--accent-light); line-height: 1; margin-bottom: 12px;
+    border-bottom: 1px solid var(--grey-6); padding-bottom: 16px;
+  }
+  .workshop-title {
+    font-family: var(--sans); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--black);
+    margin: 20px 0 12px;
+  }
+  .workshop-desc { font-size: 13px; color: var(--grey-3); line-height: 1.75; margin-bottom: 24px; }
+  .workshop-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 36px; }
+  .workshop-features li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 12px; color: var(--grey-3); line-height: 1.5;
+  }
+  .workshop-features li::before {
+    content: ''; width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px;
+    background: var(--accent-light); border: 1px solid var(--accent);
+    background-image: url("data:image/svg+xml,%3Csvg width='9' height='7' viewBox='0 0 9 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3.5L3 5.5L8 1' stroke='%23a8893e' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: center;
+  }
+  .workshop-divider { width: 1px; background: var(--grey-6); align-self: stretch; }
+
+  /* ── CTA STRIP ── */
+  .cta-strip {
+    background: var(--black); position: relative; overflow: hidden;
+    padding: 100px 80px;
+  }
+  .cta-strip::before {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(45deg, transparent, transparent 60px,
+      rgba(200,169,110,0.04) 60px, rgba(200,169,110,0.04) 61px);
+  }
+  .cta-inner { position: relative; z-index: 1; text-align: center; max-width: 640px; margin: 0 auto; }
+  .cta-inner .section-label { justify-content: center; }
+  .cta-inner .section-label::before { display: none; }
+  .cta-title {
+    font-family: var(--serif); font-size: clamp(36px,4vw,60px);
+    font-weight: 300; color: var(--white); line-height: 1.1; margin-bottom: 20px;
+  }
+  .cta-title em { font-style: italic; color: var(--accent); }
+  .cta-desc { font-size: 14px; color: var(--grey-4); line-height: 1.75; margin-bottom: 40px; }
+  .cta-actions { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+  .btn-cta-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--accent); color: var(--black);
+    font-family: var(--sans); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    padding: 16px 36px; border: none; cursor: none; text-decoration: none;
+    transition: background .2s;
+  }
+  .btn-cta-primary:hover { background: var(--accent-dark); color: var(--white); }
+  .btn-cta-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: transparent; color: var(--white);
+    font-family: var(--sans); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 16px 32px; border: 1px solid rgba(255,255,255,0.3);
+    cursor: none; text-decoration: none; transition: border-color .2s, background .2s;
+  }
+  .btn-cta-secondary:hover { border-color: var(--white); background: rgba(255,255,255,0.06); }
+
+  /* Newsletter */
+  .newsletter { background: #f5f5f5; position: relative; overflow: hidden; }
+  .newsletter::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 60px, rgba(200,169,110,0.1) 60px, rgba(200,169,110,0.1) 61px); }
+  .newsletter-inner { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 100px 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .nl-overline { font-family: var(--sans); font-size: 11px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+  .nl-overline::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+  .nl-title { font-family: var(--serif); font-size: clamp(32px,3vw,50px); font-weight: 300; line-height: 1.15; color: var(--black); }
+  .nl-title em { font-style: italic; color: var(--accent); }
+  .nl-desc { font-size: 14px; color: var(--grey-3); line-height: 1.7; margin-top: 16px; }
+  .nl-form { display: flex; flex-direction: column; gap: 14px; }
+  .nl-row { display: flex; border: 1px solid var(--grey-6); background: var(--white); overflow: hidden; transition: border-color .2s; }
+  .nl-row:focus-within { border-color: var(--accent); }
+  .nl-row input { flex: 1; background: none; border: none; outline: none; padding: 16px 20px; font-family: var(--sans); font-size: 14px; color: var(--black); cursor: none; }
+  .nl-row input::placeholder { color: var(--grey-5); }
+  .nl-row button { background: var(--accent); color: var(--black); border: none; padding: 0 28px; font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; cursor: none; transition: background .2s; }
+  .nl-row button:hover { background: var(--accent-dark); color: var(--white); }
+  .nl-note { font-size: 11px; color: var(--grey-3); }
+
+  /* Footer */
+  footer { background: var(--black); color: var(--white); border-top: 1px solid var(--grey-2); padding: 80px 80px 40px; }
+  .footer-top { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 60px; padding-bottom: 64px; border-bottom: 1px solid var(--grey-2); }
+  .footer-brand p { font-size: 13px; color: var(--grey-4); line-height: 1.7; margin-top: 20px; max-width: 260px; }
+  .footer-socials { display: flex; gap: 12px; margin-top: 28px; }
+  .social-btn { width: 36px; height: 36px; border: 1px solid var(--grey-2); display: flex; align-items: center; justify-content: center; color: var(--grey-4); text-decoration: none; transition: border-color .2s, color .2s; }
+  .social-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .footer-col h4 { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--grey-5); margin-bottom: 24px; }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  .footer-col ul li a { font-size: 13px; color: var(--grey-4); text-decoration: none; transition: color .2s; }
+  .footer-col ul li a:hover { color: var(--accent); }
+  .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 32px; gap: 16px; flex-wrap: wrap; }
+  .footer-bottom p { font-size: 12px; color: var(--grey-4); }
+  .footer-bottom-links { display: flex; gap: 24px; }
+  .footer-bottom-links a { font-size: 12px; color: var(--grey-4); text-decoration: none; transition: color .2s; }
+  .footer-bottom-links a:hover { color: var(--accent); }
+
+  /* Responsive */
+  @media (max-width: 1100px) {
+    .services-grid { grid-template-columns: repeat(2,1fr); }
+  }
+  @media (max-width: 768px) {
+    .page-hero-inner { padding: 100px 24px 56px; flex-direction: column; gap: 32px; }
+    .page-hero-stat { text-align: left; }
+    .services-section { padding: 72px 24px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .workshops-section { padding: 0 24px 80px; }
+    .workshops-wrap { padding: 40px 24px; }
+    .workshops-grid { grid-template-columns: 1fr; gap: 40px; }
+    .workshop-divider { display: none; }
+    .cta-strip { padding: 80px 24px; }
+    .newsletter-inner { padding: 72px 24px; grid-template-columns: 1fr; gap: 40px; }
+    footer { padding: 64px 24px 32px; }
+    .footer-top { grid-template-columns: 1fr; gap: 32px; }
+  }
+
+</style>
+</head>
+<body>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="promo-ticker" id="promoTicker">
+  <div class="promo-ticker-track">
+    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
+    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7e171018113e1d0b0d0a1113170d1b131b0b15501d1113">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
+    <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
+    <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
+    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="660f0800092605131512090b0f15030b03130d4805090b">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
+    <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
+    <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
+  </div>
+</div>
+<header id="mainHeader">
+  <div class="header-top-row">
+    <div class="search-wrap">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search products, designs, categories…"/>
+    </div>
+  </div>
+  <div class="header-bottom-row">
+    <a class="logo" href="{% url 'home-page' %}">
+      <img src="{% static 'icon.png' %}" alt="CustomiseMe UK Logo"/>
+      <!-- <span class="logo-text">CustomiseMe UK</span> -->
+    </a>
+    <nav>
+      <div class="nav-item"><a href="{% url 'home-page' %}">Home</a></div>
+      <div class="nav-item">
+        <a href="{% url 'shop-page' %}">Shop <span class="chevron"></span></a>
+        <div class="mega-menu"><div class="mega-menu-grid cols-4">
+          <div class="mega-col"><h5>Categories</h5><ul><li><a href="{% url 'shop-page' %}">All Products</a></li><li><a href="{% url 'shop-page' %}?cat=apparel">Apparel</a></li><li><a href="{% url 'shop-page' %}?cat=decorations">Decorations</a></li><li><a href="{% url 'shop-page' %}?cat=prints">Prints</a></li><li><a href="{% url 'shop-page' %}?cat=accessories">Accessories</a></li></ul></div>
+          <div class="mega-col"><h5>Apparel</h5><ul><li><a href="{% url 'shop-page' %}?cat=tshirts">T-Shirts</a></li><li><a href="{% url 'shop-page' %}?cat=hoodies">Hoodies</a></li><li><a href="{% url 'shop-page' %}?cat=bags">Bags</a></li></ul></div>
+          <div class="mega-col"><h5>Party Essentials</h5><ul><li><a href="{% url 'shop-page' %}?cat=banners">Vinyl Banners</a></li><li><a href="{% url 'shop-page' %}?cat=tableware">Plates, Cups, Utensils</a></li><li><a href="{% url 'shop-page' %}?cat=table-decor">Table Decor</a></li><li><a href="{% url 'shop-page' %}?cat=party-packs">Party Packs</a></li><li><a href="{% url 'shop-page' %}?cat=cake-decor">Cake Decor</a></li></ul></div>
+          <div class="mega-col"><h5>Stickers &amp; Labels</h5><ul><li><a href="{% url 'shop-page' %}?cat=vinyl-stickers">Vinyl Stickers</a></li><li><a href="{% url 'shop-page' %}?cat=custom-labels">Custom Labels</a></li><li><a href="{% url 'shop-page' %}?cat=wall-decals">Wall Decals</a></li><li><a href="{% url 'shop-page' %}?cat=sticker-packs">Sticker Packs</a></li></ul></div>
+        </div></div>
+      </div>
+      <div class="nav-item">
+        <a href="{% url 'design-studio-page' %}">Design Studio <span class="chevron"></span></a>
+        <div class="mega-menu"><div class="mega-menu-grid cols-2">
+          <div class="mega-col"><h5>Services</h5><ul><li><a href="{% url 'design-service-page' %}">Design Services</a></li></ul></div>
+          <div class="mega-col"><h5>Resources</h5><ul><li><a href="{% url 'design-studio-page' %}#resources">Design Templates</a></li><li><a href="{% url 'faq-page' %}">FAQs</a></li></ul></div>
+        </div></div>
+      </div>
+      <div class="nav-item">
+        <a href="{% url 'premium-page' %}">Premium Services <span class="chevron"></span></a>
+        <div class="mega-menu"><div class="mega-menu-grid cols-3">
+          <div class="mega-col"><h5>Services</h5><ul><li><a href="{% url 'senditems-page' %}">Send Items In</a></li><li><a href="{% url 'subscriptions-page' %}">Subscriptions</a></li></ul></div>
+          <div class="mega-col"><h5>Installation</h5><ul><li><a href="{% url 'installation-page' %}">Vinyl Installation</a></li><li><a href="{% url 'premium-page' %}">Setup at Event</a></li></ul></div>
+          <div class="mega-col"><h5>Workshops</h5><ul><li><a href="{% url 'workshop-page' %}">Group Workshop</a></li><li><a href="{% url 'premium-page' %}">Station Experience</a></li></ul></div>
+        </div></div>
+      </div>
+      <div class="nav-item"><a href="{% url 'about-page' %}">About</a></div>
+      <!-- <div class="nav-item"><a href="{% url 'contact-page' %}">Contact</a></div> -->
+    </nav>
+    <div class="header-icons">
+      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">🇬🇧</span><span class="currency-code">GBP £</span></button>
+      <div class="icon-divider"></div>
+      <button class="hdr-icon-btn" aria-label="Saved items">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span class="hdr-icon-label">Saved</span><span class="hdr-icon-badge">3</span>
+      </button>
+      <button class="hdr-icon-btn" aria-label="Shopping bag">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span class="hdr-icon-label">Bag</span><span class="hdr-icon-badge">2</span>
+      </button>
+      <button class="hdr-icon-btn" aria-label="My account">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="hdr-icon-label">Account</span>
+      </button>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<div class="mobile-nav" id="mobileNav" aria-hidden="true">
+  <a href="{% url 'home-page' %}">Home</a>
+  <a href="{% url 'shop-page' %}">Shop</a>
+  <a href="{% url 'design-studio-page' %}">Design Studio</a>
+  <a href="{% url 'premium-page' %}">Premium Services</a>
+  <a href="{% url 'about-page' %}">About</a>
+  <!-- <a href="{% url 'contact-page' %}">Contact</a> -->
+</div>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-hero-text">
+      <div class="page-hero-overline">Bespoke Solutions</div>
+      <h1>Premium<br/><em>Services</em></h1>
+      <p class="page-hero-sub">Professional solutions tailored to your unique requirements — from personalised send-ins to full event setup and creative workshops.</p>
+    </div>
+    <div class="page-hero-stat">
+      <div class="page-hero-stat-num">5<span>+</span></div>
+      <div class="page-hero-stat-label">Service Offerings</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<!-- <div class="marquee-section">
+  <div class="marquee-track">
+    <span class="marquee-item">Send Items In</span>
+    <span class="marquee-item">Subscriptions</span>
+    <span class="marquee-item">Vinyl Installation</span>
+    <span class="marquee-item">Event Setup</span>
+    <span class="marquee-item">Workshops</span>
+    <span class="marquee-item">Custom Design</span>
+    <span class="marquee-item">UK-Wide Coverage</span>
+    <span class="marquee-item">Send Items In</span>
+    <span class="marquee-item">Subscriptions</span>
+    <span class="marquee-item">Vinyl Installation</span>
+    <span class="marquee-item">Event Setup</span>
+    <span class="marquee-item">Workshops</span>
+    <span class="marquee-item">Custom Design</span>
+    <span class="marquee-item">UK-Wide Coverage</span>
+  </div>
+</div> -->
+
+<!-- 4 SERVICE CARDS -->
+<section class="services-section">
+  <div style="max-width:1280px;margin:0 auto;">
+    <div style="margin-bottom:56px;">
+      <div class="section-label">What We Offer</div>
+      <h2 class="section-title">Our <em>Services</em></h2>
+    </div>
+    <div class="services-grid">
+
+      <!-- Send Items In -->
+      <div class="svc-card reveal">
+        <div class="svc-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <div class="svc-card-name">Send Items In</div>
+        <p class="svc-card-desc">Transform your personal items with professional customisation. Send us your pieces and we'll create something truly unique.</p>
+        <ul class="svc-card-features">
+          <li>Expert customisation on your own garments</li>
+          <li>Full insurance coverage during processing</li>
+          <li>Fast 10–14 day turnaround</li>
+          <li>CustomiseMe UK quality guarantee</li>
+        </ul>
+        <a href="{% url 'senditems-page' %}" class="btn-svc">Learn More</a>
+      </div>
+
+      <!-- Subscriptions -->
+      <div class="svc-card reveal">
+        <div class="svc-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+            <line x1="12" y1="22.08" x2="12" y2="12"/>
+          </svg>
+        </div>
+        <div class="svc-card-name">Subscriptions</div>
+        <p class="svc-card-desc">Regular deliveries of curated party supplies and custom items with exclusive member benefits every month.</p>
+        <ul class="svc-card-features">
+          <li>Monthly curated design collections</li>
+          <li>Exclusive 15% discount on all orders</li>
+          <li>Priority VIP customer support</li>
+          <li>Free expedited shipping included</li>
+        </ul>
+        <a href="{% url 'subscriptions-page' %}" class="btn-svc gold">View Plans</a>
+      </div>
+
+      <!-- Vinyl Installation -->
+      <div class="svc-card reveal">
+        <div class="svc-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M3 9h18M9 21V9"/>
+          </svg>
+        </div>
+        <div class="svc-card-name">Vinyl Installation</div>
+        <p class="svc-card-desc">Professional installation for wall vinyls, window graphics, and large-scale projects across the UK — flawlessly applied.</p>
+        <ul class="svc-card-features">
+          <li>Windows, walls, and backdrops</li>
+          <li>In-house expert installation team</li>
+          <li>Perfect, bubble-free results guaranteed</li>
+          <li>Comprehensive UK-wide coverage</li>
+        </ul>
+        <a href="{% url 'installation-page' %}" class="btn-svc">Request Quote</a>
+      </div>
+
+      <!-- Event Setup -->
+      <div class="svc-card reveal">
+        <div class="svc-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+          </svg>
+        </div>
+        <div class="svc-card-name">Event Setup</div>
+        <p class="svc-card-desc">Complete event setup and styling services for parties, corporate events, and special occasions — end-to-end.</p>
+        <ul class="svc-card-features">
+          <li>End-to-end event planning support</li>
+          <li>Professional on-site installation</li>
+          <li>Bespoke custom decorations</li>
+          <li>Dedicated on-site coordination</li>
+        </ul>
+        <a href="{% url 'contact-page' %}?service=event" class="btn-svc">Get Quote</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- WORKSHOPS -->
+<section class="workshops-section">
+  <div style="max-width:1280px;margin:0 auto;">
+    <div class="workshops-wrap">
+      <div class="workshops-header">
+        <div class="section-label" style="justify-content:center;">Creative Learning</div>
+        <h2 class="section-title" style="text-align:center;">Creative <em>Workshops</em></h2>
+        <p style="font-size:14px;color:var(--grey-3);max-width:560px;margin:20px auto 0;line-height:1.8;text-align:center;">Join our hands-on workshops to learn design techniques, DIY party décor, and custom printing skills from our expert team.</p>
+      </div>
+
+      <div class="workshops-grid">
+
+        <!-- Group Workshop -->
+        <div class="workshop-item reveal">
+          <div class="workshop-num">01</div>
+          <div class="workshop-title">Group Iron On Workshop</div>
+          <p class="workshop-desc">Perfect for parties, team building, or group events. Learn the basics of iron-on transfers in a fun, social setting with expert guidance throughout.</p>
+          <ul class="workshop-features">
+            <li>Groups of 5–15 people</li>
+            <li>Comprehensive 2-hour session</li>
+            <li>All premium materials included</li>
+            <li>Take home your own creations</li>
+          </ul>
+          <a href="{% url 'workshop-page' %}" class="btn-svc">Book Group Session</a>
+        </div>
+
+        <div class="workshop-divider"></div>
+
+        <!-- Individual Workshop -->
+        <div class="workshop-item reveal">
+          <div class="workshop-num">02</div>
+          <div class="workshop-title">Individual Iron On Experience</div>
+          <p class="workshop-desc">One-on-one personalised session to master iron-on techniques and create custom pieces with dedicated expert guidance tailored entirely to you.</p>
+          <ul class="workshop-features">
+            <li>Private exclusive 1-on-1 session</li>
+            <li>1.5-hour personalised instruction</li>
+            <li>Custom project guidance</li>
+            <li>Expert professional tips and tricks</li>
+          </ul>
+          <a href="{% url 'workshop-page' %}" class="btn-svc">Book Private Session</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA STRIP -->
+<section class="cta-strip">
+  <div class="cta-inner">
+    <div class="section-label" style="justify-content:center;color:var(--accent);">Let's Talk</div>
+    <h2 class="cta-title">Ready to Get <em>Started?</em></h2>
+    <p class="cta-desc">Contact us to discuss your needs and find the perfect service for your project. Our team responds within 2 working hours.</p>
+    <div class="cta-actions">
+      <a href="{% url 'contact-page' %}" class="btn-cta-primary">
+        Contact Us
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="{% url 'shop-page' %}" class="btn-cta-secondary">Browse Shop</a>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter">
+  <div class="newsletter-inner">
+    <div>
+      <div class="nl-overline">Stay in Touch</div>
+      <h2 class="nl-title">Get <em>10% off</em><br/>your first order</h2>
+      <p class="nl-desc">Join our newsletter for exclusive offers, new arrivals, and behind-the-scenes studio stories.</p>
+    </div>
+    <div class="nl-form">
+      <div class="nl-row">
+        <input type="email" placeholder="Your email address"/>
+        <button type="button">Subscribe</button>
+      </div>
+      <p class="nl-note">By subscribing you agree to our Privacy Policy. Unsubscribe anytime.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <!-- <a class="logo" href="{% url 'home-page' %}"><img src="{% static 'icon.png' %}" alt="" style="filter:invert(1);width:36px;height:36px;"/></a> -->
+      <p>Dedicated to creating meaningful, personalised items that tell your unique story. Every piece is handcrafted with love in our studio.</p>
+      <div class="footer-socials">
+        <a class="social-btn" href="#" aria-label="Facebook"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+        <a class="social-btn" href="#" aria-label="Instagram"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+        <a class="social-btn" href="#" aria-label="Twitter"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.84 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg></a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Quick Links</h4><ul>
+      <li><a href="{% url 'about-page' %}">About Us</a></li>
+      <li><a href="{% url 'shop-page' %}">Shop All</a></li>
+    {% if user.is_authenticated %}
+      <li><a href="{% url 'design-studio-page' %}">Design Studio</a></li>
+    {% endif %}
+      <li><a href="{% url 'faq-page' %}">FAQs</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Services</h4><ul>
+    {% if user.is_authenticated %}
+      <li><a href="{% url 'senditems-page' %}">Send Items In</a></li>
+    {% endif %}
+      <li><a href="{% url 'subscriptions-page' %}">Subscriptions</a></li>
+      <li><a href="{% url 'installation-page' %}">Vinyl Installation</a></li>
+      <li><a href="{% url 'workshop-page' %}">Group Workshop</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Legal</h4><ul>
+      <li><a href="{% url 'privacy-page' %}">Privacy Policy</a></li>
+      <li><a href="{% url 'conditions-page' %}">Terms</a></li>
+      <li><a href="{% url 'contact-page' %}">Contact</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 CustomiseMe UK. All rights reserved.</p>
+    <div class="footer-bottom-links"><a href="{% url 'privacy-page' %}">Privacy</a><a href="{% url 'conditions-page' %}">Terms</a></div>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  const cursor=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+  (function loop(){rx+=(mx-rx)*.15;ry+=(my-ry)*.15;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+  document.querySelectorAll('a,button,input,select,textarea').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{cursor.style.width='6px';cursor.style.height='6px';ring.style.width='52px';ring.style.height='52px';});
+    el.addEventListener('mouseleave',()=>{cursor.style.width='10px';cursor.style.height='10px';ring.style.width='36px';ring.style.height='36px';});
+  });
+  const hb=document.getElementById('hamburger'),mn=document.getElementById('mobileNav');
+  if(hb&&mn){
+    hb.addEventListener('click',()=>{const o=mn.classList.toggle('open');hb.classList.toggle('active',o);hb.setAttribute('aria-expanded',o);mn.setAttribute('aria-hidden',!o);document.body.style.overflow=o?'hidden':'';});
+    mn.querySelectorAll('a').forEach(l=>l.addEventListener('click',()=>{mn.classList.remove('open');hb.classList.remove('active');hb.setAttribute('aria-expanded','false');mn.setAttribute('aria-hidden','true');document.body.style.overflow='';}));
+    document.addEventListener('click',e=>{if(!hb.contains(e.target)&&!mn.contains(e.target)){mn.classList.remove('open');hb.classList.remove('active');hb.setAttribute('aria-expanded','false');mn.setAttribute('aria-hidden','true');document.body.style.overflow='';}});
+  }
+  const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)';e.target.style.transition='opacity .7s ease, transform .7s ease';}});},{threshold:0.08});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.opacity='0';el.style.transform='translateY(24px)';el.style.transitionDelay=(i*0.08)+'s';obs.observe(el);});
+</script>
+</body>
+</html>
