@@ -77,6 +77,9 @@ def _save_cart(request, cart):
 
 
 
+def page_not_found_view(request, exception=None):
+    return render(request, "404.html", status=404)
+
 
 def homepage(request):
     slides   = CarouselSlide.objects.filter(is_active=True).order_by("position", "id")
