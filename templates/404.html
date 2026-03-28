@@ -1,0 +1,447 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CustomiseMe UK | Page Not Found</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --black: #0a0a0a; --white: #f8f8f6;
+    --grey-1: #1a1a1a; --grey-2: #2e2e2e; --grey-3: #4a4a4a;
+    --grey-4: #888888; --grey-5: #b0b0b0; --grey-6: #d4d4d4;
+    --grey-7: #e8e8e6; --grey-8: #f2f2f0;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans:  'DM Sans', system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { height: 100%; scroll-behavior: smooth; }
+  body {
+    background: var(--white); color: var(--black);
+    font-family: var(--sans); font-size: 15px; line-height: 1.6;
+    overflow-x: hidden; min-height: 100vh;
+    display: flex; flex-direction: column;
+  }
+
+  /* ── CURSOR ── */
+  * { cursor: none; }
+  #cursor { position: fixed; top: 0; left: 0; width: 10px; height: 10px; background: var(--black); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width .2s, height .2s; }
+  #cursor-ring { position: fixed; top: 0; left: 0; width: 36px; height: 36px; border: 1px solid var(--black); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .3s, height .3s; }
+
+  /* ── PROMO TICKER ── */
+  .promo-ticker { position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: var(--black); height: 34px; overflow: hidden; display: flex; align-items: center; }
+  .promo-ticker-track { display: flex; align-items: center; white-space: nowrap; animation: ticker 40s linear infinite; will-change: transform; }
+  .promo-ticker-track:hover { animation-play-state: paused; }
+  @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  .promo-ticker-item { display: inline-flex; align-items: center; gap: 32px; font-family: var(--sans); font-size: 10.5px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.85); padding: 0 40px; }
+  .promo-ticker-item .dot { display: inline-block; width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.35); flex-shrink: 0; }
+
+  /* ── HEADER ── */
+  header { position: fixed; top: 34px; left: 0; right: 0; z-index: 100; background: rgba(248,248,246,0.96); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--grey-6); display: flex; flex-direction: column; }
+  .header-top-row { display: flex; align-items: center; justify-content: center; padding: 8px 48px; border-bottom: 1px solid var(--grey-7); }
+  .search-wrap { display: flex; align-items: center; gap: 10px; border: 1px solid var(--grey-6); padding: 6px 16px; background: var(--grey-8); width: 460px; }
+  .search-wrap input { background: none; border: none; outline: none; font-family: var(--sans); font-size: 12px; color: var(--black); flex: 1; cursor: none; }
+  .search-wrap input::placeholder { color: var(--grey-5); }
+  .search-icon { color: var(--grey-4); flex-shrink: 0; }
+  .header-bottom-row { display: flex; align-items: center; justify-content: space-between; padding: 0 48px; height: 68px; }
+  .logo { display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; flex-shrink: 0; }
+  .logo img { width: 48px; height: 48px; object-fit: contain; }
+  nav { display: flex; align-items: center; gap: 32px; }
+  nav a { font-family: var(--sans); font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-3); text-decoration: none; position: relative; transition: color .2s; padding: 22px 0; }
+  nav a::after { content: ''; position: absolute; bottom: 16px; left: 0; width: 0; height: 1px; background: var(--black); transition: width .3s ease; }
+  nav a:hover { color: var(--black); }
+  nav a:hover::after { width: 100%; }
+  .header-icons { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+  .hdr-icon-btn { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; cursor: none; color: var(--grey-3); padding: 8px 10px; transition: color .2s; text-decoration: none; }
+  .hdr-icon-btn:hover { color: var(--black); }
+  .hdr-icon-btn svg { display: block; }
+  .hdr-icon-label { font-family: var(--sans); font-size: 9px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1; white-space: nowrap; }
+  .hdr-icon-badge { position: absolute; top: 4px; right: 4px; width: 15px; height: 15px; border-radius: 50%; background: var(--black); color: var(--white); font-size: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .currency-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; cursor: none; color: var(--grey-3); padding: 8px 10px; transition: color .2s; }
+  .currency-btn:hover { color: var(--black); }
+  .currency-flag { font-size: 18px; line-height: 1; }
+  .currency-code { font-family: var(--sans); font-size: 9px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+  .icon-divider { width: 1px; height: 28px; background: var(--grey-6); margin: 0 6px; }
+  /* Account dropdown */
+  .hdr-account-wrap { position: relative; }
+  .hdr-account-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; cursor: none; color: var(--grey-3); padding: 8px 10px; transition: color .2s; }
+  .hdr-account-btn:hover, .hdr-account-wrap.open .hdr-account-btn { color: var(--black); }
+  .hdr-account-btn svg { display: block; }
+  .hdr-account-btn .hdr-icon-label { display: flex; align-items: center; gap: 4px; }
+  .hdr-account-chevron { display: inline-block; width: 6px; height: 6px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg) translateY(-1px); transition: transform .2s; }
+  .hdr-account-wrap.open .hdr-account-chevron { transform: rotate(-135deg) translateY(1px); }
+  .hdr-account-menu { display: none; position: absolute; top: calc(100% + 6px); right: 0; min-width: 176px; background: var(--white); border: 1px solid var(--grey-6); box-shadow: 0 16px 48px rgba(0,0,0,0.1); z-index: 200; }
+  .hdr-account-wrap.open .hdr-account-menu { display: block; }
+  .hdr-account-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 16px; background: none; border: none; font-family: var(--sans); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--grey-3); text-decoration: none; transition: background .15s, color .15s; cursor: none; text-align: left; border-bottom: 1px solid var(--grey-7); }
+  .hdr-account-item:last-child { border-bottom: none; }
+  .hdr-account-item:hover { background: var(--grey-8); color: var(--black); }
+  .hdr-account-item svg { flex-shrink: 0; }
+  .hdr-account-item--danger { color: #c0392b; }
+  .hdr-account-item--danger:hover { background: #fdf0ef; color: #a93226; }
+  /* Hamburger */
+  .hamburger { display: none; flex-direction: column; justify-content: center; align-items: center; gap: 5px; width: 40px; height: 40px; background: none; border: none; cursor: none; padding: 4px; flex-shrink: 0; }
+  .hamburger span { display: block; width: 22px; height: 1.5px; background: var(--black); transition: transform .35s, opacity .25s, width .3s; transform-origin: center; }
+  .hamburger.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .hamburger.active span:nth-child(2) { opacity: 0; width: 0; }
+  .hamburger.active span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+  .mobile-nav { display: none; position: fixed; top: calc(28px + 56px); left: 0; right: 0; background: rgba(248,248,246,0.97); backdrop-filter: blur(16px); border-bottom: 1px solid var(--grey-6); z-index: 99; padding: 0 32px; max-height: 0; overflow: hidden; transition: max-height .45s cubic-bezier(.4,0,.2,1), padding .35s; }
+  .mobile-nav.open { max-height: 400px; padding: 24px 32px 32px; }
+  .mobile-nav a { display: block; font-family: var(--sans); font-size: 13px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--grey-3); text-decoration: none; padding: 14px 0; border-bottom: 1px solid var(--grey-7); opacity: 0; transform: translateY(10px); transition: color .2s, padding-left .2s, opacity .3s, transform .3s; }
+  .mobile-nav a:last-child { border-bottom: none; }
+  .mobile-nav a:hover { color: var(--black); padding-left: 8px; }
+  .mobile-nav.open a { opacity: 1; transform: translateY(0); }
+  .mobile-nav.open a:nth-child(1) { transition-delay: .05s; }
+  .mobile-nav.open a:nth-child(2) { transition-delay: .10s; }
+  .mobile-nav.open a:nth-child(3) { transition-delay: .15s; }
+  .mobile-nav.open a:nth-child(4) { transition-delay: .20s; }
+  .mobile-nav.open a:nth-child(5) { transition-delay: .25s; }
+
+  /* ── PAGE ── */
+  .page-wrap { flex: 1; padding-top: 136px !important; display: flex; align-items: center; }
+
+  /* ── 404 BLOCK ── */
+  .error-block {
+    max-width: 700px; margin: 0 auto;
+    padding: 80px 48px 100px;
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center;
+  }
+
+  /* Large decorative 404 */
+  .error-num {
+    font-family: var(--serif);
+    font-size: clamp(96px, 18vw, 180px);
+    font-weight: 300; line-height: 1;
+    color: var(--grey-7);
+    letter-spacing: -0.04em;
+    margin-bottom: 0;
+    position: relative;
+    user-select: none;
+  }
+  /* Thin overline above the 404 */
+  .error-num::before {
+    content: '';
+    display: block;
+    width: 40px; height: 1px;
+    background: var(--grey-5);
+    margin: 0 auto 28px;
+  }
+
+  .error-overline {
+    font-family: var(--sans); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.28em; text-transform: uppercase; color: var(--grey-4);
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 8px; margin-bottom: 20px;
+  }
+  .error-overline::before, .error-overline::after {
+    content: ''; width: 24px; height: 1px; background: var(--grey-6);
+  }
+
+  .error-title {
+    font-family: var(--serif);
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 300; line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .error-title em { font-style: italic; color: var(--grey-4); }
+
+  .error-desc {
+    font-size: 14px; color: var(--grey-4);
+    line-height: 1.8; max-width: 400px;
+    margin-bottom: 40px;
+  }
+
+  /* Action buttons */
+  .error-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+  .btn-home {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 32px;
+    background: var(--black); color: var(--white);
+    font-family: var(--sans); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    border: none; cursor: none; text-decoration: none;
+    position: relative; overflow: hidden;
+  }
+  .btn-home::after { content: ''; position: absolute; inset: 0; background: var(--grey-2); transform: translateX(-100%); transition: transform .35s ease; }
+  .btn-home:hover::after { transform: translateX(0); }
+  .btn-home span { position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; }
+
+  .btn-shop {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 32px;
+    background: none; color: var(--black);
+    font-family: var(--sans); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    border: 1px solid var(--grey-6); cursor: none; text-decoration: none;
+    transition: border-color .2s, background .2s;
+  }
+  .btn-shop:hover { border-color: var(--grey-3); background: var(--grey-8); }
+
+  /* Quick links strip */
+  .quick-links {
+    margin-top: 56px; padding-top: 32px;
+    border-top: 1px solid var(--grey-7);
+    display: flex; gap: 32px; flex-wrap: wrap; justify-content: center;
+  }
+  .quick-link {
+    font-family: var(--sans); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--grey-4); text-decoration: none;
+    transition: color .2s; display: flex; align-items: center; gap: 6px;
+  }
+  .quick-link:hover { color: var(--black); }
+  .quick-link svg { flex-shrink: 0; }
+
+  /* ── FOOTER ── */
+  footer { background: var(--black); color: var(--white); padding: 64px 80px 36px; }
+  .footer-bottom { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .footer-bottom p { font-size: 12px; color: var(--grey-4); }
+  .footer-bottom-links { display: flex; gap: 24px; }
+  .footer-bottom-links a { font-size: 12px; color: var(--grey-4); text-decoration: none; transition: color .2s; }
+  .footer-bottom-links a:hover { color: var(--white); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .promo-ticker { height: 28px; }
+    header { top: 28px; }
+    .header-top-row { display: none; }
+    .header-bottom-row { padding: 0 20px; height: 56px; }
+    .logo img { width: 36px; height: 36px; }
+    nav { display: none; }
+    .header-icons { display: none; }
+    .hamburger { display: flex !important; }
+    .mobile-nav { display: block; top: calc(28px + 56px); }
+    .page-wrap { padding-top: 84px !important; }
+    .error-block { padding: 56px 24px 72px; }
+    .error-actions { flex-direction: column; width: 100%; }
+    .btn-home, .btn-shop { justify-content: center; }
+    footer { padding: 40px 24px 28px; }
+    .footer-bottom { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- PROMO TICKER -->
+<div class="promo-ticker">
+  <div class="promo-ticker-track">
+    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
+    <span class="promo-ticker-item">info@customisemeuk.com <span class="dot"></span></span>
+    <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
+    <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
+    <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
+    <span class="promo-ticker-item">info@customisemeuk.com <span class="dot"></span></span>
+    <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
+    <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
+    <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header id="mainHeader">
+  <div class="header-top-row">
+    <div class="search-wrap">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search products, designs, categories…"/>
+    </div>
+  </div>
+  <div class="header-bottom-row">
+    <a class="logo" href="{% url 'home-page' %}">
+      <img src="{% static 'icon.png' %}" alt="CustomiseMe UK Logo"/>
+    </a>
+    <nav>
+      <a href="{% url 'home-page' %}">Home</a>
+      <a href="{% url 'shop-page' %}">Shop</a>
+      <a href="{% url 'design-studio-page' %}">Design Studio</a>
+      <a href="{% url 'premium-page' %}">Premium Services</a>
+      <a href="{% url 'about-page' %}">About</a>
+    </nav>
+    <div class="header-icons">
+      <button class="currency-btn" aria-label="Currency: GBP">
+        <span class="currency-flag">🇬🇧</span>
+        <span class="currency-code">GBP £</span>
+      </button>
+      <div class="icon-divider"></div>
+      {% if user.is_authenticated %}
+      <a href="{% url 'wishlist-page' %}" class="hdr-icon-btn" aria-label="Saved items">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span class="hdr-icon-label">Saved</span>
+        {% if wish_count %}<span class="hdr-icon-badge">{{ wish_count }}</span>{% endif %}
+      </a>
+      <a href="{% url 'cart-page' %}" class="hdr-icon-btn" aria-label="Shopping bag">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span class="hdr-icon-label">Bag</span>
+        {% if cart_count %}<span class="hdr-icon-badge">{{ cart_count }}</span>{% endif %}
+      </a>
+      <div class="hdr-account-wrap" id="accountWrap">
+        <button class="hdr-account-btn" id="accountBtn" aria-label="My account" aria-haspopup="true" aria-expanded="false">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span class="hdr-icon-label">Account <span class="hdr-account-chevron"></span></span>
+        </button>
+        <div class="hdr-account-menu" role="menu">
+          <a href="{% url 'me' %}" class="hdr-account-item" role="menuitem">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>My Profile
+          </a>
+          <a href="{% url 'wishlist-page' %}" class="hdr-account-item" role="menuitem">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l7.84-7.84a5.5 5.5 0 000-7.78z"/></svg>My Wishlist
+          </a>
+          <a href="{% url 'cart-page' %}" class="hdr-account-item" role="menuitem">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>My Cart
+          </a>
+          <form method="post" action="{% url 'logout' %}" style="margin:0;">
+            {% csrf_token %}
+            <button type="submit" class="hdr-account-item hdr-account-item--danger" role="menuitem">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Log Out
+            </button>
+          </form>
+        </div>
+      </div>
+      {% else %}
+      <a href="{% url 'login-page' %}" class="hdr-icon-btn" aria-label="Sign in">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="hdr-icon-label">Sign In</span>
+      </a>
+      {% endif %}
+    </div>
+    <!-- Hamburger: outside .header-icons, stays visible on mobile -->
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav" aria-hidden="true">
+  <a href="{% url 'home-page' %}">Home</a>
+  <a href="{% url 'shop-page' %}">Shop</a>
+  <a href="{% url 'design-studio-page' %}">Design Studio</a>
+  <a href="{% url 'premium-page' %}">Premium Services</a>
+  <a href="{% url 'about-page' %}">About</a>
+  {% if user.is_authenticated %}
+  <a href="{% url 'me' %}">My Account</a>
+  {% else %}
+  <a href="{% url 'login-page' %}">Sign In</a>
+  {% endif %}
+</div>
+
+<!-- PAGE -->
+<div class="page-wrap">
+  <div class="error-block">
+
+    <div class="error-num">404</div>
+
+    <div class="error-overline">Page Not Found</div>
+
+    <h1 class="error-title">This page doesn't<br/><em>exist.</em></h1>
+
+    <p class="error-desc">
+      The page you're looking for may have been moved, renamed, or never existed.
+      Let's get you back on track.
+    </p>
+
+    <div class="error-actions">
+      <a class="btn-home" href="{% url 'home-page' %}">
+        <span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Go Home
+        </span>
+      </a>
+      <a class="btn-shop" href="{% url 'shop-page' %}">Browse Shop</a>
+    </div>
+
+    <div class="quick-links">
+      <a class="quick-link" href="{% url 'about-page' %}">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        About Us
+      </a>
+      <a class="quick-link" href="{% url 'contact-page' %}">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Contact Support
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER (minimal — just the bottom bar) -->
+<footer>
+  <div class="footer-bottom">
+    <p>© 2026 CustomiseMe UK. All rights reserved.</p>
+    <div class="footer-bottom-links">
+      <a href="{% url 'privacy-page' %}">Privacy</a>
+      <a href="{% url 'conditions-page' %}">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ── Cursor ── */
+  const cursor = document.getElementById('cursor');
+  const ring   = document.getElementById('cursor-ring');
+  let mx=0, my=0, rx=0, ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
+  (function loop(){ rx+=(mx-rx)*.15; ry+=(my-ry)*.15; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(loop); })();
+  document.querySelectorAll('a,button,input').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.width='6px'; cursor.style.height='6px'; ring.style.width='52px'; ring.style.height='52px'; });
+    el.addEventListener('mouseleave', () => { cursor.style.width='10px'; cursor.style.height='10px'; ring.style.width='36px'; ring.style.height='36px'; });
+  });
+
+  /* ── Hamburger ── */
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobileNav');
+  if (hamburger && mobileNav) {
+    hamburger.addEventListener('click', () => {
+      const open = mobileNav.classList.toggle('open');
+      hamburger.classList.toggle('active', open);
+      hamburger.setAttribute('aria-expanded', open);
+      mobileNav.setAttribute('aria-hidden', !open);
+      document.body.style.overflow = open ? 'hidden' : '';
+    });
+    mobileNav.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        mobileNav.classList.remove('open'); hamburger.classList.remove('active');
+        hamburger.setAttribute('aria-expanded','false');
+        mobileNav.setAttribute('aria-hidden','true');
+        document.body.style.overflow = '';
+      });
+    });
+    document.addEventListener('click', e => {
+      if (!hamburger.contains(e.target) && !mobileNav.contains(e.target)) {
+        mobileNav.classList.remove('open'); hamburger.classList.remove('active');
+        hamburger.setAttribute('aria-expanded','false');
+        mobileNav.setAttribute('aria-hidden','true');
+        document.body.style.overflow = '';
+      }
+    });
+  }
+
+  /* ── Account dropdown ── */
+  const accountBtn  = document.getElementById('accountBtn');
+  const accountWrap = document.getElementById('accountWrap');
+  if (accountBtn && accountWrap) {
+    accountBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      const isOpen = accountWrap.classList.toggle('open');
+      accountBtn.setAttribute('aria-expanded', isOpen);
+    });
+    document.addEventListener('click', e => {
+      if (!accountWrap.contains(e.target)) {
+        accountWrap.classList.remove('open');
+        accountBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { accountWrap.classList.remove('open'); accountBtn.focus(); }
+    });
+  }
+</script>
+</body>
+</html>

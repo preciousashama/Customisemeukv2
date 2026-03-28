@@ -77,6 +77,9 @@ def _save_cart(request, cart):
 
 
 
+def page_not_found_view(request, exception=None):
+    return render(request, "404.html", status=404)
+
 
 def homepage(request):
     slides   = CarouselSlide.objects.filter(is_active=True).order_by("position", "id")
@@ -148,19 +151,28 @@ def productpage(request, slug=None):
         product = get_object_or_404(Product, slug=slug, is_active=True)
     else:
         product = Product.objects.filter(is_active=True).first()
-
-    related = Product.objects.filter(
-        is_active=True, category=product.category
-    ).exclude(pk=product.pk)[:4] if product else []
-
-    is_wished = False
+ 
+    related = (
+        Product.objects.filter(is_active=True, category=product.category)
+        .exclude(pk=product.pk)[:4]
+        if product else []
+    )
+ 
+    is_wished   = False
+    wish_count  = 0
     if request.user.is_authenticated and product:
-        is_wished = Wishlist.objects.filter(user=request.user, product=product).exists()
-
+        is_wished  = Wishlist.objects.filter(user=request.user, product=product).exists()
+        wish_count = Wishlist.objects.filter(user=request.user).count()
+ 
+    cart       = request.session.get("cart", [])
+    cart_count = sum(int(item.get("quantity", 1)) for item in cart)
+ 
     return render(request, "product.html", {
-        "product":   product,
-        "related":   related,
-        "is_wished": is_wished,
+        "product":    product,
+        "related":    related,
+        "is_wished":  is_wished,
+        "wish_count": wish_count,
+        "cart_count": cart_count,
     })
 
 
