@@ -6,7 +6,7 @@ import os
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect, get_object_or_404
-
+from django.conf import settings
 from .decorators import admin_required
 from orderapp.models import Order
 from customiseapp.models import CarouselSlide, Product, DesignSubmission,SendItemRequest
@@ -90,8 +90,7 @@ def contactpage(request):     return render(request, "contact.html")
 
 
 
-from django.conf import settings as _settings
-_ACTIVATION_MAX_AGE = getattr(_settings, "REGISTRATION_TOKEN_MAX_AGE", 86_400)
+_ACTIVATION_MAX_AGE = getattr(settings, "REGISTRATION_TOKEN_MAX_AGE", 86_400)
 
 # Salt keeps registration tokens separate from any other signed values
 _ACTIVATION_SALT = "customiseme-uk-registration-v1"
@@ -371,8 +370,8 @@ def _products_qs(search_query=""):
     return qs
  
  
-def _build_context(request, active_tab="orders", search_query="",
-                   form_errors=None, edit_slide=None, edit_product=None):
+def _build_context(request, active_tab, search_query="", form_errors=None,
+                   edit_slide=None, edit_product=None, viewed_order=None):
     return {
         "stats":          _user_stats(),
         "recent_orders":  Order.objects.select_related("customer").order_by("-created_at")[:20],
@@ -390,6 +389,7 @@ def _build_context(request, active_tab="orders", search_query="",
         "form_errors":    form_errors or {},
         "edit_slide":     edit_slide,
         "edit_product":   edit_product,
+        "viewed_order": viewed_order,
     }
  
 
@@ -442,16 +442,26 @@ def admin_dashboard_data(request):
         search_query    = request.GET.get("q", "").strip()
         edit_slide_id   = request.GET.get("edit_slide")
         edit_product_id = request.GET.get("edit_product")
+        order_query     = request.GET.get("q", "").strip()
  
         edit_slide   = get_object_or_404(CarouselSlide, pk=edit_slide_id)  if edit_slide_id   else None
         edit_product = get_object_or_404(Product,       pk=edit_product_id) if edit_product_id else None
  
         if edit_slide:   active_tab = "carousel"
         if edit_product: active_tab = "products"
+
+        viewed_order = None
+        if active_tab == "orders" and order_query:
+            viewed_order = (
+                Order.objects.filter(order_number=order_query).first()
+                or Order.objects.filter(pk=order_query).first()
+            )
  
         return render(request, "admin-page.html",
                       _build_context(request, active_tab, search_query,
-                                     edit_slide=edit_slide, edit_product=edit_product))
+                                     edit_slide=edit_slide,
+                                     edit_product=edit_product,
+                                     viewed_order=viewed_order))
  
     # ── POST ─────────────────────────────────────────────────
     action = request.POST.get("action", "")
@@ -501,6 +511,7 @@ def admin_dashboard_data(request):
  
         return redirect(f"{request.path}?tab=carousel")
  
+ 
     if action == "delete_slide":
         slide = get_object_or_404(CarouselSlide, pk=request.POST.get("slide_id"))
         title = slide.title
@@ -509,6 +520,23 @@ def admin_dashboard_data(request):
         slide.delete()
         messages.success(request, f'Slide "{title}" removed.')
         return redirect(f"{request.path}?tab=carousel")
+    
+
+    if action == "update_order_status":
+        order_id    = request.POST.get("order_id")
+        new_status  = request.POST.get("order_status", "").strip()
+        redirect_to = request.POST.get("redirect_order", "")
+        VALID = {"processing", "shipped", "delivered", "cancelled"}
+
+        if new_status not in VALID:
+            messages.error(request, "Invalid status.")
+            return redirect(f"{request.path}?tab=orders")
+
+        order = get_object_or_404(Order, pk=order_id)
+        order.status = new_status
+        order.save(update_fields=["status"])
+        messages.success(request, f'Order #{order.order_number} status updated to "{new_status}".')
+        return redirect(f"{request.path}?tab=orders&q={redirect_to}")
  
     # ══ § 03  Products ════════════════════════════════════════
     if action in ("add_product", "edit_product"):
