@@ -161,6 +161,15 @@ MEDIA_ROOT = BASE_DIR / "media"
 DATA_UPLOAD_MAX_MEMORY_SIZE = 30 * 1024 * 1024   # 30 MB overall
 FILE_UPLOAD_MAX_MEMORY_SIZE = 26 * 1024 * 1024   # 26 MB per file
 
+import sentry_sdk
+
+sentry_sdk.init(
+    dsn="https://80fb4f5255b06b964701dc6a3d5b0e82@o349605.ingest.us.sentry.io/4511126468231168",
+    # Add data like request headers and IP for users,
+    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+    send_default_pii=True,
+)
+
 
 
 MESSAGE_TAGS = {
