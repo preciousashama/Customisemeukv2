@@ -126,6 +126,7 @@ def orderconfirmpage(request):
             shipping_country      = addr.get("country", "") or "GB",
         )
 
+        # ── Build cart lookup maps (best-effort, cart may already be cleared) ──
         cart = request.session.pop("pending_cart", None) or request.session.get("cart", [])
         cart_by_pid = {}
         for c in cart:
@@ -133,27 +134,27 @@ def orderconfirmpage(request):
             if pid:
                 cart_by_pid[pid] = c
 
-        product_map = {}          # str(django_pk) → Product
-        stripe_price_to_product = {}  # stripe_price_id → Product
+        product_map = {}               # str(django_pk) → Product
+        stripe_price_to_product = {}   # stripe_price_id → Product
         if cart_by_pid:
             for p in Product.objects.filter(pk__in=cart_by_pid.keys()):
                 product_map[str(p.pk)] = p
                 if p.stripe_price_id:
                     stripe_price_to_product[p.stripe_price_id] = p
 
-       
         logger.info("stripe_line_items count: %d", len(stripe_line_items))
         logger.info("product_map keys: %s", list(product_map.keys()))
 
         subtotal = Decimal("0.00")
 
         if stripe_line_items:
+            # ── PRIMARY PATH: resolve everything from Stripe ───────────────
             for li in stripe_line_items:
-                qty        = li.get("quantity", 1)
-                price_obj  = li.get("price") or {}
-                stripe_pid = price_obj.get("id", "")
+                qty         = li.get("quantity", 1)
+                price_obj   = li.get("price") or {}
+                stripe_pid  = price_obj.get("id", "")
                 unit_amount = price_obj.get("unit_amount", 0)
-                price      = Decimal(str(unit_amount)) / 100
+                price       = Decimal(str(unit_amount)) / 100
 
                 stripe_product_obj = price_obj.get("product") or {}
                 stripe_name = (
@@ -167,23 +168,33 @@ def orderconfirmpage(request):
                     dict(getattr(stripe_product_obj, "metadata", {}))
                 )
 
-                # Skip shipping line
+                # Skip shipping line item
                 if stripe_name == "Standard Shipping":
                     continue
-                # Also skip by price if name is missing
                 if not stripe_meta.get("django_product_id") and price == Decimal("4.99") and qty == 1:
                     continue
 
-                # Resolve Django product
+                # ── Resolve Django Product ─────────────────────────────────
                 django_pid  = stripe_meta.get("django_product_id", "")
                 product_obj = (
                     product_map.get(django_pid)
                     or stripe_price_to_product.get(stripe_pid)
                 )
-                # Last resort: if only one product in cart, use it
+
+                # ── Direct DB lookup via Stripe metadata ───────────────────
+                # Works even when cart session is already cleared
+                if not product_obj and django_pid:
+                    try:
+                        product_obj = Product.objects.get(pk=django_pid)
+                        logger.info("Resolved product via Stripe metadata: %s", product_obj.name)
+                    except Product.DoesNotExist:
+                        logger.warning("No product found for django_product_id=%s", django_pid)
+
+                # Last resort: single item in cart
                 if not product_obj and len(product_map) == 1:
                     product_obj = next(iter(product_map.values()))
 
+                # ── Resolve fields from DB ─────────────────────────────────
                 name = (
                     (product_obj.name if product_obj else None)
                     or stripe_name
@@ -220,7 +231,10 @@ def orderconfirmpage(request):
                 subtotal += price * qty
 
         else:
-            logger.warning("No Stripe line items — falling back to cart session for order %s", order.order_number)
+            logger.warning(
+                "No Stripe line items — falling back to cart session for order %s",
+                order.order_number
+            )
             for item in cart:
                 try:
                     price = Decimal(str(item.get("price", "0")))
