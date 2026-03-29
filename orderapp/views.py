@@ -77,10 +77,7 @@ def orderconfirmpage(request):
 
     if not order:
         try:
-            sess = stripe.checkout.Session.retrieve(
-                session_id,
-                expand=["line_items.data.price.product", "customer_details"],
-            )
+            sess = stripe.checkout.Session.retrieve(session_id)
         except stripe.StripeError as e:
             logger.error("Stripe session retrieve failed: %s", e)
             error = "Could not verify your payment. Please contact support."
@@ -89,6 +86,17 @@ def orderconfirmpage(request):
         if sess.get("payment_status") not in ("paid", "no_payment_required"):
             error = "Payment has not been completed. Please try again."
             return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0})
+
+        try:
+            line_items_resp = stripe.checkout.Session.list_line_items(
+                session_id,
+                limit=100,
+                expand=["data.price.product"],
+            )
+            stripe_line_items = line_items_resp.get("data", [])
+        except stripe.StripeError as e:
+            logger.error("Stripe list_line_items failed: %s", e)
+            stripe_line_items = []
 
         shipping = sess.get("shipping_details") or sess.get("customer_details") or {}
         addr     = shipping.get("address") or {}
@@ -118,87 +126,148 @@ def orderconfirmpage(request):
             shipping_country      = addr.get("country", "") or "GB",
         )
 
-        subtotal = Decimal("0.00")
-
         cart = request.session.pop("pending_cart", None) or request.session.get("cart", [])
-        cart_by_stripe_price = {}   # stripe_price_id → cart item
-        cart_by_pid          = {}   # product_id      → cart item
+        cart_by_pid = {}
         for c in cart:
             pid = str(c.get("product_id") or c.get("id") or "").strip()
             if pid:
                 cart_by_pid[pid] = c
 
-        product_map = {}  # str(pk) → Product instance
+        product_map = {}          # str(django_pk) → Product
+        stripe_price_to_product = {}  # stripe_price_id → Product
         if cart_by_pid:
             for p in Product.objects.filter(pk__in=cart_by_pid.keys()):
                 product_map[str(p.pk)] = p
-                # also index by stripe_price_id for Stripe line_item matching
                 if p.stripe_price_id:
-                    cart_by_stripe_price[p.stripe_price_id] = p
+                    stripe_price_to_product[p.stripe_price_id] = p
 
-        stripe_line_items = (sess.get("line_items") or {}).get("data", [])
+       
+        logger.info("stripe_line_items count: %d", len(stripe_line_items))
+        logger.info("product_map keys: %s", list(product_map.keys()))
 
-        for li in stripe_line_items:
-            qty          = li.get("quantity", 1)
-            amount_total = li.get("amount_total", 0)   # pence
-            price_obj    = li.get("price") or {}
-            stripe_pid   = price_obj.get("id", "")     # Stripe price_id
-            unit_amount  = price_obj.get("unit_amount", 0)
-            price        = Decimal(unit_amount) / 100
+        subtotal = Decimal("0.00")
 
-            stripe_product_obj = price_obj.get("product") or {}
-            stripe_name        = (
-                stripe_product_obj.get("name", "") if isinstance(stripe_product_obj, dict)
-                else ""
-            )
-            stripe_meta        = (
-                stripe_product_obj.get("metadata", {}) if isinstance(stripe_product_obj, dict)
-                else {}
-            )
+        if stripe_line_items:
+            for li in stripe_line_items:
+                qty        = li.get("quantity", 1)
+                price_obj  = li.get("price") or {}
+                stripe_pid = price_obj.get("id", "")
+                unit_amount = price_obj.get("unit_amount", 0)
+                price      = Decimal(str(unit_amount)) / 100
 
-            if stripe_name == "Standard Shipping" or price == Decimal("4.99") and qty == 1 and not stripe_meta.get("django_product_id"):
-                continue
+                stripe_product_obj = price_obj.get("product") or {}
+                stripe_name = (
+                    stripe_product_obj.get("name", "")
+                    if isinstance(stripe_product_obj, dict) else
+                    getattr(stripe_product_obj, "name", "")
+                )
+                stripe_meta = (
+                    stripe_product_obj.get("metadata", {})
+                    if isinstance(stripe_product_obj, dict) else
+                    dict(getattr(stripe_product_obj, "metadata", {}))
+                )
 
-            django_pid  = stripe_meta.get("django_product_id", "")
-            product_obj = (
-                product_map.get(django_pid)
-                or cart_by_stripe_price.get(stripe_pid)
-            )
+                # Skip shipping line
+                if stripe_name == "Standard Shipping":
+                    continue
+                # Also skip by price if name is missing
+                if not stripe_meta.get("django_product_id") and price == Decimal("4.99") and qty == 1:
+                    continue
 
-            if not product_obj and len(product_map) == 1:
-                product_obj = next(iter(product_map.values()))
+                # Resolve Django product
+                django_pid  = stripe_meta.get("django_product_id", "")
+                product_obj = (
+                    product_map.get(django_pid)
+                    or stripe_price_to_product.get(stripe_pid)
+                )
+                # Last resort: if only one product in cart, use it
+                if not product_obj and len(product_map) == 1:
+                    product_obj = next(iter(product_map.values()))
 
-            name = (
-                (product_obj.name if product_obj else None)
-                or stripe_name
-                or "Unknown Product"
-            )
-            sku = (
-                (product_obj.sku if product_obj else None)
-                or stripe_meta.get("sku", "")
-                or ""
-            )
-            image_url = ""
-            if product_obj and product_obj.image:
+                name = (
+                    (product_obj.name if product_obj else None)
+                    or stripe_name
+                    or "Unknown Product"
+                )
+                sku = (
+                    (product_obj.sku if product_obj else None)
+                    or stripe_meta.get("sku", "")
+                    or ""
+                )
+                image_url = ""
+                if product_obj and product_obj.image:
+                    try:
+                        image_url = product_obj.image.url
+                    except Exception:
+                        pass
+
+                cart_item = (
+                    cart_by_pid.get(django_pid)
+                    or cart_by_pid.get(str(product_obj.pk) if product_obj else "")
+                )
+                variant = (cart_item or {}).get("variant", "") or ""
+
+                logger.info(
+                    "Creating OrderItem: name=%s sku=%s price=%s qty=%s django_pid=%s",
+                    name, sku, price, qty, django_pid
+                )
+
+                OrderItem.objects.create(
+                    order=order, product=product_obj,
+                    name=name, sku=sku, price=price,
+                    quantity=qty, variant=variant, image_url=image_url,
+                )
+                subtotal += price * qty
+
+        else:
+            logger.warning("No Stripe line items — falling back to cart session for order %s", order.order_number)
+            for item in cart:
                 try:
-                    image_url = product_obj.image.url
-                except Exception:
-                    pass
+                    price = Decimal(str(item.get("price", "0")))
+                except InvalidOperation:
+                    price = Decimal("0.00")
+                qty = max(1, int(item.get("quantity", 1)))
 
-            cart_item = cart_by_pid.get(django_pid) or cart_by_pid.get(str(product_obj.pk) if product_obj else "")
-            variant   = (cart_item or {}).get("variant", "") or ""
+                if item.get("is_shipping"):
+                    continue
+                pid = str(item.get("product_id") or item.get("id") or "").strip()
+                if not pid and price in (Decimal("4.99"), Decimal("0.00")):
+                    continue
 
-            OrderItem.objects.create(
-                order     = order,
-                product   = product_obj,
-                name      = name,
-                sku       = sku,
-                price     = price,
-                quantity  = qty,
-                variant   = variant,
-                image_url = image_url,
-            )
-            subtotal += price * qty
+                product_obj = product_map.get(pid)
+                if not product_obj and pid:
+                    try:
+                        product_obj = Product.objects.get(pk=pid)
+                    except Product.DoesNotExist:
+                        pass
+
+                name = (
+                    (product_obj.name if product_obj else None)
+                    or item.get("name", "").strip()
+                    or "Unknown Product"
+                )
+                sku = (
+                    (product_obj.sku if product_obj else None)
+                    or item.get("sku", "").strip()
+                    or ""
+                )
+                image_url = ""
+                if product_obj and product_obj.image:
+                    try:
+                        image_url = product_obj.image.url
+                    except Exception:
+                        pass
+                else:
+                    image_url = item.get("image_url", "") or ""
+
+                OrderItem.objects.create(
+                    order=order, product=product_obj,
+                    name=name, sku=sku, price=price,
+                    quantity=qty,
+                    variant=item.get("variant", "") or "",
+                    image_url=image_url,
+                )
+                subtotal += price * qty
 
         shipping_cost = Decimal("0.00") if subtotal >= 100 else Decimal("4.99")
         order.subtotal      = subtotal
