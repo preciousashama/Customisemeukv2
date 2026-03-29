@@ -6,7 +6,7 @@ from django.conf import settings
 from django.shortcuts import render # get_object_or_404
 from accounts.email_service import send_order_confirmation_email
 from .models import Order,OrderItem
-
+from customiseapp.models import Product
 
 logger = logging.getLogger(__name__)
 
@@ -79,7 +79,7 @@ def orderconfirmpage(request):
         try:
             sess = stripe.checkout.Session.retrieve(
                 session_id,
-                expand=["line_items", "customer_details"],
+                expand=["line_items.data.price.product", "customer_details"],
             )
         except stripe.StripeError as e:
             logger.error("Stripe session retrieve failed: %s", e)
@@ -118,81 +118,104 @@ def orderconfirmpage(request):
             shipping_country      = addr.get("country", "") or "GB",
         )
 
-        if not order.items.exists():
-            cart     = request.session.pop("pending_cart", None) or request.session.get("cart", [])
-            subtotal = Decimal("0.00")
+        subtotal = Decimal("0.00")
 
-            for item in cart:
+        cart = request.session.pop("pending_cart", None) or request.session.get("cart", [])
+        cart_by_stripe_price = {}   # stripe_price_id → cart item
+        cart_by_pid          = {}   # product_id      → cart item
+        for c in cart:
+            pid = str(c.get("product_id") or c.get("id") or "").strip()
+            if pid:
+                cart_by_pid[pid] = c
+
+        product_map = {}  # str(pk) → Product instance
+        if cart_by_pid:
+            for p in Product.objects.filter(pk__in=cart_by_pid.keys()):
+                product_map[str(p.pk)] = p
+                # also index by stripe_price_id for Stripe line_item matching
+                if p.stripe_price_id:
+                    cart_by_stripe_price[p.stripe_price_id] = p
+
+        stripe_line_items = (sess.get("line_items") or {}).get("data", [])
+
+        for li in stripe_line_items:
+            qty          = li.get("quantity", 1)
+            amount_total = li.get("amount_total", 0)   # pence
+            price_obj    = li.get("price") or {}
+            stripe_pid   = price_obj.get("id", "")     # Stripe price_id
+            unit_amount  = price_obj.get("unit_amount", 0)
+            price        = Decimal(unit_amount) / 100
+
+            stripe_product_obj = price_obj.get("product") or {}
+            stripe_name        = (
+                stripe_product_obj.get("name", "") if isinstance(stripe_product_obj, dict)
+                else ""
+            )
+            stripe_meta        = (
+                stripe_product_obj.get("metadata", {}) if isinstance(stripe_product_obj, dict)
+                else {}
+            )
+
+            if stripe_name == "Standard Shipping" or price == Decimal("4.99") and qty == 1 and not stripe_meta.get("django_product_id"):
+                continue
+
+            django_pid  = stripe_meta.get("django_product_id", "")
+            product_obj = (
+                product_map.get(django_pid)
+                or cart_by_stripe_price.get(stripe_pid)
+            )
+
+            if not product_obj and len(product_map) == 1:
+                product_obj = next(iter(product_map.values()))
+
+            name = (
+                (product_obj.name if product_obj else None)
+                or stripe_name
+                or "Unknown Product"
+            )
+            sku = (
+                (product_obj.sku if product_obj else None)
+                or stripe_meta.get("sku", "")
+                or ""
+            )
+            image_url = ""
+            if product_obj and product_obj.image:
                 try:
-                    price = Decimal(str(item.get("price", "0")))
-                except InvalidOperation:
-                    price = Decimal("0.00")
-                qty = max(1, int(item.get("quantity", 1)))
+                    image_url = product_obj.image.url
+                except Exception:
+                    pass
 
-                if item.get("is_shipping"):
-                    continue
+            cart_item = cart_by_pid.get(django_pid) or cart_by_pid.get(str(product_obj.pk) if product_obj else "")
+            variant   = (cart_item or {}).get("variant", "") or ""
 
-                pid = str(item.get("id") or item.get("product_id") or "").strip()
-                if not pid and price in (Decimal("4.99"), Decimal("0.00")):
-                    continue
+            OrderItem.objects.create(
+                order     = order,
+                product   = product_obj,
+                name      = name,
+                sku       = sku,
+                price     = price,
+                quantity  = qty,
+                variant   = variant,
+                image_url = image_url,
+            )
+            subtotal += price * qty
 
-                product_obj = None
-                if pid:
-                    from customiseapp.models import Product
-                    try:
-                        product_obj = Product.objects.get(pk=pid)
-                    except Product.DoesNotExist:
-                        pass
+        shipping_cost = Decimal("0.00") if subtotal >= 100 else Decimal("4.99")
+        order.subtotal      = subtotal
+        order.shipping_cost = shipping_cost
+        order.total         = subtotal + shipping_cost
+        order.save(update_fields=["subtotal", "shipping_cost", "total"])
 
-                name = (
-                    (product_obj.name if product_obj else None)
-                    or item.get("name", "").strip()
-                    or "Unknown Product"
-                )
+        logger.info("Order %s created for session %s", order.order_number, session_id)
 
-                sku = (
-                    (product_obj.sku if product_obj else None)
-                    or item.get("sku", "").strip()
-                    or ""
-                )
-
-                image_url = ""
-                if product_obj and product_obj.image:
-                    try:
-                        image_url = product_obj.image.url
-                    except Exception:
-                        image_url = item.get("image_url", "") or ""
-                else:
-                    image_url = item.get("image_url", "") or ""
-
-                OrderItem.objects.create(
-                    order     = order,
-                    product   = product_obj,
-                    name      = name,
-                    sku       = sku,
-                    price     = price,
-                    quantity  = qty,
-                    variant   = item.get("variant", "") or "",
-                    image_url = image_url,
-                )
-                subtotal += price * qty
-
-            shipping_cost = Decimal("0.00") if subtotal >= 100 else Decimal("4.99")
-            order.subtotal      = subtotal
-            order.shipping_cost = shipping_cost
-            order.total         = subtotal + shipping_cost
-            order.save(update_fields=["subtotal", "shipping_cost", "total"])
-
-            logger.info("Order %s created on confirm page for session %s", order.order_number, session_id)
-
-            try:
-                sent = send_order_confirmation_email(order)
-                if sent:
-                    logger.info("Order confirmation email sent for %s", order.order_number)
-                else:
-                    logger.warning("Order confirmation email failed for %s", order.order_number)
-            except Exception as e:
-                logger.error("Order email error for %s: %s", order.order_number, e)
+        try:
+            sent = send_order_confirmation_email(order)
+            if sent:
+                logger.info("Confirmation email sent for %s", order.order_number)
+            else:
+                logger.warning("Confirmation email failed for %s", order.order_number)
+        except Exception as e:
+            logger.error("Order email error for %s: %s", order.order_number, e)
 
     if order and order.status in ("confirmed", "shipped", "delivered"):
         request.session["cart"] = []
