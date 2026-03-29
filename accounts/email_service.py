@@ -310,9 +310,6 @@ def send_order_confirmation_email(order) -> bool:
         <p style="font-size:12px;color:#888;margin-top:8px;">Estimated delivery: 3–5 business days</p>
       </div>
  
-      <!-- Track Order CTA -->
-      {_btn(tracking_url, "Track Your Order")}
- 
       <p style="color:#888;font-size:12px;margin-top:32px;line-height:1.6;">
         Questions? Reply to this email or visit
         <a href="{site_url}/contact/" style="color:#0a0a0a;">{site_url}/contact/</a>
