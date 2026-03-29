@@ -140,12 +140,19 @@ def orderconfirmpage(request):
             OrderItem.objects.create(
                 order     = order,
                 product   = product_obj,
-                name      = item.get("name", ""),
-                sku       = (product_obj.sku if product_obj else "") or "",
+                name      = (product_obj.name if product_obj else None)
+                            or item.get("name", "").strip()
+                            or "Unknown Product",
+                sku       = (product_obj.sku if product_obj else None)
+                            or item.get("sku", "") or "",
                 price     = price,
                 quantity  = qty,
                 variant   = item.get("variant", "") or "",
-                image_url = item.get("image_url", "") or "",
+                image_url = (
+                    product_obj.image.url
+                    if product_obj and product_obj.image
+                    else item.get("image_url", "") or ""
+                ),
             )
             subtotal += price * qty
 

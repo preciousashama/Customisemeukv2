@@ -104,7 +104,7 @@ class OrderAdmin(admin.ModelAdmin):
 
     def customer_display(self, obj):
         if obj.customer:
-            name  = obj.customer.get_full_name() or obj.customer.email
+            name  = getattr(obj.customer, "full_name", None) or obj.customer.email
             email = obj.customer.email
             return format_html("{}<br/><small style='color:#888;'>{}</small>", name, email)
         return format_html(
