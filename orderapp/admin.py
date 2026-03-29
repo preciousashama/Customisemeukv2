@@ -1,15 +1,11 @@
-# =====================================================================
-#  orderapp/admin.py
-# =====================================================================
+
 from django.contrib import admin
 from django.utils.html import format_html
 
 from .models import Order, OrderItem
 
 
-# ─────────────────────────────────────────────────────────────
-# OrderItem inline
-# ─────────────────────────────────────────────────────────────
+admin.site.register(OrderItem)
 
 class OrderItemInline(admin.TabularInline):
     model         = OrderItem
