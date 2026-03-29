@@ -151,9 +151,11 @@ main{flex:1;overflow-y:auto;background:var(--white);display:flex;flex-direction:
 .order-total{font-weight:600;}
 .status-badge{font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;padding:5px 10px;border:1px solid;white-space:nowrap;display:inline-block;}
 .status-processing{border-color:var(--grey-5);color:var(--grey-3);background:var(--grey-8);}
+.status-confirmed{border-color:#1d4ed8;color:#1e40af;background:#dbeafe;}
 .status-shipped{border-color:var(--grey-4);color:var(--grey-2);background:var(--grey-7);}
 .status-delivered{border-color:var(--black);color:var(--black);background:var(--white);}
 .status-cancelled{border-color:var(--danger);color:var(--danger);background:#fee2e2;}
+.status-refunded{border-color:#7c3aed;color:#5b21b6;background:#ede9fe;}
 .empty-row td{text-align:center!important;padding:40px;color:var(--grey-5);font-size:13px;font-style:italic;}
 
 /* ── ORDER DETAIL PANEL ── */
@@ -528,16 +530,20 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
           <div class="order-detail-cell">
             <div class="order-detail-cell-label">Customer</div>
             <div class="order-detail-cell-val">
-              <strong>{{ viewed_order.customer_name|default:"—" }}</strong><br>
+              <strong>{{ viewed_order.customer_name|default:"Guest" }}</strong><br>
               {{ viewed_order.customer_email_addr|default:"—" }}
-              {% if viewed_order.customer_phone %}<br>{{ viewed_order.customer_phone }}{% endif %}
             </div>
           </div>
           <div class="order-detail-cell">
             <div class="order-detail-cell-label">Shipping Address</div>
             <div class="order-detail-cell-val">
-              {% if viewed_order.shipping_address %}
-                {{ viewed_order.shipping_address|linebreaksbr }}
+              {% if viewed_order.shipping_line1 %}
+                {% if viewed_order.shipping_name %}<strong>{{ viewed_order.shipping_name }}</strong><br>{% endif %}
+                {{ viewed_order.shipping_line1 }}<br>
+                {% if viewed_order.shipping_line2 %}{{ viewed_order.shipping_line2 }}<br>{% endif %}
+                {{ viewed_order.shipping_city }}{% if viewed_order.shipping_county %}, {{ viewed_order.shipping_county }}{% endif %}<br>
+                {{ viewed_order.shipping_postcode }}<br>
+                {{ viewed_order.shipping_country }}
               {% else %}
                 <span style="color:var(--grey-5);font-style:italic;">Not provided</span>
               {% endif %}
@@ -546,9 +552,13 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
           <div class="order-detail-cell">
             <div class="order-detail-cell-label">Payment</div>
             <div class="order-detail-cell-val">
-              {% if viewed_order.payment_method %}<strong>{{ viewed_order.payment_method }}</strong><br>{% endif %}
-              {% if viewed_order.payment_status %}<span style="font-size:12px;color:var(--grey-4);">{{ viewed_order.payment_status }}</span><br>{% endif %}
-              <span style="font-size:12px;color:var(--grey-4);">Order Total: </span><strong>£{{ viewed_order.total|floatformat:2 }}</strong>
+              <strong>Stripe</strong><br>
+              {% if viewed_order.stripe_payment_intent %}
+                <span style="font-size:11px;color:var(--grey-4);">{{ viewed_order.stripe_payment_intent|truncatechars:28 }}</span><br>
+              {% endif %}
+              <span style="font-size:12px;color:var(--grey-4);">Subtotal: </span>£{{ viewed_order.subtotal|floatformat:2 }}<br>
+              <span style="font-size:12px;color:var(--grey-4);">Shipping: </span>£{{ viewed_order.shipping_cost|floatformat:2 }}<br>
+              <span style="font-size:12px;color:var(--grey-4);">Total: </span><strong>£{{ viewed_order.total|floatformat:2 }}</strong>
             </div>
           </div>
         </div>
@@ -570,13 +580,13 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             {% for item in viewed_order.items.all %}
             <tr>
               <td>
-                <div style="font-weight:600;font-size:13px;">{{ item.product_name|default:item.product }}</div>
+                <div style="font-weight:600;font-size:13px;">{{ item.name }}</div>
                 {% if item.variant %}<div style="font-size:11px;color:var(--grey-5);">{{ item.variant }}</div>{% endif %}
               </td>
               <td style="font-size:12px;color:var(--grey-4);">{{ item.sku|default:"—" }}</td>
               <td class="r">{{ item.quantity }}</td>
-              <td class="r">£{{ item.unit_price|floatformat:2 }}</td>
-              <td class="r"><strong>£{{ item.subtotal|floatformat:2 }}</strong></td>
+              <td class="r">£{{ item.price|floatformat:2 }}</td>
+              <td class="r"><strong>£{{ item.line_total|floatformat:2 }}</strong></td>
             </tr>
             {% endfor %}
           </tbody>
@@ -593,10 +603,14 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
         </div>
         {% endif %}
 
-        {% if viewed_order.notes %}
+        <!-- Tracking info if available -->
+        {% if viewed_order.tracking_number %}
         <div style="margin-bottom:24px;">
-          <div class="order-items-title">Customer Notes</div>
-          <div style="padding:14px 16px;background:var(--grey-8);border:1px solid var(--grey-7);font-size:13px;color:var(--grey-3);line-height:1.6;">{{ viewed_order.notes }}</div>
+          <div class="order-items-title">Tracking</div>
+          <div style="padding:14px 16px;background:var(--grey-8);border:1px solid var(--grey-7);font-size:13px;color:var(--grey-3);line-height:1.6;">
+            <strong>{{ viewed_order.carrier|default:"Carrier" }}</strong> — {{ viewed_order.tracking_number }}
+            {% if viewed_order.estimated_delivery %}<br><span style="font-size:12px;color:var(--grey-4);">Est. delivery: {{ viewed_order.estimated_delivery|date:"d M Y" }}</span>{% endif %}
+          </div>
         </div>
         {% endif %}
 
@@ -611,9 +625,11 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             <div class="status-form">
               <select name="order_status" class="status-select" aria-label="Order status">
                 <option value="processing" {% if viewed_order.status == "processing" %}selected{% endif %}>Processing</option>
+                <option value="confirmed"  {% if viewed_order.status == "confirmed"  %}selected{% endif %}>Confirmed</option>
                 <option value="shipped"    {% if viewed_order.status == "shipped"    %}selected{% endif %}>Shipped</option>
                 <option value="delivered"  {% if viewed_order.status == "delivered"  %}selected{% endif %}>Delivered</option>
                 <option value="cancelled"  {% if viewed_order.status == "cancelled"  %}selected{% endif %}>Cancelled</option>
+                <option value="refunded"   {% if viewed_order.status == "refunded"   %}selected{% endif %}>Refunded</option>
               </select>
               <button type="submit" class="btn-small">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
