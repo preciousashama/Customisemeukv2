@@ -142,7 +142,7 @@ class OrderAdmin(admin.ModelAdmin):
     item_count.short_description = "Items"
 
     def shipping_address_block(self, obj):
-        lines = filter(None, [
+        lines = [l for l in [
             obj.shipping_name,
             obj.shipping_line1,
             obj.shipping_line2,
@@ -150,8 +150,11 @@ class OrderAdmin(admin.ModelAdmin):
             obj.shipping_county,
             obj.shipping_postcode,
             obj.shipping_country,
-        ])
-        return format_html("<br/>".join(lines))
+        ] if l]
+        if not lines:
+            return "—"
+        from django.utils.html import mark_safe, escape
+        return mark_safe("<br/>".join(escape(l) for l in lines))
     shipping_address_block.short_description = "Shipping Address"
 
     # ── bulk actions ──────────────────────────────────────────
