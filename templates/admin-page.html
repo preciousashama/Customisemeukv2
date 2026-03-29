@@ -478,7 +478,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
           <td data-label="Total"><span class="order-total">£{{ order.total|floatformat:2 }}</span></td>
           <td data-label="Status"><span class="status-badge status-{{ order.status|lower }}">{{ order.status }}</span></td>
           <td class="r" data-label="Actions">
-            <a class="btn-icon" href="{% url 'admin-order-detail' order.id %}" title="View order">
+            <a class="btn-icon" href="{% url 'admin-page' %}?tab=orders&q={{ order.order_number }}" title="View order">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
             </a>
           </td>
