@@ -35,7 +35,7 @@
     flex-direction: column;
   }
 
-  /* --- CURSOR --- */
+
   * { cursor: none; }
   #cursor {
     position: fixed; top: 0; left: 0; width: 10px; height: 10px;
@@ -327,9 +327,7 @@
     .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
   }
 
-  /* =============================================
-     PROMO TICKER BANNER
-     ============================================= */
+
   .promo-ticker {
     position: fixed; top: 0; left: 0; right: 0; z-index: 200;
     background: var(--black);
@@ -360,9 +358,7 @@
     background: rgba(255,255,255,0.35); flex-shrink: 0;
   }
 
-  /* =============================================
-     HEADER — TWO-ROW STRUCTURE (desktop)
-     ============================================= */
+  
   header, #mainHeader {
     position: fixed;
     top: 34px;
@@ -614,9 +610,7 @@
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
 
-<!-- ============================================================
-     PROMO TICKER — infinite scrolling banner
-     ============================================================ -->
+
 <div class="promo-ticker" id="promoTicker">
   <div class="promo-ticker-track">
     <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
@@ -634,9 +628,7 @@
   </div>
 </div>
 
-<!-- ============================================================
-     HEADER — two-row: search on top, logo|nav|icons below
-     ============================================================ -->
+
 <header id="mainHeader">
 
   <!-- ROW 1: Search bar -->
@@ -828,7 +820,7 @@
   <div class="page-inner">
 
     {% if error %}
-    <div style="background:#fdf0ef;border:1px solid #f0c0b8;color:#a93226;padding:16px 24px;margin-bottom:32px;font-size:13px;display:flex;align-items:center;gap:10px;border-radius:2px;">
+    <div style="background:#fdf0ef;border:1px solid #f0c0b8;color:#a93226;padding:16px 24px;margin-bottom:32px;font-size:13px;display:flex;align-items:center;gap:10px;">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       {{ error }}
     </div>
@@ -843,12 +835,6 @@
       <p class="success-subtitle">Your order has been received and is now being prepared with care.{% if order %}{% if order.customer %} A confirmation email has been sent to <strong>{{ order.customer_email_addr }}</strong>.{% endif %}{% else %} You'll receive a confirmation email shortly.{% endif %}</p>
       <div class="order-ref">{% if order %}#{{ order.order_number }}{% else %}—{% endif %}</div>
       <div class="success-actions">
-        {% comment %} <a class="btn-track" href="{% if order %}{% url 'order-tracking-page' %}?order={{ order.order_number }}{% else %}{% url 'order-tracking-page' %}{% endif %}">
-          <span>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-            Track Order
-          </span>
-        </a> {% endcomment %}
         <a class="btn-shop" href="{% url 'shop-page' %}">Continue Shopping</a>
       </div>
     </div>

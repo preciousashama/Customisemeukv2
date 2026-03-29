@@ -26,13 +26,13 @@ class Order(models.Model):
     # Guest details stored if no account
     guest_name     = models.CharField(max_length=200, blank=True)
     guest_email    = models.EmailField(blank=True)
-
+ 
     status         = models.CharField(max_length=20, choices=ORDER_STATUSES, default="processing")
     subtotal       = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
     shipping_cost  = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
     tax            = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
     total          = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
-
+ 
     # Shipping address
     shipping_name    = models.CharField(max_length=200, blank=True)
     shipping_line1   = models.CharField(max_length=200, blank=True)
@@ -41,38 +41,38 @@ class Order(models.Model):
     shipping_county  = models.CharField(max_length=100, blank=True)
     shipping_postcode = models.CharField(max_length=20, blank=True)
     shipping_country = models.CharField(max_length=100, blank=True, default="United Kingdom")
-
+ 
     # Tracking
     tracking_number  = models.CharField(max_length=100, blank=True)
     carrier          = models.CharField(max_length=100, blank=True)
     estimated_delivery = models.DateField(null=True, blank=True)
-
+ 
     stripe_session_id     = models.CharField(max_length=200, blank=True, db_index=True,
                                           help_text="Stripe Checkout Session ID (cs_...)")
     stripe_payment_intent = models.CharField(max_length=200, blank=True,
                                           help_text="Stripe PaymentIntent ID (pi_...)")
-
+ 
     created_at  = models.DateTimeField(auto_now_add=True)
     updated_at  = models.DateTimeField(auto_now=True)
-
+ 
     class Meta:
         ordering = ["-created_at"]
-
+ 
     def __str__(self):
         return f"Order {self.order_number}"
-
+ 
     @property
     def customer_name(self):
         if self.customer:
-            return self.customer.get_full_name() or self.customer.email
+            return self.customer.full_name or self.customer.email
         return self.guest_name or self.guest_email or "Guest"
-
+ 
     @property
     def customer_email_addr(self):
         if self.customer:
             return self.customer.email
         return self.guest_email
-
+ 
     def save(self, *args, **kwargs):
         if not self.order_number:
             import random, string
@@ -80,7 +80,7 @@ class Order(models.Model):
                 random.choices(string.digits, k=6)
             )
         super().save(*args, **kwargs)
-
+ 
     def get_timeline(self):
         steps = ["processing", "confirmed", "shipped", "delivered"]
         labels = {"processing": "Order Placed", "confirmed": "Confirmed",
@@ -98,8 +98,8 @@ class Order(models.Model):
                 "time":   "",
             })
         return result
-
-
+ 
+ 
 class OrderItem(models.Model):
     order    = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
     product  = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
@@ -110,10 +110,10 @@ class OrderItem(models.Model):
     variant  = models.CharField(max_length=200, blank=True,
                                 help_text="e.g. 'Size M · Navy'")
     image_url = models.URLField(blank=True)
-
+ 
     def __str__(self):
         return f"{self.name} × {self.quantity}"
-
+ 
     @property
     def line_total(self):
         return self.price * self.quantity

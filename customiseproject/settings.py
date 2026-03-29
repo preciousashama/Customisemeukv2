@@ -14,7 +14,7 @@ load_dotenv()
 
 SECRET_KEY=os.getenv("SECRET_KEY")
 DEBUG=os.getenv("DEBUG", "False") == "True"
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["customisemeuk.onrender.com"]
 
 INSTALLED_APPS = [
     "accounts",
@@ -59,9 +59,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "customiseproject.wsgi.application"
 
-# ─────────────────────────────────────────────────────────────
-# Auth
-# ─────────────────────────────────────────────────────────────
+
 
 AUTH_USER_MODEL     = "accounts.CustomUser"
 LOGIN_URL           = "account/login/"
@@ -114,18 +112,14 @@ FIREBASE_STORAGE_BUCKET=os.getenv("FIREBASE_STORAGE_BUCKET", "")
 _fb_json = BASE_DIR / "firebase-credentials.json"
 FIREBASE_CREDENTIALS_JSON = _fb_json if _fb_json.exists() else None
 
-# ─────────────────────────────────────────────────────────────
-# Stripe
-# ─────────────────────────────────────────────────────────────
+
 
 STRIPE_SECRET_KEY      = os.getenv("STRIPE_SECRET_KEY", "")
 STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY", "")
 STRIPE_WEBHOOK_SECRET  = os.getenv("STRIPE_WEBHOOK_SECRET", "")
 SITE_URL               = os.getenv("SITE_URL", "http://localhost:8000")
 
-# ─────────────────────────────────────────────────────────────
-# Email (Brevo / SendinBlue)
-# ─────────────────────────────────────────────────────────────
+
 
 BREVO_API_KEY      = os.getenv("BREVO_API_KEY", "")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@customisemeuk.com")
