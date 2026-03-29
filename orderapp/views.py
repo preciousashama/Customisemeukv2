@@ -128,8 +128,14 @@ def orderconfirmpage(request):
                 price = Decimal("0.00")
             qty = max(1, int(item.get("quantity", 1)))
 
+            if item.get("is_shipping"):
+                continue
+
+            pid = item.get("product_id", "").strip()
+            if not pid and price in (Decimal("4.99"), Decimal("0.00")):
+                continue
+
             product_obj = None
-            pid = item.get("product_id", "")
             if pid:
                 from customiseapp.models import Product
                 try:
@@ -137,22 +143,36 @@ def orderconfirmpage(request):
                 except Product.DoesNotExist:
                     pass
 
+            name = (
+                (product_obj.name if product_obj else None)
+                or item.get("name", "").strip()
+                or "Unknown Product"
+            )
+
+            sku = (
+                (product_obj.sku if product_obj else None)
+                or item.get("sku", "").strip()
+                or ""
+            )
+
+            image_url = ""
+            if product_obj and product_obj.image:
+                try:
+                    image_url = product_obj.image.url
+                except Exception:
+                    image_url = item.get("image_url", "") or ""
+            else:
+                image_url = item.get("image_url", "") or ""
+
             OrderItem.objects.create(
                 order     = order,
                 product   = product_obj,
-                name      = (product_obj.name if product_obj else None)
-                            or item.get("name", "").strip()
-                            or "Unknown Product",
-                sku       = (product_obj.sku if product_obj else None)
-                            or item.get("sku", "") or "",
+                name      = name,
+                sku       = sku,
                 price     = price,
                 quantity  = qty,
                 variant   = item.get("variant", "") or "",
-                image_url = (
-                    product_obj.image.url
-                    if product_obj and product_obj.image
-                    else item.get("image_url", "") or ""
-                ),
+                image_url = image_url,
             )
             subtotal += price * qty
 
@@ -177,7 +197,6 @@ def orderconfirmpage(request):
         request.session["cart"] = []
         request.session.modified = True
 
-  
     if order and order.customer and order.customer != request.user:
         if not getattr(request.user, "is_staff", False):
             logger.warning("Unauthorized confirm page access for order %s", order.pk)
