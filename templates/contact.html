@@ -889,28 +889,6 @@
 </div>
 
 
-<!-- NEWSLETTER -->
-<div class="newsletter-wrap">
-  <div class="newsletter-inner">
-    <div>
-      <div class="nl-label">Stay in Touch</div>
-      <h2 class="nl-title">Get <em>10% off</em><br/>your first order</h2>
-      <p class="nl-desc">Join our newsletter for exclusive offers, new arrivals, and behind-the-scenes studio stories.</p>
-    </div>
-    <div class="nl-form">
-      <div class="nl-row">
-        <form method="POST" action="{% url 'contact-page' %}" style="display:contents;">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="newsletter"/>
-        <input type="email" name="newsletter_email" placeholder="Your email address"/>
-        <button type="submit">Subscribe</button>
-        </form>
-      </div>
-      <p class="nl-note">By subscribing you agree to our Privacy Policy. Unsubscribe anytime.</p>
-    </div>
-  </div>
-</div>
-
 <!-- FOOTER -->
 <footer>
   <div class="footer-top">
