@@ -473,7 +473,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
         {% for order in recent_orders %}
         <tr>
           <td data-label="Order ID"><span class="order-id">#{{ order.order_number|default:order.id }}</span></td>
-          <td data-label="Customer">{{ order.customer.get_full_name|default:order.customer.email }}</td>
+          <td data-label="Customer">{{ order.customer_name|default:order.customer_email_addr|default:'Guest' }}</td>
           <td data-label="Date"><span class="order-date">{{ order.created_at|date:"d M Y" }}</span></td>
           <td data-label="Total"><span class="order-total">£{{ order.total|floatformat:2 }}</span></td>
           <td data-label="Status"><span class="status-badge status-{{ order.status|lower }}">{{ order.status }}</span></td>
@@ -773,8 +773,8 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
         {% for sub in design_submissions %}
         <tr>
           <td>
-            <div class="sub-user">{{ sub.user.get_full_name|default:sub.user.email }}</div>
-            <div class="sub-email">{{ sub.user.email }}</div>
+            <div class="sub-user">{% if sub.user %}{{ sub.user.full_name|default:sub.user.email }}{% else %}{{ sub.contact_name }}{% endif %}</div>
+            <div class="sub-email">{% if sub.user %}{{ sub.user.email }}{% else %}{{ sub.contact_email }}{% endif %}</div>
           </td>
           <td><div class="sub-service">{{ sub.service_type|default:"Custom Design" }}</div></td>
           <td><div class="sub-date">{{ sub.created_at|date:"d M Y" }}</div></td>
@@ -857,14 +857,12 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
       <tbody>
         {% for req in send_item_requests %}
         <tr>
-          {# Customer ─────────────────── #}
           <td>
             <div class="req-name">{{ req.full_name }}</div>
             <div class="req-email">{{ req.email }}</div>
             {% if req.phone %}<div class="req-email">{{ req.phone }}</div>{% endif %}
           </td>
-
-          {# Items description ─────────── #}
+          
           <td>
             <div class="req-items">{{ req.items_description|truncatechars:80 }}</div>
             {% if req.custom_details %}
@@ -894,19 +892,18 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             {% endif %}
           </td>
 
-          {# Qty ────────────────────────── #}
           <td><span class="req-date">{{ req.quantity|default:"—" }}</span></td>
 
-          {# Deadline ───────────────────── #}
+          
           <td><span class="req-date">{% if req.deadline %}{{ req.deadline|date:"d M Y" }}{% else %}—{% endif %}</span></td>
 
-          {# Submitted ──────────────────── #}
+          
           <td><span class="req-date">{{ req.created_at|date:"d M Y" }}</span></td>
 
-          {# Status badge ───────────────── #}
+          
           <td><span class="req-status {{ req.status }}">{{ req.get_status_display }}</span></td>
 
-          {# Inline update form ─────────── #}
+          
           <td>
             <form method="POST" action="{% url 'admin-page' %}" id="reqForm{{ req.id }}">
               {% csrf_token %}
