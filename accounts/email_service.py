@@ -199,3 +199,129 @@ def send_admin_login_alert(user, ip: Optional[str] = None) -> bool:
       </p>"""
     return _send(user.email, user.full_name or user.email,
                  "Admin Login Alert — CustomiseMe UK", _wrap(body))
+
+
+
+
+def send_order_confirmation_email(order) -> bool:  
+    to_email = (order.customer_email_addr or "").strip()
+    if not to_email:
+        logger.warning("Order %s has no email — skipping confirmation email", order.order_number)
+        return False
+ 
+    to_name  = order.customer_name or to_email
+    site_url = getattr(settings, "SITE_URL", "").rstrip("/")
+ 
+    items_html = ""
+    try:
+        for item in order.items.all():
+            line_total = item.price * item.quantity
+            items_html += f"""
+            <tr>
+              <td style="padding:12px 0;border-bottom:1px solid #e8e8e6;font-size:13px;color:#1a1a1a;">
+                {item.name}
+                {"<br/><span style='font-size:11px;color:#888;'>" + item.variant + "</span>" if item.variant else ""}
+              </td>
+              <td style="padding:12px 0;border-bottom:1px solid #e8e8e6;font-size:13px;color:#888;text-align:center;">
+                {item.quantity}
+              </td>
+              <td style="padding:12px 0;border-bottom:1px solid #e8e8e6;font-size:13px;color:#1a1a1a;text-align:right;">
+                £{line_total:.2f}
+              </td>
+            </tr>"""
+    except Exception as e:
+        logger.warning("Could not build items table for order %s: %s", order.order_number, e)
+ 
+    
+    shipping_parts = filter(None, [
+        order.shipping_name,
+        order.shipping_line1,
+        order.shipping_line2,
+        f"{order.shipping_city} {order.shipping_postcode}".strip(),
+        order.shipping_country,
+    ])
+    shipping_html = "<br/>".join(shipping_parts) or "Not provided"
+ 
+    # Totals
+    shipping_label = "Complimentary" if order.shipping_cost == 0 else f"£{order.shipping_cost:.2f}"
+ 
+    tracking_url = f"{site_url}/order/tracking/"
+ 
+    body = f"""
+      <h2 style="font-family:Georgia,serif;font-size:28px;font-weight:300;
+                 color:#0a0a0a;margin-bottom:8px;">
+        Your order is confirmed ✦
+      </h2>
+      <p style="font-size:13px;color:#888;letter-spacing:.1em;text-transform:uppercase;
+                margin-bottom:32px;">Order #{order.order_number}</p>
+ 
+      <p style="color:#4a4a4a;font-size:14px;line-height:1.8;margin-bottom:28px;">
+        Hello {to_name},<br/><br/>
+        Thank you for your order. We've received your payment and your items are
+        now being prepared with care in our studio.
+        We'll send you another email when your order ships.
+      </p>
+ 
+      <!-- Order Items -->
+      <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+        <thead>
+          <tr>
+            <th style="font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+                       color:#888;padding-bottom:10px;border-bottom:2px solid #0a0a0a;text-align:left;">
+              Item
+            </th>
+            <th style="font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+                       color:#888;padding-bottom:10px;border-bottom:2px solid #0a0a0a;text-align:center;">
+              Qty
+            </th>
+            <th style="font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+                       color:#888;padding-bottom:10px;border-bottom:2px solid #0a0a0a;text-align:right;">
+              Price
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {items_html}
+        </tbody>
+      </table>
+ 
+      <!-- Totals -->
+      <table style="width:100%;border-collapse:collapse;margin-bottom:32px;">
+        <tr>
+          <td style="padding:8px 0;font-size:13px;color:#888;">Subtotal</td>
+          <td style="padding:8px 0;font-size:13px;color:#1a1a1a;text-align:right;">£{order.subtotal:.2f}</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0;font-size:13px;color:#888;">Shipping</td>
+          <td style="padding:8px 0;font-size:13px;color:#1a1a1a;text-align:right;">{shipping_label}</td>
+        </tr>
+        <tr style="border-top:1px solid #e8e8e6;">
+          <td style="padding:12px 0 4px;font-size:14px;font-weight:600;color:#0a0a0a;">Total</td>
+          <td style="padding:12px 0 4px;font-family:Georgia,serif;font-size:20px;
+                     font-weight:400;color:#0a0a0a;text-align:right;">£{order.total:.2f}</td>
+        </tr>
+      </table>
+ 
+      <!-- Shipping Address -->
+      <div style="background:#f2f2f0;border:1px solid #e8e8e6;padding:20px 24px;margin-bottom:32px;">
+        <p style="font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+                  color:#888;margin-bottom:10px;">Shipping To</p>
+        <p style="font-size:13px;color:#4a4a4a;line-height:1.7;">{shipping_html}</p>
+        <p style="font-size:12px;color:#888;margin-top:8px;">Estimated delivery: 3–5 business days</p>
+      </div>
+ 
+      <!-- Track Order CTA -->
+      {_btn(tracking_url, "Track Your Order")}
+ 
+      <p style="color:#888;font-size:12px;margin-top:32px;line-height:1.6;">
+        Questions? Reply to this email or visit
+        <a href="{site_url}/contact/" style="color:#0a0a0a;">{site_url}/contact/</a>
+      </p>
+    """
+ 
+    return _send(
+        to_email,
+        to_name,
+        f"Order Confirmed — #{order.order_number} | CustomiseMe UK",
+        _wrap(body),
+    )

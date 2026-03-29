@@ -21,7 +21,8 @@ from .models import (
    SendItemFile,SendItemRequest,
     SERVICE_TYPES, BUDGET_RANGES,
 )
-
+from orderapp.models import OrderItem,Order
+from accounts.email_service import send_order_confirmation_email
 logger        = logging.getLogger(__name__)
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -463,34 +464,151 @@ def create_checkout_session(request):
 def stripe_webhook(request):
     payload    = request.body
     sig_header = request.META.get("HTTP_STRIPE_SIGNATURE", "")
-    try:
-        event = stripe.Webhook.construct_event(
-            payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
+    secret     = settings.STRIPE_WEBHOOK_SECRET
+ 
+    logger.info(
+        "Stripe webhook received — sig_header present: %s, secret configured: %s",
+        bool(sig_header),
+        bool(secret),
+    )
+ 
+    if not secret:
+        logger.error(
+            "STRIPE_WEBHOOK_SECRET is not set. "
+            "Set it in Render environment variables → copy the signing secret "
+            "from Stripe Dashboard → Webhooks → your endpoint → Signing secret."
         )
-    except (ValueError, stripe.SignatureVerificationError) as e:
-        logger.warning("Stripe webhook invalid: %s", e)
+        # Return 200 so Stripe doesn't keep retrying — but log the problem
+        return HttpResponse("Webhook secret not configured", status=200)
+ 
+    try:
+        event = stripe.Webhook.construct_event(payload, sig_header, secret)
+    except ValueError as e:
+        logger.warning("Stripe webhook invalid payload: %s", e)
         return HttpResponse(status=400)
+    except stripe.SignatureVerificationError as e:
+        logger.warning(
+            "Stripe webhook signature verification FAILED. "
+            "This usually means STRIPE_WEBHOOK_SECRET is set to the wrong value. "
+            "Make sure you copied the signing secret from the DASHBOARD ENDPOINT "
+            "(whsec_...) — NOT the CLI listener secret (whsec_test_...). "
+            "Error: %s", e
+        )
+        return HttpResponse(status=400)
+ 
+    logger.info("Stripe webhook event received: %s", event["type"])
+ 
 
+ 
     if event["type"] == "checkout.session.completed":
-        from orderapp.models import Order
-        sess     = event["data"]["object"]
-        existing = Order.objects.filter(stripe_session_id=sess["id"]).first()
-        if existing and existing.status not in ("confirmed", "shipped", "delivered"):
-            existing.status                = "confirmed"
-            existing.stripe_payment_intent = sess.get("payment_intent", "") or ""
-            existing.save(update_fields=["status", "stripe_payment_intent"])
+        sess = event["data"]["object"]
+        session_id = sess.get("id", "")
+        logger.info("checkout.session.completed for session %s", session_id)
+ 
 
+        order = Order.objects.filter(stripe_session_id=session_id).first()
+ 
+        if order:
+            # Order exists — just update status and payment intent
+            changed = False
+            if order.status not in ("confirmed", "shipped", "delivered"):
+                order.status = "confirmed"
+                changed = True
+            pi = sess.get("payment_intent", "") or ""
+            if pi and not order.stripe_payment_intent:
+                order.stripe_payment_intent = pi
+                changed = True
+            if changed:
+                order.save(update_fields=["status", "stripe_payment_intent"])
+                logger.info("Order %s updated to confirmed via webhook", order.order_number)
+        else:
+            # Order doesn't exist yet (user closed tab before confirm page loaded)
+            # Create it from the Stripe session
+            logger.info("Order not found for session %s — creating from webhook", session_id)
+            _create_order_from_session(sess)
+ 
     elif event["type"] == "payment_intent.payment_failed":
         pi = event["data"]["object"]
-        from orderapp.models import Order
-        Order.objects.filter(stripe_payment_intent=pi["id"]).update(status="cancelled")
-
+        updated = Order.objects.filter(
+            stripe_payment_intent=pi["id"]
+        ).exclude(status__in=("shipped", "delivered")).update(status="cancelled")
+        logger.info("payment_intent.payment_failed: %s orders cancelled", updated)
+ 
     elif event["type"] == "charge.refunded":
         charge = event["data"]["object"]
-        from orderapp.models import Order
-        Order.objects.filter(stripe_payment_intent=charge.get("payment_intent", "")).update(status="refunded")
-
+        pi_id = charge.get("payment_intent", "")
+        if pi_id:
+            updated = Order.objects.filter(stripe_payment_intent=pi_id).update(status="refunded")
+            logger.info("charge.refunded: %s orders refunded for pi %s", updated, pi_id)
+ 
     return HttpResponse(status=200)
+
+
+
+
+def _create_order_from_session(sess):
+    try:
+        full_sess = stripe.checkout.Session.retrieve(
+            sess["id"],
+            expand=["line_items"],
+        )
+        shipping = full_sess.get("shipping_details") or full_sess.get("customer_details") or {}
+        addr     = (shipping.get("address") or {})
+ 
+        order = Order.objects.create(
+            guest_email           = full_sess.get("customer_email", "") or "",
+            guest_name            = shipping.get("name", "") or "",
+            status                = "confirmed",
+            stripe_session_id     = full_sess["id"],
+            stripe_payment_intent = full_sess.get("payment_intent", "") or "",
+            shipping_name         = shipping.get("name", "") or "",
+            shipping_line1        = addr.get("line1", "") or "",
+            shipping_line2        = addr.get("line2", "") or "",
+            shipping_city         = addr.get("city", "") or "",
+            shipping_county       = addr.get("state", "") or "",
+            shipping_postcode     = addr.get("postal_code", "") or "",
+            shipping_country      = addr.get("country", "") or "GB",
+        )
+ 
+        # Build items from Stripe line_items
+        subtotal = Decimal("0.00")
+        line_items = (full_sess.get("line_items") or {}).get("data", [])
+        for li in line_items:
+            price_obj   = li.get("price") or {}
+            prod_obj    = price_obj.get("product") or {}
+            name        = prod_obj.get("name", "Item") if isinstance(prod_obj, dict) else "Item"
+            unit_amount = price_obj.get("unit_amount", 0) or 0
+            price_dec   = Decimal(unit_amount) / 100
+            qty         = li.get("quantity", 1)
+ 
+            # Skip shipping line item
+            if name == "Standard Shipping":
+                order.shipping_cost = price_dec
+                continue
+ 
+            OrderItem.objects.create(
+                order    = order,
+                name     = name,
+                sku      = "",
+                price    = price_dec,
+                quantity = qty,
+            )
+            subtotal += price_dec * qty
+ 
+        order.subtotal = subtotal
+        order.total    = subtotal + order.shipping_cost
+        order.save(update_fields=["subtotal", "shipping_cost", "total"])
+ 
+        # Send confirmation email
+        try:
+            send_order_confirmation_email(order)
+        except Exception as e:
+            logger.error("Webhook email error for order %s: %s", order.order_number, e)
+ 
+        logger.info("Order %s created from webhook for session %s", order.order_number, sess["id"])
+ 
+    except Exception as e:
+        logger.error("Failed to create order from webhook session %s: %s", sess.get("id"), e)
 
 
 

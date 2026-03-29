@@ -4,12 +4,11 @@ import stripe
 from decimal import Decimal, InvalidOperation
 from django.conf import settings
 from django.shortcuts import render # get_object_or_404
-
+from accounts.email_service import send_order_confirmation_email
 from .models import Order,OrderItem
 
 
 logger = logging.getLogger(__name__)
-
 
 
 
@@ -33,14 +32,12 @@ def ordertrackingpage(request):
                     order_number__iexact=order_number,
                 )
                 owner_email = (order.customer_email_addr or "").lower()
- 
                 if not owner_email or owner_email != email:
                     order        = None
                     lookup_error = (
                         "No order found with those details. "
                         "Please check your order number and email address."
                     )
- 
             except Order.DoesNotExist:
                 lookup_error = (
                     "No order found with those details. "
@@ -57,6 +54,7 @@ def ordertrackingpage(request):
 
 
 
+
 def orderconfirmpage(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
     order          = None
@@ -65,9 +63,10 @@ def orderconfirmpage(request):
     session_id = request.GET.get("session_id", "").strip()
  
     if not session_id:
-        error = "No payment session found. If your payment was successful, contact support."
+        error = "No payment session found. If your payment was successful, please contact support."
         return render(request, "order-confirm.html", {"order": None, "error": error})
-
+ 
+   
     order = (
         Order.objects
         .prefetch_related("items__product")
@@ -93,7 +92,6 @@ def orderconfirmpage(request):
         shipping = sess.get("shipping_details") or sess.get("customer_details") or {}
         addr     = shipping.get("address") or {}
  
-        # Create the Order row
         order = Order.objects.create(
             customer              = request.user if request.user.is_authenticated else None,
             guest_name            = shipping.get("name", "") or "",
@@ -101,7 +99,6 @@ def orderconfirmpage(request):
             status                = "confirmed",
             stripe_session_id     = session_id,
             stripe_payment_intent = sess.get("payment_intent", "") or "",
-            # Flat shipping address fields (matching the Order model exactly)
             shipping_name         = shipping.get("name", "") or "",
             shipping_line1        = addr.get("line1", "") or "",
             shipping_line2        = addr.get("line2", "") or "",
@@ -121,7 +118,6 @@ def orderconfirmpage(request):
                 price = Decimal("0.00")
             qty = max(1, int(item.get("quantity", 1)))
  
-            # Try to link back to the Product object
             product_obj = None
             pid = item.get("product_id", "")
             if pid:
@@ -151,13 +147,21 @@ def orderconfirmpage(request):
  
         request.session["cart"] = []
         request.session.modified = True
- 
         logger.info("Order %s created on confirm page for session %s", order.order_number, session_id)
  
-
-    if order.customer and order.customer != request.user:
+        try:
+            sent = send_order_confirmation_email(order)
+            if sent:
+                logger.info("Order confirmation email sent for %s", order.order_number)
+            else:
+                logger.warning("Order confirmation email failed for %s", order.order_number)
+        except Exception as e:
+            logger.error("Order email error for %s: %s", order.order_number, e)
+ 
+   
+    if order and order.customer and order.customer != request.user:
         if not getattr(request.user, "is_staff", False):
-            logger.warning("Unauthorized order confirm access attempt for order %s", order.pk)
+            logger.warning("Unauthorized confirm page access for order %s", order.pk)
             order = None
             error = "You do not have permission to view this order."
  
