@@ -118,80 +118,81 @@ def orderconfirmpage(request):
             shipping_country      = addr.get("country", "") or "GB",
         )
 
-        cart     = request.session.get("cart", [])
-        subtotal = Decimal("0.00")
+        if not order.items.exists():
+            cart     = request.session.pop("pending_cart", None) or request.session.get("cart", [])
+            subtotal = Decimal("0.00")
 
-        for item in cart:
-            try:
-                price = Decimal(str(item.get("price", "0")))
-            except InvalidOperation:
-                price = Decimal("0.00")
-            qty = max(1, int(item.get("quantity", 1)))
-
-            if item.get("is_shipping"):
-                continue
-
-            pid = item.get("product_id", "").strip()
-            if not pid and price in (Decimal("4.99"), Decimal("0.00")):
-                continue
-
-            product_obj = None
-            if pid:
-                from customiseapp.models import Product
+            for item in cart:
                 try:
-                    product_obj = Product.objects.get(pk=pid)
-                except Product.DoesNotExist:
-                    pass
+                    price = Decimal(str(item.get("price", "0")))
+                except InvalidOperation:
+                    price = Decimal("0.00")
+                qty = max(1, int(item.get("quantity", 1)))
 
-            name = (
-                (product_obj.name if product_obj else None)
-                or item.get("name", "").strip()
-                or "Unknown Product"
-            )
+                if item.get("is_shipping"):
+                    continue
 
-            sku = (
-                (product_obj.sku if product_obj else None)
-                or item.get("sku", "").strip()
-                or ""
-            )
+                pid = str(item.get("id") or item.get("product_id") or "").strip()
+                if not pid and price in (Decimal("4.99"), Decimal("0.00")):
+                    continue
 
-            image_url = ""
-            if product_obj and product_obj.image:
-                try:
-                    image_url = product_obj.image.url
-                except Exception:
+                product_obj = None
+                if pid:
+                    from customiseapp.models import Product
+                    try:
+                        product_obj = Product.objects.get(pk=pid)
+                    except Product.DoesNotExist:
+                        pass
+
+                name = (
+                    (product_obj.name if product_obj else None)
+                    or item.get("name", "").strip()
+                    or "Unknown Product"
+                )
+
+                sku = (
+                    (product_obj.sku if product_obj else None)
+                    or item.get("sku", "").strip()
+                    or ""
+                )
+
+                image_url = ""
+                if product_obj and product_obj.image:
+                    try:
+                        image_url = product_obj.image.url
+                    except Exception:
+                        image_url = item.get("image_url", "") or ""
+                else:
                     image_url = item.get("image_url", "") or ""
-            else:
-                image_url = item.get("image_url", "") or ""
 
-            OrderItem.objects.create(
-                order     = order,
-                product   = product_obj,
-                name      = name,
-                sku       = sku,
-                price     = price,
-                quantity  = qty,
-                variant   = item.get("variant", "") or "",
-                image_url = image_url,
-            )
-            subtotal += price * qty
+                OrderItem.objects.create(
+                    order     = order,
+                    product   = product_obj,
+                    name      = name,
+                    sku       = sku,
+                    price     = price,
+                    quantity  = qty,
+                    variant   = item.get("variant", "") or "",
+                    image_url = image_url,
+                )
+                subtotal += price * qty
 
-        shipping_cost = Decimal("0.00") if subtotal >= 100 else Decimal("4.99")
-        order.subtotal      = subtotal
-        order.shipping_cost = shipping_cost
-        order.total         = subtotal + shipping_cost
-        order.save(update_fields=["subtotal", "shipping_cost", "total"])
+            shipping_cost = Decimal("0.00") if subtotal >= 100 else Decimal("4.99")
+            order.subtotal      = subtotal
+            order.shipping_cost = shipping_cost
+            order.total         = subtotal + shipping_cost
+            order.save(update_fields=["subtotal", "shipping_cost", "total"])
 
-        logger.info("Order %s created on confirm page for session %s", order.order_number, session_id)
+            logger.info("Order %s created on confirm page for session %s", order.order_number, session_id)
 
-        try:
-            sent = send_order_confirmation_email(order)
-            if sent:
-                logger.info("Order confirmation email sent for %s", order.order_number)
-            else:
-                logger.warning("Order confirmation email failed for %s", order.order_number)
-        except Exception as e:
-            logger.error("Order email error for %s: %s", order.order_number, e)
+            try:
+                sent = send_order_confirmation_email(order)
+                if sent:
+                    logger.info("Order confirmation email sent for %s", order.order_number)
+                else:
+                    logger.warning("Order confirmation email failed for %s", order.order_number)
+            except Exception as e:
+                logger.error("Order email error for %s: %s", order.order_number, e)
 
     if order and order.status in ("confirmed", "shipped", "delivered"):
         request.session["cart"] = []

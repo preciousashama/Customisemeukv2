@@ -418,6 +418,9 @@ def create_checkout_session(request):
     if request.user.is_authenticated:
         metadata["user_id"]    = str(request.user.id)
         metadata["user_email"] = request.user.email
+
+    request.session["pending_cart"] = request.session.get("cart", [])
+    request.session.modified = True
  
     try:
         session = stripe.checkout.Session.create(
