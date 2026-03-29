@@ -10,6 +10,8 @@ from .models import Order,OrderItem
 
 logger = logging.getLogger(__name__)
 
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 
@@ -59,21 +61,20 @@ def orderconfirmpage(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
     order          = None
     error          = None
- 
+
     session_id = request.GET.get("session_id", "").strip()
- 
+
     if not session_id:
         error = "No payment session found. If your payment was successful, please contact support."
-        return render(request, "order-confirm.html", {"order": None, "error": error})
- 
-   
+        return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0})
+
     order = (
         Order.objects
         .prefetch_related("items__product")
         .filter(stripe_session_id=session_id)
         .first()
     )
- 
+
     if not order:
         try:
             sess = stripe.checkout.Session.retrieve(
@@ -83,17 +84,26 @@ def orderconfirmpage(request):
         except stripe.StripeError as e:
             logger.error("Stripe session retrieve failed: %s", e)
             error = "Could not verify your payment. Please contact support."
-            return render(request, "order-confirm.html", {"order": None, "error": error})
- 
+            return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0})
+
         if sess.get("payment_status") not in ("paid", "no_payment_required"):
             error = "Payment has not been completed. Please try again."
-            return render(request, "order-confirm.html", {"order": None, "error": error})
- 
+            return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0})
+
         shipping = sess.get("shipping_details") or sess.get("customer_details") or {}
         addr     = shipping.get("address") or {}
- 
+
+        _customer = request.user if request.user.is_authenticated else None
+        if _customer is None:
+            _uid = (sess.get("metadata") or {}).get("user_id")
+            if _uid:
+                try:
+                    _customer = User.objects.get(pk=_uid)
+                except User.DoesNotExist:
+                    pass
+
         order = Order.objects.create(
-            customer              = request.user if request.user.is_authenticated else None,
+            customer              = _customer,
             guest_name            = shipping.get("name", "") or "",
             guest_email           = sess.get("customer_email", "") or "",
             status                = "confirmed",
@@ -107,17 +117,17 @@ def orderconfirmpage(request):
             shipping_postcode     = addr.get("postal_code", "") or "",
             shipping_country      = addr.get("country", "") or "GB",
         )
- 
+
         cart     = request.session.get("cart", [])
         subtotal = Decimal("0.00")
- 
+
         for item in cart:
             try:
                 price = Decimal(str(item.get("price", "0")))
             except InvalidOperation:
                 price = Decimal("0.00")
             qty = max(1, int(item.get("quantity", 1)))
- 
+
             product_obj = None
             pid = item.get("product_id", "")
             if pid:
@@ -126,7 +136,7 @@ def orderconfirmpage(request):
                     product_obj = Product.objects.get(pk=pid)
                 except Product.DoesNotExist:
                     pass
- 
+
             OrderItem.objects.create(
                 order     = order,
                 product   = product_obj,
@@ -138,17 +148,15 @@ def orderconfirmpage(request):
                 image_url = item.get("image_url", "") or "",
             )
             subtotal += price * qty
- 
+
         shipping_cost = Decimal("0.00") if subtotal >= 100 else Decimal("4.99")
         order.subtotal      = subtotal
         order.shipping_cost = shipping_cost
         order.total         = subtotal + shipping_cost
         order.save(update_fields=["subtotal", "shipping_cost", "total"])
- 
-        request.session["cart"] = []
-        request.session.modified = True
+
         logger.info("Order %s created on confirm page for session %s", order.order_number, session_id)
- 
+
         try:
             sent = send_order_confirmation_email(order)
             if sent:
@@ -157,12 +165,16 @@ def orderconfirmpage(request):
                 logger.warning("Order confirmation email failed for %s", order.order_number)
         except Exception as e:
             logger.error("Order email error for %s: %s", order.order_number, e)
- 
-   
+
+    if order and order.status in ("confirmed", "shipped", "delivered"):
+        request.session["cart"] = []
+        request.session.modified = True
+
+  
     if order and order.customer and order.customer != request.user:
         if not getattr(request.user, "is_staff", False):
             logger.warning("Unauthorized confirm page access for order %s", order.pk)
             order = None
             error = "You do not have permission to view this order."
- 
-    return render(request, "order-confirm.html", {"order": order, "error": error})
+
+    return render(request, "order-confirm.html", {"order": order, "error": error, "cart_count": 0})
