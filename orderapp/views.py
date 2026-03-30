@@ -181,8 +181,7 @@ def orderconfirmpage(request):
                     or stripe_price_to_product.get(stripe_pid)
                 )
 
-                # ── Direct DB lookup via Stripe metadata ───────────────────
-                # Works even when cart session is already cleared
+            
                 if not product_obj and django_pid:
                     try:
                         product_obj = Product.objects.get(pk=django_pid)
@@ -190,11 +189,9 @@ def orderconfirmpage(request):
                     except Product.DoesNotExist:
                         logger.warning("No product found for django_product_id=%s", django_pid)
 
-                # Last resort: single item in cart
                 if not product_obj and len(product_map) == 1:
                     product_obj = next(iter(product_map.values()))
 
-                # ── Resolve fields from DB ─────────────────────────────────
                 name = (
                     (product_obj.name if product_obj else None)
                     or stripe_name

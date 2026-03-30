@@ -850,54 +850,49 @@
         </div>
 
         {% if order %}
-        <div class="order-items">
-          {% for item in order.items.all %}
-          <div class="order-item">
-            {% if item.product and item.product.image %}
-              <div class="item-thumb" style="background-image:url('{{ item.product.image.url }}')"></div>
-            {% elif item.image_url %}
-              <div class="item-thumb" style="background-image:url('{{ item.image_url }}')"></div>
-            {% else %}
-              <div class="item-thumb" style="background:var(--grey-8);display:flex;align-items:center;justify-content:center;">
-                <svg ...></svg>
+         <div class="order-items">
+            {% for item in order.items.all %}
+            <div class="order-item">
+              {% if item.product and item.product.image %}
+                <div class="item-thumb" style="background-image:url('{{ item.product.image.url }}')"></div>
+              {% elif item.image_url %}
+                <div class="item-thumb" style="background-image:url('{{ item.image_url }}')"></div>
+              {% else %}
+                <div class="item-thumb" style="background:var(--grey-8);"></div>
+              {% endif %}
+              <div style="flex:1;">
+                <div class="item-name">{{ item.name }}</div>
+                <div class="item-meta">
+                  Qty {{ item.quantity }}{% if item.variant %} &middot; {{ item.variant }}{% endif %}
+                </div>
               </div>
-            {% endif %}
-            <div style="flex:1;">
-              <div class="item-name">{{ item.name }}</div>
-              <div class="item-meta">
-                Qty {{ item.quantity }}{% if item.variant %} &middot; {{ item.variant }}{% endif %}
-              </div>
+              <div class="item-price">£{{ item.line_total|floatformat:2 }}</div>
             </div>
-            <div class="item-price">£{{ item.price|floatformat:2 }}</div>
+            {% empty %}
+            <p style="font-size:13px;color:var(--grey-5);font-style:italic;">No items found.</p>
+            {% endfor %}
           </div>
-          {% empty %}
-          <p style="font-size:13px;color:var(--grey-5);font-style:italic;">No items found.</p>
-          {% endfor %}
-        </div>
-
-        <div class="totals">
-          <div class="total-row">
-            <span>Subtotal</span>
-            <span>£{{ order.subtotal|floatformat:2 }}</span>
+          <div class="totals">
+            <div class="total-row">
+              <span>Subtotal</span>
+              <span>£{{ order.subtotal|floatformat:2 }}</span>
+            </div>
+            {% if order.shipping_cost == 0 %}
+            <div class="total-row free">
+              <span>Shipping</span>
+              <span>Complimentary</span>
+            </div>
+            {% else %}
+            <div class="total-row">
+              <span>Shipping</span>
+              <span>£{{ order.shipping_cost|floatformat:2 }}</span>
+            </div>
+            {% endif %}
+            <div class="total-final">
+              <span class="total-final-label">Total</span>
+              <span class="total-final-amount">£{{ order.total|floatformat:2 }}</span>
+            </div>
           </div>
-          {% if order.shipping_cost is not None %}
-          {% if order.shipping_cost == 0 %}
-          <div class="total-row free">
-            <span>Shipping</span>
-            <span>Complimentary</span>
-          </div>
-          {% else %}
-          <div class="total-row">
-            <span>Shipping</span>
-            <span>£{{ order.shipping_cost|floatformat:2 }}</span>
-          </div>
-          {% endif %}
-          {% endif %}
-          <div class="total-final">
-            <span class="total-final-label">Total</span>
-            <span class="total-final-amount">£{{ order.total|floatformat:2 }}</span>
-          </div>
-        </div>
         {% else %}
         <p style="font-size:13px;color:var(--grey-5);padding:16px 0;font-style:italic;">Order details unavailable.</p>
         {% endif %}
