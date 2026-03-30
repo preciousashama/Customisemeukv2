@@ -86,6 +86,8 @@ def landing(request):
 
     return render(request,"landing.html")
 
+
+
 def homepage(request):
     slides   = CarouselSlide.objects.filter(is_active=True).order_by("position", "id")
     featured = Product.objects.filter(is_active=True).order_by("?")[:4]
