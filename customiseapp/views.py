@@ -82,6 +82,10 @@ def page_not_found_view(request, exception=None):
     return render(request, "404.html", status=404)
 
 
+def landing(request):
+
+    return render(request,"landing.html")
+
 def homepage(request):
     slides   = CarouselSlide.objects.filter(is_active=True).order_by("position", "id")
     featured = Product.objects.filter(is_active=True).order_by("?")[:4]
