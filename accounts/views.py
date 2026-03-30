@@ -248,10 +248,27 @@ def loginpage(request):
     else:
         request.session.set_expiry(0)
 
+    if auth_user.role == auth_user.Role.ADMIN or auth_user.is_staff:
+        return redirect("admin-page")
+
     next_url = request.GET.get("next") or request.POST.get("next", "")
+
     if next_url and next_url.startswith("/"):
         return redirect(next_url)
+    
     return redirect("home-page")
+
+    # logger.info("Customer login: %s", auth_user.email)
+
+    # if cd.get("remember_me"):
+    #     request.session.set_expiry(60 * 60 * 24 * 30)
+    # else:
+    #     request.session.set_expiry(0)
+
+    # next_url = request.GET.get("next") or request.POST.get("next", "")
+    # if next_url and next_url.startswith("/"):
+    #     return redirect(next_url)
+    # return redirect("home-page")
 
 
 
@@ -511,7 +528,7 @@ def admin_dashboard_data(request):
  
         return redirect(f"{request.path}?tab=carousel")
  
- 
+
     if action == "delete_slide":
         slide = get_object_or_404(CarouselSlide, pk=request.POST.get("slide_id"))
         title = slide.title
