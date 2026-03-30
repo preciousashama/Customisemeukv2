@@ -3,3 +3,5 @@ penv/
 .env
 products/
 media/
+accounts/management/commands/__pycache__/repair_orderitem.cpython-312.pyc
+accounts/management/commands/repair_orderitem.py

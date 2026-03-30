@@ -60,21 +60,18 @@ def ordertrackingpage(request):
 def _resolve_stripe_product(price_obj):
     stripe_product_obj = price_obj.get("product") if isinstance(price_obj, dict) else getattr(price_obj, "product", None)
  
-    # Shape 1: already a dict with a "name" key
     if isinstance(stripe_product_obj, dict) and "name" in stripe_product_obj:
         return (
             stripe_product_obj.get("name", ""),
             stripe_product_obj.get("metadata", {}),
         )
  
-    # Shape 2: StripeObject with a name attribute
     if hasattr(stripe_product_obj, "name"):
         return (
             getattr(stripe_product_obj, "name", ""),
             dict(getattr(stripe_product_obj, "metadata", {})),
         )
  
-    # Shape 3: bare product ID string → fetch from Stripe
     if isinstance(stripe_product_obj, str) and stripe_product_obj.startswith("prod_"):
         try:
             fetched = stripe.Product.retrieve(stripe_product_obj)
@@ -108,7 +105,10 @@ def orderconfirmpage(request):
  
     if not order:
         try:
-            sess = stripe.checkout.Session.retrieve(session_id)
+            sess = stripe.checkout.Session.retrieve(
+                session_id,
+                expand=["line_items.data.price.product"],
+            )
         except stripe.StripeError as e:
             logger.error("Stripe session retrieve failed: %s", e)
             error = "Could not verify your payment. Please contact support."
@@ -122,6 +122,7 @@ def orderconfirmpage(request):
             line_items_resp = stripe.checkout.Session.list_line_items(
                 session_id,
                 limit=100,
+                expand=["data.price.product"],
             )
             stripe_line_items = line_items_resp.get("data", [])
         except stripe.StripeError as e:
@@ -171,6 +172,13 @@ def orderconfirmpage(request):
                 if p.stripe_price_id:
                     stripe_price_to_product[p.stripe_price_id] = p
  
+        if not stripe_price_to_product:
+            for p in Product.objects.exclude(stripe_price_id="").only(
+                "id", "name", "sku", "stripe_price_id", "image"
+            ):
+                stripe_price_to_product[p.stripe_price_id] = p
+                product_map[str(p.pk)] = p
+ 
         logger.info("stripe_line_items count: %d", len(stripe_line_items))
         logger.info("product_map keys: %s", list(product_map.keys()))
  
@@ -193,7 +201,6 @@ def orderconfirmpage(request):
                 is_shipping_meta = (stripe_meta.get("is_shipping") or "").lower() in ("true", "1", "yes")
                 if is_shipping_meta:
                     continue
-                # Heuristic guard: if stripe identified it as shipping via description
                 if li_description.lower() in ("standard shipping", "shipping"):
                     continue
  
@@ -210,13 +217,19 @@ def orderconfirmpage(request):
                     except Product.DoesNotExist:
                         logger.warning("No product found for django_product_id=%s", django_pid)
  
+                if not product_obj and stripe_name and stripe_name not in ("", "Standard Shipping"):
+                    matched = Product.objects.filter(name__iexact=stripe_name).first()
+                    if matched:
+                        product_obj = matched
+                        logger.info("Resolved product by name match: %s", product_obj.name)
+ 
                 if not product_obj and len(product_map) == 1:
                     product_obj = next(iter(product_map.values()))
  
                 name = (
                     (product_obj.name if product_obj else None)
-                    or stripe_name
-                    or li_description
+                    or (stripe_name if stripe_name and stripe_name not in ("Item",) else None)
+                    or (li_description if li_description.lower() not in ("item", "") else None)
                     or "Unknown Product"
                 )
                 sku = (
@@ -238,8 +251,9 @@ def orderconfirmpage(request):
                 variant = (cart_item or {}).get("variant", "") or ""
  
                 logger.info(
-                    "Creating OrderItem: name=%s sku=%s price=%s qty=%s django_pid=%s stripe_name=%s",
+                    "Creating OrderItem: name=%s sku=%s price=%s qty=%s django_pid=%s stripe_name=%s product_obj=%s",
                     name, sku, price, qty, django_pid, stripe_name,
+                    product_obj.pk if product_obj else None,
                 )
  
                 OrderItem.objects.create(
