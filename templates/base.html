@@ -148,7 +148,7 @@ header, #mainHeader {
   display: flex; align-items: center; gap: 14px;
   text-decoration: none; color: inherit; flex-shrink: 0;
 }
-.logo img { width: 48px; height: 48px; object-fit: contain; }
+.logo img { width: 100px; height: 100px; object-fit: contain; }
 .logo-text {
   font-family: var(--serif); font-size: 24px; font-weight: 500;
   letter-spacing: 0.12em; text-transform: uppercase; color: var(--black);
@@ -554,10 +554,6 @@ footer {
 
     <nav aria-label="Main navigation">
 
-      <div class="nav-item">
-        <a href="{% url 'home-page' %}"
-           {% block nav_home %}{% endblock %}>Home</a>
-      </div>
 
       <div class="nav-item">
         <a href="{% url 'shop-page' %}"
@@ -658,8 +654,8 @@ footer {
       </div>
 
       <div class="nav-item">
-        <a href="{% url 'about-page' %}"
-           {% block nav_about %}{% endblock %}>About</a>
+        <a href="{% url 'policy-page' %}"
+           {% block nav_about %}{% endblock %}>Policy</a>
       </div>
 
     </nav>
