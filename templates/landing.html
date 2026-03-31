@@ -91,6 +91,15 @@
     100% { transform: translate(3px, -1px); }
   }
 
+  /* ── VIGNETTE ── */
+  .vignette {
+    position: absolute; inset: 0; z-index: 2;
+    background: radial-gradient(ellipse at center,
+      transparent 30%,
+      rgba(0,0,0,0.35) 70%,
+      rgba(0,0,0,0.75) 100%);
+    pointer-events: none;
+  }
 
   /* ── CONTENT ── */
   .content {
@@ -123,16 +132,29 @@
   }
 
   /* Main title */
- .brand-name img {
-  height: 50px;
-}
+  .brand-name {
+    font-family: var(--serif);
+    font-size: clamp(52px, 8vw, 96px);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    color: var(--white);
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeInUp 1.1s ease 0.85s forwards;
+  }
+  .brand-name em {
+    font-style: italic;
+    color: rgba(248,248,246,0.65);
+  }
+
   /* Subtitle */
   .tagline {
     font-family: var(--serif);
     font-size: clamp(15px, 2vw, 19px);
     font-weight: 300;
     font-style: italic;
-    color: rgba(0, 0, 0, 0.5);
+    color: rgba(248,248,246,0.5);
     letter-spacing: 0.06em;
     margin-bottom: 52px;
     opacity: 0;
@@ -251,6 +273,31 @@
     100% { left: 100%; }
   }
 
+  /* Corner marks */
+  .corner {
+    position: absolute; z-index: 10;
+    width: 22px; height: 22px;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.8s forwards;
+  }
+  .corner--tl { top: 28px; left: 28px; border-top: 1px solid rgba(248,248,246,0.2); border-left: 1px solid rgba(248,248,246,0.2); }
+  .corner--tr { top: 28px; right: 28px; border-top: 1px solid rgba(248,248,246,0.2); border-right: 1px solid rgba(248,248,246,0.2); }
+  .corner--bl { bottom: 28px; left: 28px; border-bottom: 1px solid rgba(248,248,246,0.2); border-left: 1px solid rgba(248,248,246,0.2); }
+  .corner--br { bottom: 28px; right: 28px; border-bottom: 1px solid rgba(248,248,246,0.2); border-right: 1px solid rgba(248,248,246,0.2); }
+
+  /* Mute button */
+  .mute-btn {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    z-index: 11;
+    background: none; border: 1px solid rgba(248,248,246,0.18);
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(248,248,246,0.4);
+    transition: border-color .3s, color .3s;
+    opacity: 0;
+    animation: fadeIn 1s ease 2.2s forwards;
+  }
+  .mute-btn:hover { border-color: rgba(248,248,246,0.5); color: var(--white); }
 
   /* Page transition overlay */
   .transition-overlay {
@@ -275,6 +322,15 @@
     to   { opacity: 1; }
   }
 
+  /* Mobile */
+  @media (max-width: 640px) {
+    .bottom-strip { padding: 0 24px; bottom: 28px; }
+    .strip-left { display: none; }
+    .corner--tl { top: 20px; left: 20px; }
+    .corner--tr { top: 20px; right: 20px; }
+    .corner--bl { bottom: 20px; left: 20px; }
+    .corner--br { bottom: 20px; right: 20px; }
+  }
 </style>
 </head>
 <body>
@@ -285,8 +341,11 @@
 <!-- Page transition overlay -->
 <div class="transition-overlay" id="transitionOverlay"></div>
 
-
-{% load static %}
+<!-- Corner marks -->
+<div class="corner corner--tl"></div>
+<div class="corner corner--tr"></div>
+<div class="corner corner--bl"></div>
+<div class="corner corner--br"></div>
 
 <div class="scene">
 
@@ -297,21 +356,23 @@
     muted
     playsinline
     preload="auto"
-  >
-    <source src="{% static 'videos/cmuk-bg.mp4' %}" type="video/mp4">
-  </video>
+    src="{% static 'cmuk-bg.mp4' %}"
+  ></video>
 
   <div class="grain"></div>
+  <div class="vignette"></div>
 
   <!-- Main content -->
   <div class="content">
     <div class="top-rule"></div>
 
-    <div class="overline">Est.2023 &nbsp;·&nbsp;</div>
+    <div class="overline">Est. London &nbsp;·&nbsp; Handcrafted</div>
 
     <h1 class="brand-name">
-  <img src="{% static 'logo.png' %}" alt="CustomiseMe logo">
-</h1>
+      Customise<em>Me</em>
+    </h1>
+
+    <p class="tagline">Every piece, a story only you can tell.</p>
 
     <div class="ornament">
       <div class="ornament-line"></div>
@@ -321,7 +382,7 @@
 
     <div class="cta-wrap">
       <a href="{% url 'home-page' %}" class="enter-btn" id="enterBtn">
-        <span class="btn-label">Enter Store</span>
+        <span class="btn-label">Enter the Collection</span>
         <span class="btn-arrow">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <line x1="5" y1="12" x2="19" y2="12"/>
@@ -331,6 +392,28 @@
       </a>
     </div>
   </div>
+
+  <!-- Bottom strip -->
+  <div class="bottom-strip">
+    <div class="strip-left">
+      CustomiseMe UK
+      <span>Personalised gifts &amp; homeware</span>
+    </div>
+    <div class="strip-right">
+      <div class="scroll-indicator">
+        <div class="scroll-line"></div>
+        UK &nbsp;&middot;&nbsp; Free shipping over £100
+      </div>
+    </div>
+  </div>
+
+  <!-- Mute toggle -->
+  <button class="mute-btn" id="muteBtn" aria-label="Toggle sound" title="Toggle sound">
+    <svg id="muteIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+      <line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+    </svg>
+  </button>
 
 </div>
 
@@ -353,6 +436,19 @@
   document.querySelectorAll('a, button').forEach(el => {
     el.addEventListener('mouseenter', () => { cur.classList.add('hovering'); ring.classList.add('hovering'); });
     el.addEventListener('mouseleave', () => { cur.classList.remove('hovering'); ring.classList.remove('hovering'); });
+  });
+
+  // ── Mute toggle ──
+  const video   = document.getElementById('bgVideo');
+  const muteBtn = document.getElementById('muteBtn');
+  const muteIcon = document.getElementById('muteIcon');
+
+  const soundOnSVG  = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/>`;
+  const soundOffSVG = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>`;
+
+  muteBtn.addEventListener('click', () => {
+    video.muted = !video.muted;
+    muteIcon.innerHTML = video.muted ? soundOffSVG : soundOnSVG;
   });
 
   // ── Enter button: page transition ──
