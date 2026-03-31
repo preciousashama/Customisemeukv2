@@ -84,50 +84,6 @@
     gap: 0;
   }
 
-  /* Top rule */
-  .top-rule {
-    width: 1px; height: 60px;
-    margin-bottom: 36px;
-    opacity: 0;
-    animation: fadeInUp 1s ease 0.3s forwards;
-  }
-
-  /* Overline */
-  .overline {
-    font-family: var(--sans);
-    font-size: 10px; font-weight: 500;
-    letter-spacing: 0.32em; text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 22px;
-    opacity: 0;
-    animation: fadeInUp 1s ease 0.6s forwards;
-  }
-
-  /* Main title */
-  .mainlogo {
-    width: 200px;
-    height: auto;
-  }
-   
-
-  /* Horizontal ornament */
-  .ornament {
-    display: flex; align-items: center; gap: 18px;
-    margin-bottom: 52px;
-    opacity: 0;
-    animation: fadeInUp 1s ease 1.3s forwards;
-  }
-  .ornament-line {
-    width: 48px; height: 1px;
-    background: rgba(200,169,110,0.4);
-  }
-  .ornament-diamond {
-    width: 5px; height: 5px;
-    border: 1px solid var(--accent);
-    transform: rotate(45deg);
-    opacity: 0.7;
-  }
-
   /* CTA Button */
   .cta-wrap {
     opacity: 0;
@@ -141,7 +97,7 @@
     background: transparent;
     border: none;
     outline: none;
-    color: var(--white);
+    color: var(--black);
     font-family: var(--sans);
     font-size: 10px; font-weight: 500;
     letter-spacing: 0.28em; text-transform: uppercase;
@@ -216,19 +172,6 @@
     src="{% static 'cmuk-bg.mp4' %}"
   ></video>
 
-  <!-- Main content -->
-  <div class="content">
-    <div class="top-rule"></div>
-
-    <div class="overline">Est.2023 &nbsp;·United Kingdom &nbsp;</div>
-
-    <img id="mainlogo" src="{% static 'logo.png' %}" alt="Logo" />
-
-    <div class="ornament">
-      <div class="ornament-line"></div>
-      <div class="ornament-diamond"></div>
-      <div class="ornament-line"></div>
-    </div>
 
     <div class="cta-wrap">
       <a href="{% url 'home-page' %}" class="enter-btn" id="enterBtn">

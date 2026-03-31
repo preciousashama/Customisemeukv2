@@ -16,7 +16,7 @@
      ============================================= */
   
   
-    100% { transform: translateX(-50%); }
+    @keyframes mobile {100% { transform: translateX(-50%); }
   }
   
 
@@ -174,14 +174,6 @@
   .hero-right-tag p { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-4); }
   .hero-right-tag h3 { font-family: var(--serif); font-size: 22px; font-weight: 400; margin-top: 2px; color: var(--black); }
 
-  /* Brands */
-  .brands-banner { background: var(--white); border-top: 1px solid var(--grey-7); border-bottom: 1px solid var(--grey-7); padding: 40px 80px; }
-  .brands-label { text-align: center; font-family: var(--sans); font-size: 10px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--grey-5); margin-bottom: 32px; }
-  .brands-track { display: grid; grid-template-columns: repeat(6, 1fr); gap: 32px; align-items: center; }
-  .brand-logo { display: flex; align-items: center; justify-content: center; padding: 12px 0; border: 1px solid var(--grey-7); background: var(--grey-8); transition: border-color .25s, background .25s; min-height: 64px; }
-  .brand-logo:hover { border-color: var(--grey-5); background: var(--white); }
-  .brand-logo span { font-family: var(--serif); font-size: 16px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--grey-5); font-style: italic; transition: color .25s; }
-  .brand-logo:hover span { color: var(--grey-2); }
 
   /* Section header */
   .section-label {
@@ -325,7 +317,7 @@
   }
 
   /* Animations */
-   to { opacity: 1; transform: translateY(0); } }
+   to { opacity: 1; transform: translateY(0); } 
 
   /* ── HERO SLIDER ── */
   /* The hero itself must be the positioning root */
@@ -437,19 +429,6 @@
 </section>
 
 
-{# ── BRANDS BANNER ── #}
-<section class="brands-banner">
-  <p class="brands-label">Trusted by leading brands</p>
-  <div class="brands-track">
-    <div class="brand-logo"><span>Primark</span></div>
-    <div class="brand-logo"><span>Next UK</span></div>
-    <div class="brand-logo"><span>Marks &amp; Co.</span></div>
-    <div class="brand-logo"><span>Selfridges</span></div>
-    <div class="brand-logo"><span>ASOS Pro</span></div>
-    <div class="brand-logo"><span>TK Maxx</span></div>
-  </div>
-</section>
-
 {# ── CATEGORIES ── #}
 <section class="categories">
   <div class="categories-header">
@@ -462,27 +441,27 @@
   <div class="cats-grid">
     <a class="cat-item" href="{% url 'shop-page' %}?cat=couple">
       <div class="cat-img-wrap"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIy-aqJrKRRpKuZkuDLilc6F0akobCk8sC9F6dD_IE13Jm8GJXcc6m6yaQw_yIkkv2ZOLk5mM8PWeYxeB3h5tO_AcbJAsiLJTLQRDYEPaoDkULuDuhej34JNlodJYIXzCQ-VA2uixPlns9rGpqUT2VbxxQQMFxtEP8CuwZfJ0CK5D3ruPjG2wU2pfa37pEfMqb72X6eXaxAmevnf718OG2OilwE9oHYi0x4ohCrQTF-mgijxMa7ZvqVPzM4A2zVBpQKbvY5LxwWssY" alt="Couple Gifts"/></div>
-      <span class="cat-name">Couple Gifts</span>
+      <span class="cat-name">Apparel</span>
     </a>
     <a class="cat-item" href="{% url 'shop-page' %}?cat=pet">
       <div class="cat-img-wrap"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWeccVggREBKuAym2zBKqvzC8F87RRbrFZ99L-gHFwmlAC_64e9Jx4_RPIjz_SI0dnGKpbdS8TeSzjociKAtOFxU7nF49e27_z8oJQzsG4eHAjGIXyp7q8Tm7hp_4mMfFe53GJ8Mi4lwSBf1Lg0qv2wraiJqCYSgDQvkwjoQ3M9el85Gl16LjIBz1cZVZ8QyVxp1UwcuWL7O31oV86gbthHMrkZQlRU4LT6Hd7gWtfwc6J4CChe2niB25znEnetmDsnLAorhyl5vwj" alt="Pet Lovers"/></div>
-      <span class="cat-name">Pet Lovers</span>
+      <span class="cat-name">Weddings</span>
     </a>
     <a class="cat-item" href="{% url 'shop-page' %}?cat=family">
       <div class="cat-img-wrap"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCniIsfG0lrlSXyEHG9fVHb7z3muvPmxkBBKMkoS8JmBISquw0P_x88PG5gI-le5jfWBODFMJN0vLzg7vZH87GzFFXoH7VNE5dcmhQWVICMBx1rwsj1uvDfWhf64lbaBE2ea_bsX5Yzr8-CgJhEB7prfv6mjxrvCx6pYRyiNvx6Szq9BSJ8QHNH4gKY3YS3L1r9L0EiP__P3LBXQoaYxVngqZTPedG1cDcQ2ml7O--5nPO9Vq6eMmiM7gZ8h-POd7G7Urz6V0YpCIMq" alt="Family Gifts"/></div>
-      <span class="cat-name">Family Gifts</span>
+      <span class="cat-name">Birthdays</span>
     </a>
     <a class="cat-item" href="{% url 'shop-page' %}?cat=baby">
       <div class="cat-img-wrap"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBe8qDuS8S_rkt1V0w6gXQLE1o6BCg8C4rEC8gkexFD0xDmBaTWBKYG8aym0mlU3ACokocyF1ZtJJZLSKBOz3ejNhBPRwCxfhFivVazbrux5mzNDMxwaBGJYojSeK4qXLqIKKsUaPo6jHY06k16yiLwkh_a-TeO8hvSPBHLTiJPvhPOc-LCdMPt0sHKlkEgHtcZD7pjJ-iTVtx5ktW9skH9DY6a7XW_7d80t4P6XXmRZ3wuIaYNydasoDqqw5z4vgEHd3I860bQ01zR" alt="Baby Gifts"/></div>
-      <span class="cat-name">Baby Gifts</span>
+      <span class="cat-name">Corporate</span>
     </a>
     <a class="cat-item" href="{% url 'shop-page' %}?cat=birthday">
       <div class="cat-img-wrap"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0XwYnrfIpv2UaHZfGY0iEJcTq2GGK1egqMQIai4t3nIbRLyW9mtZT6DpKEQnyrMNKwpUE1cI4v8VD3Q1YCzShaW3HDSBUfnaxI1vQAEYWHz-7qmSIIx-PmXXoogpMo-oiVl3gJZGqAUU4flJZj-PaHEDodfbTtcPhYx86BWlCSh1nulcVGOuP4BE3uU0-Oum2T_VZGXck3y4f_3MxdtHA8lmJV0hCGTuPFhm9Uy-iWfanT4gEQ6Xlg51NiAyy4E5n-p1qc9znCGrE" alt="Birthday Gifts"/></div>
-      <span class="cat-name">Birthday Gifts</span>
+      <span class="cat-name">Events</span>
     </a>
     <a class="cat-item" href="{% url 'shop-page' %}?cat=anniversary">
       <div class="cat-img-wrap"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzaKndGz_PB3oYmY_o6XGhVFFhgbzen9QvpwXYTjPD6i0QrgStvNwlCeP-A6LiQyZftfycdMUErowpXWxNqSoR8J45UcDaJN-R1M0Lg4GounffQgdjW7b3nlyE1uLpvbl9kiwf3uvvIWPR4m77Tj-QMbAH7V4RALYe7ydLs7MSmcHMlNvf2bzPzU7FQBSOtgICB0d9JPkEFbaDhDcazGeFQzlQ9ACL6DDYpFNoNYyG43PWU8iXIhvSLCTbVV-OgDq6KAbMc4no5MO0" alt="Anniversary Gifts"/></div>
-      <span class="cat-name">Anniversary</span>
+      <span class="cat-name">Holidays</span>
     </a>
   </div>
 </section>
