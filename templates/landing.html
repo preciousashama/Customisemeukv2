@@ -87,7 +87,6 @@
   /* Top rule */
   .top-rule {
     width: 1px; height: 60px;
-    background: linear-gradient(to bottom, transparent, rgba(248,248,246,0.4));
     margin-bottom: 36px;
     opacity: 0;
     animation: fadeInUp 1s ease 0.3s forwards;
@@ -140,6 +139,8 @@
     display: inline-flex; align-items: center; gap: 16px;
     padding: 18px 44px;
     background: transparent;
+    border: none;
+    outline: none;
     color: var(--white);
     font-family: var(--sans);
     font-size: 10px; font-weight: 500;
@@ -160,7 +161,7 @@
   .enter-btn:hover::before { transform: translateX(0); }
   .enter-btn:hover { color: var(--black); }
   .enter-btn:hover .btn-arrow { transform: translateX(5px); }
-  
+
   .btn-label { position: relative; z-index: 1; }
   .btn-arrow {
     position: relative; z-index: 1;
@@ -215,13 +216,11 @@
     src="{% static 'cmuk-bg.mp4' %}"
   ></video>
 
-  <div class="grain"></div>
-
   <!-- Main content -->
   <div class="content">
     <div class="top-rule"></div>
 
-    <div class="overline">Est.2023 &nbsp;·&nbsp;</div>
+    <div class="overline">Est.2023 &nbsp;· United Kingdom &nbsp;</div>
 
     <img id="mainlogo" src="{% static 'logo.png' %}" alt="Logo" />
 
