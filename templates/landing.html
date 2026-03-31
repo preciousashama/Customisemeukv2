@@ -286,6 +286,8 @@
 <div class="transition-overlay" id="transitionOverlay"></div>
 
 
+{% load static %}
+
 <div class="scene">
 
   <video
@@ -295,10 +297,21 @@
     muted
     playsinline
     preload="auto"
-    src="{% static 'cmuk-bg.mp4' %}"
-  ></video>
+  >
+    <source src="{% static 'videos/cmuk-bg.mp4' %}" type="video/mp4">
+  </video>
 
   <div class="grain"></div>
+
+  <!-- Main content -->
+  <div class="content">
+    <div class="top-rule"></div>
+
+    <div class="overline">Est.2023 ·</div>
+
+    <h1 class="brand-name">
+      <img src="{% static 'images/logo.png' %}" alt="CustomiseMe logo">
+    </h1>
 
   <!-- Main content -->
   <div class="content">
