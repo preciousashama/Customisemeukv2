@@ -53,6 +53,7 @@ def ordertrackingpage(request):
 
 
 def _get_attr(obj, key, default=""):
+    """Safely get a value from either a dict or a Stripe object."""
     if isinstance(obj, dict):
         return obj.get(key, default)
     return getattr(obj, key, default)
@@ -118,7 +119,6 @@ def _build_product_maps(cart):
             if p.stripe_price_id:
                 stripe_price_to_product[p.stripe_price_id] = p
 
-    
     if not stripe_price_to_product:
         for p in Product.objects.exclude(stripe_price_id=""):
             stripe_price_to_product[p.stripe_price_id] = p
@@ -141,7 +141,6 @@ def _resolve_product_obj(django_pid, stripe_pid, stripe_name, product_map, strip
     if not product_obj and stripe_name and stripe_name not in ("", "Standard Shipping", "Item"):
         product_obj = Product.objects.filter(name__iexact=stripe_name).first()
 
-   
     if not product_obj and len(product_map) == 1:
         product_obj = next(iter(product_map.values()))
 
@@ -169,7 +168,6 @@ def orderconfirmpage(request):
         error = "No payment session found. If your payment was successful, please contact support."
         return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0})
 
-   
     order = (
         Order.objects
         .prefetch_related("items__product")
@@ -177,7 +175,6 @@ def orderconfirmpage(request):
         .first()
     )
     if order:
-        # Validate ownership then render — nothing else
         if order.customer and order.customer != request.user:
             if not getattr(request.user, "is_staff", False):
                 order = None
@@ -243,7 +240,6 @@ def orderconfirmpage(request):
             stripe_name, stripe_meta, stripe_images = _resolve_stripe_product(price_obj)
             li_description = (_get_attr(li, "description") or "").strip()
 
-            # Skip shipping line items — they must never become OrderItems
             if _is_shipping_line_item(stripe_name, stripe_meta, li_description):
                 continue
 
@@ -287,7 +283,6 @@ def orderconfirmpage(request):
             subtotal += price * qty
 
     else:
-        # Fallback: cart session (rare — only if list_line_items fails entirely)
         logger.warning("No Stripe line items — falling back to cart session for order %s", order.order_number)
         for item in (cart or []):
             try:
