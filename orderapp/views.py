@@ -60,9 +60,12 @@ def _get_attr(obj, key, default=""):
 
 
 def _resolve_stripe_product(price_obj):
+    """
+    Given an expanded price object, return (product_name, metadata_dict, images_list).
+    Handles dict, StripeObject, unexpanded string ID.
+    """
     stripe_product_obj = _get_attr(price_obj, "product")
 
-    # Already expanded as a dict
     if isinstance(stripe_product_obj, dict) and "name" in stripe_product_obj:
         return (
             stripe_product_obj.get("name", ""),
@@ -80,8 +83,8 @@ def _resolve_stripe_product(price_obj):
     if isinstance(stripe_product_obj, str) and stripe_product_obj.startswith("prod_"):
         try:
             fetched = stripe.Product.retrieve(stripe_product_obj)
-            name = _get_attr(fetched, "name", "")
-            meta = dict(_get_attr(fetched, "metadata", {}) or {})
+            name   = _get_attr(fetched, "name", "")
+            meta   = dict(_get_attr(fetched, "metadata", {}) or {})
             images = list(_get_attr(fetched, "images", []) or [])
             return name, meta, images
         except stripe.StripeError as e:
@@ -91,11 +94,15 @@ def _resolve_stripe_product(price_obj):
 
 
 def _fetch_line_items(session_id):
+    """
+    Stripe list_line_items returns a ListObject not a plain dict.
+    Access .data directly — never .get("data").
+    """
     try:
         list_obj = stripe.checkout.Session.list_line_items(
             session_id,
             limit=100,
-            expand=["data.price.product"],  
+            expand=["data.price.product"],
         )
         return list(list_obj.data)
     except stripe.StripeError as e:
@@ -128,24 +135,16 @@ def _build_product_maps(cart):
 
 
 def _resolve_product_obj(django_pid, stripe_pid, stripe_name, product_map, stripe_price_to_product):
-    """Try every available strategy to resolve the Django Product for a line item."""
-
     product_obj = product_map.get(django_pid) or stripe_price_to_product.get(stripe_pid)
 
-  
     if not product_obj and django_pid:
         try:
             product_obj = Product.objects.get(pk=django_pid)
-            logger.info("Resolved product via Stripe metadata: %s", product_obj.name)
         except Product.DoesNotExist:
-            logger.warning("No product found for django_product_id=%s", django_pid)
+            pass
 
-    # 3. Case-insensitive name match against Stripe product name
     if not product_obj and stripe_name and stripe_name not in ("", "Standard Shipping", "Item"):
-        matched = Product.objects.filter(name__iexact=stripe_name).first()
-        if matched:
-            product_obj = matched
-            logger.info("Resolved product by name match: %s", product_obj.name)
+        product_obj = Product.objects.filter(name__iexact=stripe_name).first()
 
     if not product_obj and len(product_map) == 1:
         product_obj = next(iter(product_map.values()))
@@ -155,14 +154,15 @@ def _resolve_product_obj(django_pid, stripe_pid, stripe_name, product_map, strip
 
 def orderconfirmpage(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
-    order  = None
-    error  = None
+    order      = None
+    error      = None
+    debug_info = {}
 
     session_id = request.GET.get("session_id", "").strip()
 
     if not session_id:
         error = "No payment session found. If your payment was successful, please contact support."
-        return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0})
+        return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0, "debug_info": {}})
 
     order = (
         Order.objects
@@ -172,29 +172,46 @@ def orderconfirmpage(request):
     )
 
     if not order:
+        debug_info["session_id"] = session_id
+
         try:
             sess = stripe.checkout.Session.retrieve(
                 session_id,
                 expand=["line_items.data.price.product"],
             )
+            debug_info["payment_status"] = _get_attr(sess, "payment_status")
         except stripe.StripeError as e:
-            logger.error("Stripe session retrieve failed: %s", e)
             error = "Could not verify your payment. Please contact support."
-            return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0})
+            debug_info["stripe_session_error"] = str(e)
+            return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0, "debug_info": debug_info})
 
         if _get_attr(sess, "payment_status") not in ("paid", "no_payment_required"):
             error = "Payment has not been completed. Please try again."
-            return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0})
+            return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0, "debug_info": debug_info})
 
-     
+        # ── Fetch line items ───────────────────────────────────────────
         stripe_line_items = _fetch_line_items(session_id)
-        logger.info("stripe_line_items count: %d", len(stripe_line_items))
+        debug_info["line_items_count"] = len(stripe_line_items)
+        debug_info["line_items_raw"]   = []
 
-    
-        shipping = _get_attr(sess, "shipping_details") or _get_attr(sess, "customer_details") or {}
-        addr = _get_attr(shipping, "address") or {}
+        for _i, _li in enumerate(stripe_line_items):
+            _price_obj  = _get_attr(_li, "price") or {}
+            _prod_obj   = _get_attr(_price_obj, "product")
+            _sname, _smeta, _simages = _resolve_stripe_product(_price_obj)
+            debug_info["line_items_raw"].append({
+                "index":            _i,
+                "description":      _get_attr(_li, "description"),
+                "qty":              _get_attr(_li, "quantity"),
+                "unit_amount":      _get_attr(_price_obj, "unit_amount"),
+                "price_id":         _get_attr(_price_obj, "id"),
+                "product_obj_type": type(_prod_obj).__name__,
+                "stripe_name":      _sname,
+                "stripe_meta":      _smeta,
+                "stripe_images":    _simages,
+            })
 
-    
+        shipping  = _get_attr(sess, "shipping_details") or _get_attr(sess, "customer_details") or {}
+        addr      = _get_attr(shipping, "address") or {}
         _customer = request.user if request.user.is_authenticated else None
         if _customer is None:
             _uid = (_get_attr(sess, "metadata") or {}).get("user_id")
@@ -222,24 +239,24 @@ def orderconfirmpage(request):
 
         cart = request.session.pop("pending_cart", None) or request.session.get("cart", [])
         cart_by_pid, product_map, stripe_price_to_product = _build_product_maps(cart)
-        logger.info("product_map keys: %s", list(product_map.keys()))
+        debug_info["product_map_keys"]      = list(product_map.keys())
+        debug_info["stripe_price_map_keys"] = list(stripe_price_to_product.keys())
+        debug_info["cart_by_pid_keys"]      = list(cart_by_pid.keys())
+        debug_info["order_items_created"]   = []
 
         subtotal = Decimal("0.00")
 
         if stripe_line_items:
             for li in stripe_line_items:
-                qty = _get_attr(li, "quantity") or 1
-
+                qty         = _get_attr(li, "quantity") or 1
                 price_obj   = _get_attr(li, "price") or {}
                 stripe_pid  = _get_attr(price_obj, "id") or ""
                 unit_amount = _get_attr(price_obj, "unit_amount") or 0
                 price       = Decimal(str(unit_amount)) / 100
 
                 stripe_name, stripe_meta, stripe_images = _resolve_stripe_product(price_obj)
-
                 li_description = (_get_attr(li, "description") or "").strip()
 
-                # Skip shipping line items
                 if stripe_name == "Standard Shipping":
                     continue
                 if (stripe_meta.get("is_shipping") or "").lower() in ("true", "1", "yes"):
@@ -259,13 +276,11 @@ def orderconfirmpage(request):
                     or (li_description if li_description.lower() not in ("item", "") else None)
                     or "Unknown Product"
                 )
-
                 sku = (
                     (product_obj.sku if product_obj else None)
                     or stripe_meta.get("sku", "")
                     or ""
                 )
-
                 image_url = ""
                 if product_obj and product_obj.image:
                     try:
@@ -273,7 +288,7 @@ def orderconfirmpage(request):
                     except Exception:
                         pass
                 if not image_url and stripe_images:
-                    image_url = stripe_images[0]  # Stripe stores Firebase URLs here
+                    image_url = stripe_images[0]
 
                 cart_item = (
                     cart_by_pid.get(django_pid)
@@ -281,12 +296,18 @@ def orderconfirmpage(request):
                 )
                 variant = (cart_item or {}).get("variant", "") or ""
 
-                logger.info(
-                    "Creating OrderItem: name=%s sku=%s price=%s qty=%s "
-                    "django_pid=%s stripe_name=%s image_url=%s product_obj=%s",
-                    name, sku, price, qty, django_pid, stripe_name,
-                    image_url, product_obj.pk if product_obj else None,
-                )
+                debug_info["order_items_created"].append({
+                    "django_pid":          django_pid,
+                    "stripe_pid":          stripe_pid,
+                    "stripe_name":         stripe_name,
+                    "stripe_meta":         stripe_meta,
+                    "stripe_images":       stripe_images,
+                    "resolved_product_pk": str(product_obj.pk) if product_obj else None,
+                    "resolved_name":       name,
+                    "resolved_image":      image_url,
+                    "price":               str(price),
+                    "qty":                 qty,
+                })
 
                 OrderItem.objects.create(
                     order=order, product=product_obj,
@@ -296,10 +317,7 @@ def orderconfirmpage(request):
                 subtotal += price * qty
 
         else:
-            logger.warning(
-                "No Stripe line items — falling back to cart session for order %s",
-                order.order_number
-            )
+            debug_info["fallback"] = "NO Stripe line items — fell back to cart session"
             for item in (cart or []):
                 try:
                     price = Decimal(str(item.get("price", "0")))
@@ -348,20 +366,14 @@ def orderconfirmpage(request):
                 )
                 subtotal += price * qty
 
-        shipping_cost   = Decimal("0.00") if subtotal >= 100 else Decimal("4.99")
-        order.subtotal  = subtotal
+        shipping_cost       = Decimal("0.00") if subtotal >= 100 else Decimal("4.99")
+        order.subtotal      = subtotal
         order.shipping_cost = shipping_cost
-        order.total     = subtotal + shipping_cost
+        order.total         = subtotal + shipping_cost
         order.save(update_fields=["subtotal", "shipping_cost", "total"])
 
-        logger.info("Order %s created for session %s", order.order_number, session_id)
-
         try:
-            sent = send_order_confirmation_email(order)
-            if sent:
-                logger.info("Confirmation email sent for %s", order.order_number)
-            else:
-                logger.warning("Confirmation email failed for %s", order.order_number)
+            send_order_confirmation_email(order)
         except Exception as e:
             logger.error("Order email error for %s: %s", order.order_number, e)
 
@@ -371,8 +383,12 @@ def orderconfirmpage(request):
 
     if order and order.customer and order.customer != request.user:
         if not getattr(request.user, "is_staff", False):
-            logger.warning("Unauthorized confirm page access for order %s", order.pk)
             order = None
             error = "You do not have permission to view this order."
 
-    return render(request, "order-confirm.html", {"order": order, "error": error, "cart_count": 0})
+    return render(request, "order-confirm.html", {
+        "order":      order,
+        "error":      error,
+        "cart_count": 0,
+        "debug_info": debug_info,
+    })
