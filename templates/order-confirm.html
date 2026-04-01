@@ -1204,5 +1204,19 @@ CART PID KEYS        : {{ debug_info.cart_by_pid_keys|default:"[]" }}
   }
 
 </script>
+{% if debug %}
+<div style="position:fixed;bottom:0;left:0;right:0;background:#0a0a0a;color:#00ff88;font-family:monospace;font-size:11px;padding:16px;max-height:40vh;overflow-y:auto;z-index:99999;border-top:2px solid #ff4444;">
+<strong style="color:#ff4444;">DEBUG — REMOVE AFTER FIX</strong><br><br>
+SESSION: {{ debug.session_id }}<br>
+LINE ITEMS COUNT: {{ debug.line_items_count }}<br><br>
+{% for li in debug.line_items %}
+[LINE ITEM {{ forloop.counter }}] name={{ li.stripe_name|default:"EMPTY" }} | is_shipping={{ li.is_shipping }} | unit={{ li.unit_amount }} | meta={{ li.stripe_meta }}<br>
+{% endfor %}
+<br>
+{% for i in debug.order_items %}
+[ORDER ITEM {{ forloop.counter }}] name={{ i.name }} | sku={{ i.sku }} | price={{ i.price }} | image={{ i.image_url|default:"EMPTY" }} | product_pk={{ i.product_pk|default:"None" }}<br>
+{% endfor %}
+</div>
+{% endif %}
 </body>
 </html>
