@@ -152,18 +152,142 @@ def _resolve_product_obj(django_pid, stripe_pid, stripe_name, product_map, strip
     return product_obj
 
 
+def _order_items_are_incomplete(order):
+    """
+    Returns True if any OrderItem in this order has a blank name or no image.
+    This detects orders that were saved before the fix and need re-enriching.
+    """
+    for item in order.items.all():
+        if not item.name or item.name in ("Item", "Unknown Product", ""):
+            return True
+        if not item.image_url and not (item.product and item.product.image):
+            return True
+    return False
+
+
+def _enrich_existing_order(order, session_id):
+    """
+    Re-fetches Stripe line items and patches existing OrderItems in-place
+    WITHOUT deleting or recreating the order. Safe to call on live orders.
+    """
+    stripe_line_items = _fetch_line_items(session_id)
+    if not stripe_line_items:
+        logger.warning("Cannot enrich order %s — no Stripe line items returned", order.order_number)
+        return
+
+    # Build a full product map from DB (no cart session needed for enrichment)
+    product_map = {}
+    stripe_price_to_product = {}
+    for p in Product.objects.exclude(stripe_price_id=""):
+        stripe_price_to_product[p.stripe_price_id] = p
+        product_map[str(p.pk)] = p
+
+    # Build a map of existing OrderItems keyed by price_id so we can patch them
+    # We match on price to avoid touching items that are already correct
+    existing_items = list(order.items.all())
+
+    # Build stripe data indexed by price_id for fast lookup
+    stripe_data_by_price = {}
+    for li in stripe_line_items:
+        price_obj  = _get_attr(li, "price") or {}
+        stripe_pid = _get_attr(price_obj, "id") or ""
+        stripe_name, stripe_meta, stripe_images = _resolve_stripe_product(price_obj)
+
+        if stripe_name == "Standard Shipping":
+            continue
+        if (stripe_meta.get("is_shipping") or "").lower() in ("true", "1", "yes"):
+            continue
+
+        django_pid  = stripe_meta.get("django_product_id", "")
+        product_obj = _resolve_product_obj(
+            django_pid, stripe_pid, stripe_name,
+            product_map, stripe_price_to_product,
+        )
+
+        image_url = ""
+        if product_obj and product_obj.image:
+            try:
+                image_url = product_obj.image.url
+            except Exception:
+                pass
+        if not image_url and stripe_images:
+            image_url = stripe_images[0]
+
+        resolved_name = (
+            (product_obj.name if product_obj else None)
+            or (stripe_name if stripe_name and stripe_name not in ("Item",) else None)
+            or "Unknown Product"
+        )
+
+        stripe_data_by_price[stripe_pid] = {
+            "name":        resolved_name,
+            "image_url":   image_url,
+            "product_obj": product_obj,
+            "sku":         (product_obj.sku if product_obj else "") or stripe_meta.get("sku", ""),
+        }
+
+    # Patch each existing OrderItem that has incomplete data
+    for item in existing_items:
+        needs_patch = (
+            not item.name
+            or item.name in ("Item", "Unknown Product", "")
+            or (not item.image_url and not (item.product and item.product.image))
+        )
+        if not needs_patch:
+            continue
+
+        # Try to find the matching Stripe data for this item
+        # Match by product FK first, then by name
+        matched_data = None
+        if item.product:
+            for price_id, data in stripe_data_by_price.items():
+                if data["product_obj"] and data["product_obj"].pk == item.product.pk:
+                    matched_data = data
+                    break
+
+        if not matched_data and item.name:
+            for price_id, data in stripe_data_by_price.items():
+                if data["name"].lower() == item.name.lower():
+                    matched_data = data
+                    break
+
+        if not matched_data and len(stripe_data_by_price) == 1:
+            matched_data = next(iter(stripe_data_by_price.values()))
+
+        if matched_data:
+            update_fields = []
+            if not item.name or item.name in ("Item", "Unknown Product", ""):
+                item.name = matched_data["name"]
+                update_fields.append("name")
+            if not item.image_url:
+                item.image_url = matched_data["image_url"]
+                update_fields.append("image_url")
+            if not item.product and matched_data["product_obj"]:
+                item.product = matched_data["product_obj"]
+                update_fields.append("product")
+            if not item.sku and matched_data["sku"]:
+                item.sku = matched_data["sku"]
+                update_fields.append("sku")
+            if update_fields:
+                item.save(update_fields=update_fields)
+                logger.info(
+                    "Re-enriched OrderItem %s on order %s: fields=%s name=%s image=%s",
+                    item.pk, order.order_number, update_fields, item.name, item.image_url
+                )
+
+
 def orderconfirmpage(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
-    order      = None
-    error      = None
-    debug_info = {}
+    order  = None
+    error  = None
 
     session_id = request.GET.get("session_id", "").strip()
 
     if not session_id:
         error = "No payment session found. If your payment was successful, please contact support."
-        return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0, "debug_info": {}})
+        return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0})
 
+    # Check if this session was already processed
     order = (
         Order.objects
         .prefetch_related("items__product")
@@ -171,44 +295,37 @@ def orderconfirmpage(request):
         .first()
     )
 
-    if not order:
-        debug_info["session_id"] = session_id
+    if order:
+        # ── KEY FIX: existing order found but items may have blank data ──
+        # Re-enrich from Stripe without deleting anything — safe for live orders
+        if _order_items_are_incomplete(order):
+            logger.info("Order %s has incomplete items — re-enriching from Stripe", order.order_number)
+            _enrich_existing_order(order, session_id)
+            # Reload from DB so template gets the patched data
+            order = (
+                Order.objects
+                .prefetch_related("items__product")
+                .filter(stripe_session_id=session_id)
+                .first()
+            )
 
+    else:
+        # ── Brand new order — full creation flow ──────────────────────
         try:
             sess = stripe.checkout.Session.retrieve(
                 session_id,
                 expand=["line_items.data.price.product"],
             )
-            debug_info["payment_status"] = _get_attr(sess, "payment_status")
         except stripe.StripeError as e:
+            logger.error("Stripe session retrieve failed: %s", e)
             error = "Could not verify your payment. Please contact support."
-            debug_info["stripe_session_error"] = str(e)
-            return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0, "debug_info": debug_info})
+            return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0})
 
         if _get_attr(sess, "payment_status") not in ("paid", "no_payment_required"):
             error = "Payment has not been completed. Please try again."
-            return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0, "debug_info": debug_info})
+            return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0})
 
-        # ── Fetch line items ───────────────────────────────────────────
         stripe_line_items = _fetch_line_items(session_id)
-        debug_info["line_items_count"] = len(stripe_line_items)
-        debug_info["line_items_raw"]   = []
-
-        for _i, _li in enumerate(stripe_line_items):
-            _price_obj  = _get_attr(_li, "price") or {}
-            _prod_obj   = _get_attr(_price_obj, "product")
-            _sname, _smeta, _simages = _resolve_stripe_product(_price_obj)
-            debug_info["line_items_raw"].append({
-                "index":            _i,
-                "description":      _get_attr(_li, "description"),
-                "qty":              _get_attr(_li, "quantity"),
-                "unit_amount":      _get_attr(_price_obj, "unit_amount"),
-                "price_id":         _get_attr(_price_obj, "id"),
-                "product_obj_type": type(_prod_obj).__name__,
-                "stripe_name":      _sname,
-                "stripe_meta":      _smeta,
-                "stripe_images":    _simages,
-            })
 
         shipping  = _get_attr(sess, "shipping_details") or _get_attr(sess, "customer_details") or {}
         addr      = _get_attr(shipping, "address") or {}
@@ -239,10 +356,6 @@ def orderconfirmpage(request):
 
         cart = request.session.pop("pending_cart", None) or request.session.get("cart", [])
         cart_by_pid, product_map, stripe_price_to_product = _build_product_maps(cart)
-        debug_info["product_map_keys"]      = list(product_map.keys())
-        debug_info["stripe_price_map_keys"] = list(stripe_price_to_product.keys())
-        debug_info["cart_by_pid_keys"]      = list(cart_by_pid.keys())
-        debug_info["order_items_created"]   = []
 
         subtotal = Decimal("0.00")
 
@@ -296,19 +409,6 @@ def orderconfirmpage(request):
                 )
                 variant = (cart_item or {}).get("variant", "") or ""
 
-                debug_info["order_items_created"].append({
-                    "django_pid":          django_pid,
-                    "stripe_pid":          stripe_pid,
-                    "stripe_name":         stripe_name,
-                    "stripe_meta":         stripe_meta,
-                    "stripe_images":       stripe_images,
-                    "resolved_product_pk": str(product_obj.pk) if product_obj else None,
-                    "resolved_name":       name,
-                    "resolved_image":      image_url,
-                    "price":               str(price),
-                    "qty":                 qty,
-                })
-
                 OrderItem.objects.create(
                     order=order, product=product_obj,
                     name=name, sku=sku, price=price,
@@ -317,7 +417,7 @@ def orderconfirmpage(request):
                 subtotal += price * qty
 
         else:
-            debug_info["fallback"] = "NO Stripe line items — fell back to cart session"
+            logger.warning("No Stripe line items — falling back to cart session for order %s", order.order_number)
             for item in (cart or []):
                 try:
                     price = Decimal(str(item.get("price", "0")))
@@ -386,9 +486,4 @@ def orderconfirmpage(request):
             order = None
             error = "You do not have permission to view this order."
 
-    return render(request, "order-confirm.html", {
-        "order":      order,
-        "error":      error,
-        "cart_count": 0,
-        "debug_info": debug_info,
-    })
+    return render(request, "order-confirm.html", {"order": order, "error": error, "cart_count": 0})
