@@ -986,6 +986,43 @@
       </div>
     </div>
 
+    <!-- DEBUG PANEL - remove after fix -->
+    {% if debug_info %}
+    <div style="background:#0a0a0a;color:#00ff88;font-family:monospace;font-size:12px;padding:24px 28px;border:2px solid #00ff88;white-space:pre-wrap;overflow-x:auto;margin-bottom:24px;">
+<strong style="font-size:14px;color:#ff4444;">DEBUG PANEL - REMOVE AFTER FIX</strong>
+
+SESSION ID      : {{ debug_info.session_id|default:"none" }}
+PAYMENT STATUS  : {{ debug_info.payment_status|default:"none" }}
+LINE ITEMS COUNT: {{ debug_info.line_items_count|default:"0" }}
+STRIPE ERROR    : {{ debug_info.stripe_session_error|default:"none" }}
+FALLBACK USED   : {{ debug_info.fallback|default:"No - Stripe line items path used" }}
+
+PRODUCT MAP KEYS     : {{ debug_info.product_map_keys|default:"[]" }}
+STRIPE PRICE MAP KEYS: {{ debug_info.stripe_price_map_keys|default:"[]" }}
+CART PID KEYS        : {{ debug_info.cart_by_pid_keys|default:"[]" }}
+
+{% for li in debug_info.line_items_raw %}LINE ITEM [{{ li.index }}]:
+  description={{ li.description|default:"(empty)" }} qty={{ li.qty }} unit_amount={{ li.unit_amount }}
+  price_id={{ li.price_id|default:"(empty)" }}
+  product_type={{ li.product_obj_type }}
+  stripe_name={{ li.stripe_name|default:"(empty)" }}
+  stripe_meta={{ li.stripe_meta }}
+  stripe_images={{ li.stripe_images }}
+{% endfor %}
+{% for item in debug_info.order_items_created %}ORDER ITEM [{{ forloop.counter }}]:
+  django_pid={{ item.django_pid|default:"EMPTY - metadata missing!" }}
+  stripe_pid={{ item.stripe_pid|default:"(empty)" }}
+  stripe_name={{ item.stripe_name|default:"(empty)" }}
+  stripe_meta={{ item.stripe_meta }}
+  resolved_pk={{ item.resolved_product_pk|default:"None - product not found!" }}
+  resolved_name={{ item.resolved_name }}
+  resolved_image={{ item.resolved_image|default:"EMPTY - no image!" }}
+  price/qty=GBP{{ item.price }}x{{ item.qty }}
+{% empty %}NO ORDER ITEMS CREATED - line items count was 0 or all skipped
+{% endfor %}</div>
+    {% endif %}
+    <!-- END DEBUG PANEL -->
+
     <!-- HELP BANNER -->
     <div class="help-banner">
       <div>
