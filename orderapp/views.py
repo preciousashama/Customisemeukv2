@@ -60,6 +60,10 @@ def _get_attr(obj, key, default=""):
 
 
 def _resolve_stripe_product(price_obj):
+    """
+    Given an expanded price object, return (product_name, metadata_dict, images_list).
+    Handles dict, StripeObject, or unexpanded string product ID.
+    """
     stripe_product_obj = _get_attr(price_obj, "product")
 
     if isinstance(stripe_product_obj, dict) and "name" in stripe_product_obj:
@@ -91,6 +95,10 @@ def _resolve_stripe_product(price_obj):
 
 
 def _fetch_line_items(session_id):
+    """
+    Stripe list_line_items returns a ListObject — access .data directly,
+    never .get("data") which always silently returns [].
+    """
     try:
         list_obj = stripe.checkout.Session.list_line_items(
             session_id,
@@ -104,6 +112,10 @@ def _fetch_line_items(session_id):
 
 
 def _build_product_maps(cart):
+    """
+    Build product_map and stripe_price_to_product from cart session.
+    Falls back to full DB load if cart is empty/expired (common after Stripe redirect).
+    """
     cart_by_pid = {}
     for c in (cart or []):
         pid = str(c.get("product_id") or c.get("id") or "").strip()
@@ -119,6 +131,8 @@ def _build_product_maps(cart):
             if p.stripe_price_id:
                 stripe_price_to_product[p.stripe_price_id] = p
 
+    # Always ensure stripe_price_to_product is populated —
+    # cart session is often expired by the time customer hits confirm page
     if not stripe_price_to_product:
         for p in Product.objects.exclude(stripe_price_id=""):
             stripe_price_to_product[p.stripe_price_id] = p
@@ -128,19 +142,23 @@ def _build_product_maps(cart):
 
 
 def _resolve_product_obj(django_pid, stripe_pid, stripe_name, product_map, stripe_price_to_product):
+    """Try every available strategy to resolve the Django Product for a line item."""
 
+    # 1. Match by django_product_id from Stripe metadata (fastest, most reliable)
     product_obj = product_map.get(django_pid) or stripe_price_to_product.get(stripe_pid)
 
+    # 2. Direct DB lookup by django_product_id
     if not product_obj and django_pid:
         try:
             product_obj = Product.objects.get(pk=django_pid)
         except Product.DoesNotExist:
             pass
 
-    
+    # 3. Case-insensitive name match
     if not product_obj and stripe_name and stripe_name not in ("", "Standard Shipping", "Item"):
         product_obj = Product.objects.filter(name__iexact=stripe_name).first()
 
+    # 4. Last resort: only one product exists
     if not product_obj and len(product_map) == 1:
         product_obj = next(iter(product_map.values()))
 
@@ -148,6 +166,7 @@ def _resolve_product_obj(django_pid, stripe_pid, stripe_name, product_map, strip
 
 
 def _is_shipping_line_item(stripe_name, stripe_meta, li_description):
+    """Returns True if this Stripe line item is a shipping charge, not a product."""
     if stripe_name.lower() in ("standard shipping", "shipping"):
         return True
     if (stripe_meta.get("is_shipping") or "").lower() in ("true", "1", "yes"):
@@ -168,6 +187,7 @@ def orderconfirmpage(request):
         error = "No payment session found. If your payment was successful, please contact support."
         return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0})
 
+    # ── If already processed, return immediately — no extra API calls ──
     order = (
         Order.objects
         .prefetch_related("items__product")
@@ -175,6 +195,7 @@ def orderconfirmpage(request):
         .first()
     )
     if order:
+        # Validate ownership then render — nothing else
         if order.customer and order.customer != request.user:
             if not getattr(request.user, "is_staff", False):
                 order = None
@@ -196,6 +217,26 @@ def orderconfirmpage(request):
         return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0})
 
     stripe_line_items = _fetch_line_items(session_id)
+
+    _debug = {
+        "session_id":        session_id,
+        "line_items_count":  len(stripe_line_items),
+        "line_items": [],
+    }
+    for _li in stripe_line_items:
+        _po = _get_attr(_li, "price") or {}
+        _sn, _sm, _si = _resolve_stripe_product(_po)
+        _desc = (_get_attr(_li, "description") or "").strip()
+        _debug["line_items"].append({
+            "description":   _desc,
+            "qty":           _get_attr(_li, "quantity"),
+            "unit_amount":   _get_attr(_po, "unit_amount"),
+            "price_id":      _get_attr(_po, "id"),
+            "stripe_name":   _sn,
+            "stripe_meta":   _sm,
+            "stripe_images": _si,
+            "is_shipping":   _is_shipping_line_item(_sn, _sm, _desc),
+        })
 
     shipping  = _get_attr(sess, "shipping_details") or _get_attr(sess, "customer_details") or {}
     addr      = _get_attr(shipping, "address") or {}
@@ -240,6 +281,7 @@ def orderconfirmpage(request):
             stripe_name, stripe_meta, stripe_images = _resolve_stripe_product(price_obj)
             li_description = (_get_attr(li, "description") or "").strip()
 
+            # Skip shipping line items — they must never become OrderItems
             if _is_shipping_line_item(stripe_name, stripe_meta, li_description):
                 continue
 
@@ -351,4 +393,18 @@ def orderconfirmpage(request):
             order = None
             error = "You do not have permission to view this order."
 
-    return render(request, "order-confirm.html", {"order": order, "error": error, "cart_count": 0})
+    # ── TEMP DEBUG: attach created items ───────────────────────────────
+    _debug["order_items"] = [
+        {
+            "name":       i.name,
+            "sku":        i.sku,
+            "price":      str(i.price),
+            "qty":        i.quantity,
+            "image_url":  i.image_url,
+            "product_pk": str(i.product.pk) if i.product else None,
+        }
+        for i in order.items.all()
+    ] if order else []
+    # ── END TEMP DEBUG ─────────────────────────────────────────────────
+
+    return render(request, "order-confirm.html", {"order": order, "error": error, "cart_count": 0, "debug": _debug})
