@@ -180,6 +180,16 @@ def orderconfirmpage(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
     order  = None
     error  = None
+    
+    # PROOF LINE — remove after confirmed
+    return render(request, "order-confirm.html", {
+        "order": None, "error": "NEW CODE IS RUNNING v4", "cart_count": 0, "debug": {}
+    })
+
+def orderconfirmpage(request):
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    order  = None
+    error  = None
 
     session_id = request.GET.get("session_id", "").strip()
 
