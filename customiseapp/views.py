@@ -1,4 +1,3 @@
-
 import json
 import logging
 import stripe
@@ -379,7 +378,7 @@ def create_checkout_session(request):
             try:
                 product = Product.objects.only(
                     "stripe_price_id", "stripe_product_id",
-                    "price", "name", "image",
+                    "price", "name", "image", "sku",
                 ).get(pk=pid)
                 stripe_price_id = product.stripe_price_id or None
             except Product.DoesNotExist:
@@ -885,6 +884,3 @@ def senditempage(request):
         return redirect("senditems-page")
  
     return render(request, "senditems.html")
- 
- 
-

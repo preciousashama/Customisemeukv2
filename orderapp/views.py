@@ -166,25 +166,16 @@ def _resolve_product_obj(django_pid, stripe_pid, stripe_name, product_map, strip
 
 
 def _is_shipping_line_item(stripe_name, stripe_meta, li_description):
-    """Returns True if this Stripe line item is a shipping charge, not a product."""
-    if stripe_name.lower() in ("standard shipping", "shipping"):
+    shipping_keywords = ("standard shipping", "shipping", "delivery", "postage")
+    if stripe_name.lower() in shipping_keywords:
         return True
     if (stripe_meta.get("is_shipping") or "").lower() in ("true", "1", "yes"):
         return True
-    if li_description.lower() in ("standard shipping", "shipping"):
+    if li_description.lower() in shipping_keywords:
         return True
     return False
 
 
-def orderconfirmpage(request):
-    stripe.api_key = settings.STRIPE_SECRET_KEY
-    order  = None
-    error  = None
-    
-    # PROOF LINE — remove after confirmed
-    return render(request, "order-confirm.html", {
-        "order": None, "error": "NEW CODE IS RUNNING v4", "cart_count": 0, "debug": {}
-    })
 
 def orderconfirmpage(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -403,7 +394,6 @@ def orderconfirmpage(request):
             order = None
             error = "You do not have permission to view this order."
 
-    # ── TEMP DEBUG: attach created items ───────────────────────────────
     _debug["order_items"] = [
         {
             "name":       i.name,
@@ -415,6 +405,5 @@ def orderconfirmpage(request):
         }
         for i in order.items.all()
     ] if order else []
-    # ── END TEMP DEBUG ─────────────────────────────────────────────────
 
     return render(request, "order-confirm.html", {"order": order, "error": error, "cart_count": 0, "debug": _debug})
