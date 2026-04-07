@@ -176,234 +176,92 @@ def _is_shipping_line_item(stripe_name, stripe_meta, li_description):
     return False
 
 
-
 def orderconfirmpage(request):
-    stripe.api_key = settings.STRIPE_SECRET_KEY
-    order  = None
-    error  = None
-
-    session_id = request.GET.get("session_id", "").strip()
-
+    session_id = request.GET.get("session_id")
     if not session_id:
-        error = "No payment session found. If your payment was successful, please contact support."
-        return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0})
-
-    # ── If already processed, return immediately — no extra API calls ──
-    order = (
-        Order.objects
-        .prefetch_related("items__product")
-        .filter(stripe_session_id=session_id)
-        .first()
-    )
-    if order:
-        # Validate ownership then render — nothing else
-        if order.customer and order.customer != request.user:
-            if not getattr(request.user, "is_staff", False):
-                order = None
-                error = "You do not have permission to view this order."
-        return render(request, "order-confirm.html", {"order": order, "error": error, "cart_count": 0})
+        return render(request, "order-confirm.html", {"error": "No session ID provided."})
 
     try:
-        sess = stripe.checkout.Session.retrieve(
-            session_id,
-            expand=["line_items.data.price.product"],
+        session = stripe.checkout.Session.retrieve(
+            session_id, 
+            expand=["line_items.data.price.product"]
         )
-    except stripe.StripeError as e:
-        logger.error("Stripe session retrieve failed: %s", e)
-        error = "Could not verify your payment. Please contact support."
-        return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0})
+    except Exception as e:
+        logger.error("Stripe session retrieval failed: %s", e)
+        return render(request, "order-confirm.html", {"error": "Could not retrieve order details."})
 
-    if _get_attr(sess, "payment_status") not in ("paid", "no_payment_required"):
-        error = "Payment has not been completed. Please try again."
-        return render(request, "order-confirm.html", {"order": None, "error": error, "cart_count": 0})
-
-    stripe_line_items = _fetch_line_items(session_id)
-
-    _debug = {
-        "session_id":        session_id,
-        "line_items_count":  len(stripe_line_items),
-        "line_items": [],
-    }
-    for _li in stripe_line_items:
-        _po = _get_attr(_li, "price") or {}
-        _sn, _sm, _si = _resolve_stripe_product(_po)
-        _desc = (_get_attr(_li, "description") or "").strip()
-        _debug["line_items"].append({
-            "description":   _desc,
-            "qty":           _get_attr(_li, "quantity"),
-            "unit_amount":   _get_attr(_po, "unit_amount"),
-            "price_id":      _get_attr(_po, "id"),
-            "stripe_name":   _sn,
-            "stripe_meta":   _sm,
-            "stripe_images": _si,
-            "is_shipping":   _is_shipping_line_item(_sn, _sm, _desc),
-        })
-
-    shipping  = _get_attr(sess, "shipping_details") or _get_attr(sess, "customer_details") or {}
-    addr      = _get_attr(shipping, "address") or {}
-    _customer = request.user if request.user.is_authenticated else None
-    if _customer is None:
-        _uid = (_get_attr(sess, "metadata") or {}).get("user_id")
-        if _uid:
-            try:
-                _customer = User.objects.get(pk=_uid)
-            except User.DoesNotExist:
-                pass
-
-    order = Order.objects.create(
-        customer              = _customer,
-        guest_name            = _get_attr(shipping, "name") or "",
-        guest_email           = _get_attr(sess, "customer_email") or "",
-        status                = "confirmed",
-        stripe_session_id     = session_id,
-        stripe_payment_intent = _get_attr(sess, "payment_intent") or "",
-        shipping_name         = _get_attr(shipping, "name") or "",
-        shipping_line1        = _get_attr(addr, "line1") or "",
-        shipping_line2        = _get_attr(addr, "line2") or "",
-        shipping_city         = _get_attr(addr, "city") or "",
-        shipping_county       = _get_attr(addr, "state") or "",
-        shipping_postcode     = _get_attr(addr, "postal_code") or "",
-        shipping_country      = _get_attr(addr, "country") or "GB",
+    order, created = Order.objects.get_or_create(
+        stripe_session_id=session_id,
+        defaults={
+            "stripe_payment_intent": session.payment_intent,
+            "status": "confirmed",
+            "guest_email": session.customer_details.email or "",
+            "guest_name": session.customer_details.name or "",
+        }
     )
 
-    cart = request.session.pop("pending_cart", None) or request.session.get("cart", [])
-    cart_by_pid, product_map, stripe_price_to_product = _build_product_maps(cart)
+    if created:
+        addr = session.shipping_details.address if session.shipping_details else None
+        if addr:
+            order.shipping_name = session.shipping_details.name or ""
+            order.shipping_line1 = addr.line1 or ""
+            order.shipping_line2 = addr.line2 or ""
+            order.shipping_city = addr.city or ""
+            order.shipping_postcode = addr.postal_code or ""
+            order.shipping_country = addr.country or "GB"
+        
+        if request.user.is_authenticated:
+            order.customer = request.user
+        order.save()
 
-    subtotal = Decimal("0.00")
+        line_items = session.line_items.data
+        subtotal = Decimal("0.00")
 
-    if stripe_line_items:
-        for li in stripe_line_items:
-            qty         = _get_attr(li, "quantity") or 1
-            price_obj   = _get_attr(li, "price") or {}
-            stripe_pid  = _get_attr(price_obj, "id") or ""
-            unit_amount = _get_attr(price_obj, "unit_amount") or 0
-            price       = Decimal(str(unit_amount)) / 100
-
-            stripe_name, stripe_meta, stripe_images = _resolve_stripe_product(price_obj)
-            li_description = (_get_attr(li, "description") or "").strip()
-
-            # Skip shipping line items — they must never become OrderItems
-            if _is_shipping_line_item(stripe_name, stripe_meta, li_description):
+        for item in line_items:
+            if item.description and "shipping" in item.description.lower():
                 continue
 
-            django_pid  = stripe_meta.get("django_product_id", "")
-            product_obj = _resolve_product_obj(
-                django_pid, stripe_pid, stripe_name,
-                product_map, stripe_price_to_product,
-            )
+            stripe_name = item.get("description")
+            price_obj = item.get("price")
+            product_data = price_obj.get("product") if price_obj else None
+            
+            meta_name = item.get("metadata", {}).get("product_name")
+            
+            display_name = meta_name or stripe_name or (product_data.name if hasattr(product_data, 'name') else "Product")
 
-            name = (
-                (product_obj.name if product_obj else None)
-                or (stripe_name if stripe_name and stripe_name not in ("Item",) else None)
-                or (li_description if li_description.lower() not in ("item", "") else None)
-                or "Unknown Product"
-            )
-            sku = (
-                (product_obj.sku if product_obj else None)
-                or stripe_meta.get("sku", "")
-                or ""
-            )
+            sku = item.get("metadata", {}).get("product_sku", "")
+            product_obj = None
+            if sku:
+                product_obj = Product.objects.filter(sku=sku).first()
+            
+            price = Decimal(str(item.amount_total / 100)) / item.quantity
+            qty = item.quantity
             image_url = ""
-            if product_obj and product_obj.image:
-                try:
-                    image_url = product_obj.image.url
-                except Exception:
-                    pass
-            if not image_url and stripe_images:
-                image_url = stripe_images[0]
-
-            cart_item = (
-                cart_by_pid.get(django_pid)
-                or cart_by_pid.get(str(product_obj.pk) if product_obj else "")
-            )
-            variant = (cart_item or {}).get("variant", "") or ""
+            if product_data and product_data.get("images"):
+                image_url = product_data["images"][0]
+            elif product_obj and product_obj.image:
+                image_url = product_obj.image.url
 
             OrderItem.objects.create(
-                order=order, product=product_obj,
-                name=name, sku=sku, price=price,
-                quantity=qty, variant=variant, image_url=image_url,
-            )
-            subtotal += price * qty
-
-    else:
-        logger.warning("No Stripe line items — falling back to cart session for order %s", order.order_number)
-        for item in (cart or []):
-            try:
-                price = Decimal(str(item.get("price", "0")))
-            except InvalidOperation:
-                price = Decimal("0.00")
-            qty = max(1, int(item.get("quantity", 1)))
-
-            if item.get("is_shipping"):
-                continue
-            pid = str(item.get("product_id") or item.get("id") or "").strip()
-            if not pid and price in (Decimal("4.99"), Decimal("0.00")):
-                continue
-
-            product_obj = product_map.get(pid)
-            if not product_obj and pid:
-                try:
-                    product_obj = Product.objects.get(pk=pid)
-                except Product.DoesNotExist:
-                    pass
-
-            name = (
-                (product_obj.name if product_obj else None)
-                or item.get("name", "").strip()
-                or "Unknown Product"
-            )
-            sku = (
-                (product_obj.sku if product_obj else None)
-                or item.get("sku", "").strip()
-                or ""
-            )
-            image_url = ""
-            if product_obj and product_obj.image:
-                try:
-                    image_url = product_obj.image.url
-                except Exception:
-                    pass
-            else:
-                image_url = item.get("image_url", "") or ""
-
-            OrderItem.objects.create(
-                order=order, product=product_obj,
-                name=name, sku=sku, price=price,
+                order=order,
+                product=product_obj,
+                name=display_name,
+                sku=sku or (product_obj.sku if product_obj else "N/A"),
+                price=price,
                 quantity=qty,
-                variant=item.get("variant", "") or "",
+                variant=item.get("description") if meta_name else "",
                 image_url=image_url,
             )
-            subtotal += price * qty
+            subtotal += (price * qty)
 
-    shipping_cost       = Decimal("0.00") if subtotal >= 100 else Decimal("4.99")
-    order.subtotal      = subtotal
-    order.shipping_cost = shipping_cost
-    order.total         = subtotal + shipping_cost
-    order.save(update_fields=["subtotal", "shipping_cost", "total"])
+        # Update totals
+        order.subtotal = subtotal
+        order.total = Decimal(str(session.amount_total / 100))
+        order.shipping_cost = order.total - subtotal
+        order.save()
 
-    try:
-        send_order_confirmation_email(order)
-    except Exception as e:
-        logger.error("Order email error for %s: %s", order.order_number, e)
+        # Clear cart
+        request.session["cart"] = []
+        request.session.modified = True
 
-    request.session["cart"] = []
-    request.session.modified = True
-
-    if order.customer and order.customer != request.user:
-        if not getattr(request.user, "is_staff", False):
-            order = None
-            error = "You do not have permission to view this order."
-
-    _debug["order_items"] = [
-        {
-            "name":       i.name,
-            "sku":        i.sku,
-            "price":      str(i.price),
-            "qty":        i.quantity,
-            "image_url":  i.image_url,
-            "product_pk": str(i.product.pk) if i.product else None,
-        }
-        for i in order.items.all()
-    ] if order else []
-
-    return render(request, "order-confirm.html", {"order": order, "error": error, "cart_count": 0, "debug": _debug})
+    return render(request, "order-confirm.html", {"order": order})

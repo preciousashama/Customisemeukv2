@@ -387,10 +387,13 @@ def create_checkout_session(request):
             product = None
  
         if stripe_price_id:
-            # ── Happy path: use the pre-synced Stripe Price ────────
             line_items.append({
-                "price":    stripe_price_id,
+                "price": stripe_price_id,
                 "quantity": item["quantity"],
+                "metadata": {
+                    "product_name": product.name if product else item.get("name", "Item"),
+                    "product_sku": product.sku if product else "",
+                }
             })
         else:
             unit_amount = int(item["price_decimal"] * 100)
