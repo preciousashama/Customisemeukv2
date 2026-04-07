@@ -183,7 +183,7 @@ def orderconfirmpage(request):
 
     try:
         session = stripe.checkout.Session.retrieve(
-            session_id, 
+            session_id,
             expand=["line_items.data.price.product"]
         )
     except Exception as e:
@@ -203,13 +203,13 @@ def orderconfirmpage(request):
     if created:
         addr = session.shipping_details.address if session.shipping_details else None
         if addr:
-            order.shipping_name = session.shipping_details.name or ""
-            order.shipping_line1 = addr.line1 or ""
-            order.shipping_line2 = addr.line2 or ""
-            order.shipping_city = addr.city or ""
+            order.shipping_name    = session.shipping_details.name or ""
+            order.shipping_line1   = addr.line1 or ""
+            order.shipping_line2   = addr.line2 or ""
+            order.shipping_city    = addr.city or ""
             order.shipping_postcode = addr.postal_code or ""
             order.shipping_country = addr.country or "GB"
-        
+
         if request.user.is_authenticated:
             order.customer = request.user
         order.save()
@@ -218,45 +218,70 @@ def orderconfirmpage(request):
         subtotal = Decimal("0.00")
 
         for item in line_items:
-            if item.description and "shipping" in item.description.lower():
+            description = getattr(item, "description", "") or ""
+
+            if "shipping" in description.lower():
                 continue
 
-            stripe_name = item.get("description")
-            price_obj = item.get("price")
-            product_data = price_obj.get("product") if price_obj else None
-            
-            meta_name = item.get("metadata", {}).get("product_name")
-            
-            display_name = meta_name or stripe_name or (product_data.name if hasattr(product_data, 'name') else "Product")
+            price_obj    = getattr(item, "price", None)
+            product_data = getattr(price_obj, "product", None) if price_obj else None
 
-            sku = item.get("metadata", {}).get("product_sku", "")
+            item_metadata = dict(getattr(item, "metadata", {}) or {})
+            meta_name     = item_metadata.get("product_name", "")
+            sku           = item_metadata.get("product_sku", "")
+
+            if not meta_name and product_data is not None:
+                stripe_product_name = getattr(product_data, "name", "") or ""
+            else:
+                stripe_product_name = ""
+
+            display_name = meta_name or stripe_product_name or description or "Product"
+
             product_obj = None
             if sku:
                 product_obj = Product.objects.filter(sku=sku).first()
-            
-            price = Decimal(str(item.amount_total / 100)) / item.quantity
-            qty = item.quantity
+            if not product_obj and product_data is not None:
+                # Try matching via django_product_id stored in Stripe product metadata
+                stripe_prod_meta = dict(getattr(product_data, "metadata", {}) or {})
+                django_pid = stripe_prod_meta.get("django_product_id", "")
+                if django_pid:
+                    try:
+                        product_obj = Product.objects.get(pk=django_pid)
+                    except Product.DoesNotExist:
+                        pass
+            if not product_obj and display_name:
+                product_obj = Product.objects.filter(name__iexact=display_name).first()
+
+            # ── FIX 3: read images via getattr, not .get() ──
             image_url = ""
-            if product_data and product_data.get("images"):
-                image_url = product_data["images"][0]
-            elif product_obj and product_obj.image:
-                image_url = product_obj.image.url
+            if product_data is not None:
+                images = getattr(product_data, "images", None) or []
+                if images:
+                    image_url = images[0]
+            if not image_url and product_obj and product_obj.image:
+                try:
+                    image_url = product_obj.image.url
+                except Exception:
+                    pass
+
+            amount_total = getattr(item, "amount_total", 0) or 0
+            quantity     = getattr(item, "quantity", 1) or 1
+            price        = Decimal(str(amount_total / 100)) / quantity
 
             OrderItem.objects.create(
-                order=order,
-                product=product_obj,
-                name=display_name,
-                sku=sku or (product_obj.sku if product_obj else "N/A"),
-                price=price,
-                quantity=qty,
-                variant=item.get("description") if meta_name else "",
-                image_url=image_url,
+                order     = order,
+                product   = product_obj,
+                name      = display_name,
+                sku       = sku or (product_obj.sku if product_obj else "N/A"),
+                price     = price,
+                quantity  = quantity,
+                variant   = description if meta_name else "",
+                image_url = image_url,
             )
-            subtotal += (price * qty)
+            subtotal += price * quantity
 
-        # Update totals
-        order.subtotal = subtotal
-        order.total = Decimal(str(session.amount_total / 100))
+        order.subtotal     = subtotal
+        order.total        = Decimal(str((session.amount_total or 0) / 100))
         order.shipping_cost = order.total - subtotal
         order.save()
 
