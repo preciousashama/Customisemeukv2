@@ -52,9 +52,7 @@ def ordertrackingpage(request):
     })
 
 
-# ─────────────────────────────────────────────────────────────
-# Stripe helpers
-# ─────────────────────────────────────────────────────────────
+
 
 def _get_attr(obj, key, default=""):
     if isinstance(obj, dict):
@@ -63,10 +61,6 @@ def _get_attr(obj, key, default=""):
 
 
 def _resolve_stripe_product(price_obj):
-    """
-    Return (product_name, metadata_dict, images_list) from an expanded price object.
-    Handles StripeObject, plain dict, or an unexpanded prod_... string ID.
-    """
     stripe_product_obj = _get_attr(price_obj, "product")
 
     if isinstance(stripe_product_obj, dict) and "name" in stripe_product_obj:
@@ -98,12 +92,6 @@ def _resolve_stripe_product(price_obj):
 
 
 def _fetch_line_items(session_id):
-    """
-    Always use list_line_items — NOT session.line_items.data.
-    Session.retrieve() does not reliably honour nested expands like
-    expand=["line_items.data.price.product"], so product name/images
-    come back empty. list_line_items() with expand works correctly.
-    """
     try:
         list_obj = stripe.checkout.Session.list_line_items(
             session_id,
@@ -117,16 +105,6 @@ def _fetch_line_items(session_id):
 
 
 def _is_shipping_line_item(stripe_name, item_meta, description):
-    """
-    Return True ONLY if this line item is definitely a shipping charge.
-
-    FIX: We now require stripe_name to be non-empty before keyword-matching.
-    Previously, when stripe_name was "" (product not expanded), the function
-    would fall through and match on description alone — silently swallowing
-    real product items whose description happened to contain 'shipping' or
-    'delivery'. Now we only match on stripe_name when we actually have one,
-    and we still allow the metadata flag as an explicit override.
-    """
     shipping_keywords = ("standard shipping", "shipping", "delivery", "postage")
 
     # Only keyword-match if we have a meaningful name to check
@@ -144,7 +122,6 @@ def _is_shipping_line_item(stripe_name, item_meta, description):
 
 def _resolve_product_obj(django_pid, stripe_price_id, stripe_name,
                          product_map, stripe_price_to_product):
-    """Try every strategy to resolve a Django Product from a Stripe line item."""
     product_obj = product_map.get(django_pid) or stripe_price_to_product.get(stripe_price_id)
 
     if not product_obj and django_pid:
@@ -170,7 +147,7 @@ def _build_items_from_stripe(session_id, order):
         logger.warning("No line items returned for session %s", session_id)
         return Decimal("0.00"), Decimal("0.00")
 
-    # Build product lookup maps from DB (cart session is likely cleared by now)
+
     product_map = {}
     stripe_price_to_product = {}
     for p in Product.objects.exclude(stripe_price_id=""):
@@ -187,24 +164,24 @@ def _build_items_from_stripe(session_id, order):
 
         stripe_name, stripe_prod_meta, stripe_images = _resolve_stripe_product(price_obj)
 
-        # FIX: Log what we got from Stripe so it appears in the debug panel
+      
         logger.debug(
             "Line item — stripe_name=%r description=%r is_shipping=%s",
             stripe_name, description,
             _is_shipping_line_item(stripe_name, item_meta, description),
         )
 
-        # Identify and tally shipping; skip creating an OrderItem for it
+       
         if _is_shipping_line_item(stripe_name, item_meta, description):
             amount = getattr(item, "amount_total", 0) or 0
             shipping_total += Decimal(str(amount)) / 100
             continue
 
-        # Resolve display name — prefer Stripe product name over anything else
+       
         sku          = item_meta.get("product_sku", "") or stripe_prod_meta.get("sku", "")
         display_name = stripe_name or item_meta.get("product_name", "") or description or "Product"
 
-        # Resolve Django Product object
+       
         django_pid      = stripe_prod_meta.get("django_product_id", "")
         stripe_price_id = price_obj.id if price_obj else ""
         product_obj     = _resolve_product_obj(
@@ -214,15 +191,34 @@ def _build_items_from_stripe(session_id, order):
         if not product_obj and sku:
             product_obj = Product.objects.filter(sku=sku).first()
 
-        # Resolve image URL
         image_url = ""
+
         if stripe_images:
             image_url = stripe_images[0]
+
         if not image_url and product_obj and product_obj.image:
             try:
                 image_url = product_obj.image.url
             except Exception:
                 pass
+
+        if not image_url:
+            image_url = stripe_prod_meta.get("image_url", "") or item_meta.get("image_url", "")
+
+        if not image_url:
+            fallback_product = None
+            if display_name and display_name not in ("Product", "Item"):
+                fallback_product = Product.objects.filter(name__iexact=display_name).first()
+            if not fallback_product and sku:
+                fallback_product = Product.objects.filter(sku__iexact=sku).first()
+            if fallback_product and fallback_product.image:
+                try:
+                    image_url = fallback_product.image.url
+                    # Also set product_obj so it links properly
+                    if not product_obj:
+                        product_obj = fallback_product
+                except Exception:
+                    pass
 
         amount_total = getattr(item, "amount_total", 0) or 0
         quantity     = getattr(item, "quantity", 1) or 1
@@ -243,12 +239,12 @@ def _build_items_from_stripe(session_id, order):
     return subtotal, shipping_total
 
 
+
 def orderconfirmpage(request):
     session_id = request.GET.get("session_id")
     if not session_id:
         return render(request, "order-confirm.html", {"error": "No session ID provided."})
 
-    # Always clear cart on this page — not only on first visit
     request.session["cart"] = []
     request.session.modified = True
     request.session.save()
@@ -322,36 +318,5 @@ def orderconfirmpage(request):
             order.shipping_cost = shipping_total if shipping_total else (order.total - subtotal)
             order.save()
 
-    debug_ctx = None
-    if settings.DEBUG:
-        raw_items = _fetch_line_items(session_id)
-        debug_line_items = []
-        for li in raw_items:
-            price_obj  = getattr(li, "price", None)
-            item_meta  = dict(getattr(li, "metadata", {}) or {})
-            stripe_name, _, _ = _resolve_stripe_product(price_obj)
-            desc = getattr(li, "description", "") or ""
-            debug_line_items.append({
-                "stripe_name": stripe_name,
-                "description": desc,
-                "is_shipping": _is_shipping_line_item(stripe_name, item_meta, desc),
-                "unit_amount": getattr(getattr(li, "price", None), "unit_amount", "?"),
-                "stripe_meta": item_meta,
-            })
-        debug_ctx = {
-            "session_id":       session_id,
-            "line_items_count": len(raw_items),
-            "line_items":       debug_line_items,
-            "order_items": [
-                {
-                    "name":       i.name,
-                    "sku":        i.sku,
-                    "price":      i.price,
-                    "image_url":  i.image_url,
-                    "product_pk": str(i.product_id) if i.product_id else None,
-                }
-                for i in order.items.all()
-            ],
-        }
 
-    return render(request, "order-confirm.html", {"order": order, "debug": debug_ctx})
+    return render(request, "order-confirm.html", {"order": order})
