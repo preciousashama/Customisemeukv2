@@ -37,6 +37,49 @@
   .page-hero-stat-num span { color: var(--accent); }
   .page-hero-stat-label { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--grey-3); margin-top: 8px; }
 
+
+  /* ── Account dropdown ── */
+  .hdr-account-wrap { position: relative; }
+  .hdr-account-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    background: none; border: none; cursor: none;
+    color: var(--grey-3); padding: 8px 10px; transition: color .2s;
+    text-decoration: none;
+  }
+  .hdr-account-btn:hover { color: var(--black); }
+  .hdr-account-btn svg { display: block; flex-shrink: 0; }
+  .hdr-account-chevron {
+    display: inline-block; width: 5px; height: 5px;
+    border-right: 1px solid currentColor; border-bottom: 1px solid currentColor;
+    transform: rotate(45deg) translateY(-2px);
+    transition: transform .2s; flex-shrink: 0; margin-top: 1px;
+  }
+  .hdr-account-menu {
+    display: none;
+    position: absolute; top: calc(100% + 6px); right: 0;
+    min-width: 140px;
+    background: var(--white);
+    border: 1px solid var(--grey-6);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.1);
+    z-index: 200;
+  }
+  .hdr-account-wrap:hover .hdr-account-menu { display: block; }
+  .hdr-account-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px;
+    font-family: var(--sans); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--grey-3); text-decoration: none;
+    border-bottom: 1px solid var(--grey-7);
+    transition: background .15s, color .15s; cursor: none;
+    background: none; border-left: none; border-right: none; border-top: none;
+    width: 100%; text-align: left;
+  }
+  .hdr-account-item:last-child { border-bottom: none; }
+  .hdr-account-item:hover { background: var(--grey-8); color: var(--black); }
+  .hdr-account-item--danger { color: #c0392b; }
+  .hdr-account-item--danger:hover { background: #fdf0ef; color: #a93226; }
+
   /* PROMO TICKER */
   .promo-ticker { position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: var(--black); height: 34px; overflow: hidden; display: flex; align-items: center; }
   .promo-ticker-track { display: flex; align-items: center; white-space: nowrap; animation: ticker 40s linear infinite; will-change: transform; }
