@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from .decorators import admin_required
 from orderapp.models import Order
-from customiseapp.models import CarouselSlide, Product, DesignSubmission,SendItemRequest
+from customiseapp.models import CarouselSlide, Product, DesignSubmission,SendItemRequest,ProductCustomisation
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -399,6 +399,10 @@ def _build_context(request, active_tab, search_query="", form_errors=None,
         "send_item_requests": SendItemRequest.objects.select_related("user")
                           .prefetch_related("files")
                           .order_by("-created_at"),
+        "product_customisations": ProductCustomisation.objects
+                          .select_related("user", "product")
+                          .filter(final_price__isnull=False)
+                          .order_by("-created_at"),
         "search_query":   search_query,
         "current_admin":  request.user,
         "active_tab":     active_tab,
@@ -465,7 +469,7 @@ def admin_dashboard_data(request):
  
         if edit_slide:   active_tab = "carousel"
         if edit_product: active_tab = "products"
-
+ 
         viewed_order = None
         if active_tab == "orders" and order_query:
             viewed_order = (
@@ -526,7 +530,7 @@ def admin_dashboard_data(request):
  
         return redirect(f"{request.path}?tab=carousel")
  
-
+ 
     if action == "delete_slide":
         slide = get_object_or_404(CarouselSlide, pk=request.POST.get("slide_id"))
         title = slide.title
@@ -536,17 +540,17 @@ def admin_dashboard_data(request):
         messages.success(request, f'Slide "{title}" removed.')
         return redirect(f"{request.path}?tab=carousel")
     
-
+ 
     if action == "update_order_status":
         order_id    = request.POST.get("order_id")
         new_status  = request.POST.get("order_status", "").strip()
         redirect_to = request.POST.get("redirect_order", "")
         VALID = {"processing", "shipped", "delivered", "cancelled"}
-
+ 
         if new_status not in VALID:
             messages.error(request, "Invalid status.")
             return redirect(f"{request.path}?tab=orders")
-
+ 
         order = get_object_or_404(Order, pk=order_id)
         order.status = new_status
         order.save(update_fields=["status"])
@@ -669,6 +673,29 @@ def admin_dashboard_data(request):
     
     if action == "update_send_request_status":
        return _handle_update_send_request(request)
+ 
+    if action == "update_customisation_status":
+        cust_id     = request.POST.get("customisation_id", "").strip()
+        new_status  = request.POST.get("customisation_status", "").strip()
+        admin_note  = request.POST.get("customisation_note", "").strip()
+        VALID = {"pending", "in_production", "completed", "on_hold", "cancelled"}
+        if new_status not in VALID:
+            messages.error(request, "Invalid customisation status.")
+            return redirect(f"{request.path}?tab=customisations")
+        cust = get_object_or_404(ProductCustomisation, pk=cust_id)
+        try:
+            cust.fulfilment_status = new_status
+            cust.admin_note = admin_note
+            cust.save(update_fields=["fulfilment_status", "admin_note"])
+        except Exception:
+            cust.variant_summary = (
+                cust.variant_summary.split(" ║ STATUS:")[0]
+                + f" ║ STATUS: {new_status}"
+                + (f" | NOTE: {admin_note}" if admin_note else "")
+            )
+            cust.save(update_fields=["variant_summary"])
+        messages.success(request, f"Customisation #{str(cust_id)[:8]} updated to '{new_status}'.")
+        return redirect(f"{request.path}?tab=customisations")
  
     messages.error(request, "Unknown action.")
     return redirect(request.path)

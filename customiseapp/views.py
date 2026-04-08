@@ -18,6 +18,7 @@ from .models import (
     CarouselSlide, Product, Wishlist,
    DesignSubmission,DesignSubmissionFile,
    SendItemFile,SendItemRequest,
+   ProductCustomisation,
     SERVICE_TYPES, BUDGET_RANGES,
 )
 from orderapp.models import OrderItem,Order
@@ -296,18 +297,64 @@ def cartpage(request):
         is_ajax    = request.headers.get("x-requested-with") == "XMLHttpRequest"
 
         if action == "add_item":
-            existing = next((i for i in cart if i.get("product_id") == product_id), None)
+            colour        = request.POST.get("colour",       "").strip()
+            size          = request.POST.get("size",         "").strip()
+            artwork_size  = request.POST.get("artwork_size", "").strip()
+            placement     = request.POST.get("placement",    "").strip()
+            printing_side = request.POST.get("printing_side","").strip()
+            variant       = request.POST.get("variant",      "").strip()
+            # Use price_override (JS-calculated with add-ons) if present
+            raw_price     = request.POST.get("price_override") or request.POST.get("price", "0")
+
+            existing = next((i for i in cart if
+                             i.get("product_id") == product_id and
+                             i.get("variant") == variant), None)
             if existing:
                 existing["quantity"] = existing.get("quantity", 1) + 1
             else:
                 cart.append({
-                    "product_id": product_id,
-                    "name":       request.POST.get("name", ""),
-                    "price":      request.POST.get("price", "0"),
-                    "quantity":   1,
-                    "image_url":  request.POST.get("image_url", ""),
-                    "variant":    request.POST.get("variant", ""),
+                    "product_id":    product_id,
+                    "name":          request.POST.get("name", ""),
+                    "price":         raw_price,
+                    "quantity":      1,
+                    "image_url":     request.POST.get("image_url", ""),
+                    "variant":       variant,
+                    "colour":        colour,
+                    "size":          size,
+                    "artwork_size":  artwork_size,
+                    "placement":     placement,
+                    "printing_side": printing_side,
                 })
+
+            artwork_file = request.FILES.get("artwork_file")
+            try:
+                from .models import ProductCustomisation, Product as _Product
+                from decimal import Decimal as _D, InvalidOperation as _IE
+                try:
+                    fp = _D(str(raw_price))
+                except _IE:
+                    fp = None
+                pc = ProductCustomisation(
+                    user            = request.user if request.user.is_authenticated else None,
+                    session_key     = request.session.session_key or "",
+                    colour          = colour,
+                    size            = size,
+                    artwork_size    = artwork_size,
+                    placement       = placement,
+                    printing_side   = printing_side,
+                    variant_summary = variant,
+                    final_price     = fp,
+                    artwork_filename= artwork_file.name if artwork_file else "",
+                )
+                try:
+                    pc.product = _Product.objects.get(pk=product_id)
+                except (_Product.DoesNotExist, Exception):
+                    pass
+                if artwork_file:
+                    pc.artwork_file = artwork_file
+                pc.save()
+            except Exception as _e:
+                logger.warning("Could not save ProductCustomisation: %s", _e)
 
         elif action == "update_qty":
             qty = max(0, int(request.POST.get("quantity", 1)))

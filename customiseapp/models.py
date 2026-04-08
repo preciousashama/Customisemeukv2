@@ -295,3 +295,74 @@ class SendItemFile(models.Model):
  
     def __str__(self):
         return self.original_filename or str(self.file)
+    
+
+
+class ProductCustomisation(models.Model):
+    id              = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user            = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name="product_customisations",
+    )
+    session_key     = models.CharField(max_length=64, blank=True, db_index=True,
+                                       help_text="Django session key for guest users.")
+    product         = models.ForeignKey(
+        Product, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="customisations",
+    )
+ 
+    # Customisation choices
+    colour          = models.CharField(max_length=80, blank=True)
+    size            = models.CharField(max_length=20, blank=True)
+    artwork_size    = models.CharField(max_length=20, blank=True,
+                                       help_text="Small / Medium / Large")
+    placement       = models.CharField(max_length=50, blank=True,
+                                       help_text="e.g. Front Centre, Back Full")
+    printing_side   = models.CharField(max_length=30, blank=True,
+                                       help_text="Front Only / Back Only / Front & Back")
+ 
+    # Artwork file
+    artwork_file    = models.FileField(
+        upload_to="product-customisations/",
+        storage=_firebase_storage,
+        blank=True, null=True,
+    )
+    artwork_filename = models.CharField(max_length=255, blank=True)
+ 
+    # Final calculated price passed from the form
+    final_price     = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True,
+    )
+ 
+    # Full variant string for display in cart / order
+    variant_summary = models.TextField(blank=True)
+ 
+    # Admin-facing fields
+    FULFILMENT_STATUS = [
+        ("pending",       "Pending"),
+        ("in_production", "In Production"),
+        ("completed",     "Completed"),
+        ("on_hold",       "On Hold"),
+        ("cancelled",     "Cancelled"),
+    ]
+    fulfilment_status = models.CharField(
+        max_length=20, choices=FULFILMENT_STATUS, default="pending",
+        help_text="Admin-set production status visible in the dashboard.",
+    )
+    admin_note        = models.TextField(blank=True,
+                                         help_text="Internal note — not shown to customer.")
+ 
+    created_at      = models.DateTimeField(auto_now_add=True)
+ 
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Product Customisation"
+        verbose_name_plural = "Product Customisations"
+ 
+    def __str__(self):
+        return (
+            f"{self.product.name if self.product else '?'} — "
+            f"{self.colour} / {self.size} — {self.created_at:%d %b %Y}"
+        )

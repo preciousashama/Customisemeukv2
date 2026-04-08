@@ -156,6 +156,30 @@ nav>.nav-item>a .chevron{display:inline-block;width:7px;height:7px;border-right:
 .size-btn{flex:1;padding:13px 8px;border:1px solid var(--grey-6);background:var(--grey-8);font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey-3);cursor:none;transition:border-color .2s,background .2s,color .2s;text-align:center;}
 .size-btn:hover{border-color:var(--grey-3);color:var(--black);}
 .size-btn.active{border-color:var(--black);background:var(--black);color:var(--white);}
+/* COLOUR SELECT */
+.colour-select-wrap{display:flex;align-items:center;gap:12px;}
+.colour-select-wrap .field-input{flex:1;}
+.colour-swatch{width:32px;height:32px;border:1px solid var(--grey-6);border-radius:50%;flex-shrink:0;transition:background .2s;}
+
+/* PLACEMENT GRID */
+.placement-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.placement-btn{padding:10px 6px;border:1px solid var(--grey-6);background:var(--grey-8);font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--grey-3);cursor:none;transition:border-color .2s,background .2s,color .2s;text-align:center;line-height:1.3;}
+.placement-btn:hover{border-color:var(--grey-3);color:var(--black);}
+.placement-btn.active{border-color:var(--black);background:var(--black);color:var(--white);}
+
+/* ARTWORK UPLOAD */
+.artwork-upload-label{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1.5px dashed var(--grey-5);padding:28px 16px;background:var(--grey-8);cursor:none;transition:border-color .2s,background .2s;text-align:center;}
+.artwork-upload-label:hover{border-color:var(--black);background:var(--white);}
+.artwork-upload-label svg{color:var(--grey-4);}
+.artwork-upload-label span{font-size:13px;font-weight:500;color:var(--grey-3);letter-spacing:0.04em;}
+.artwork-upload-label.has-file{border-color:var(--success);background:#f0faf4;}
+.artwork-upload-label.has-file svg{color:var(--success);}
+
+/* PRICE BREAKDOWN */
+.price-breakdown{background:var(--grey-8);border:1px solid var(--grey-7);padding:16px 20px;display:flex;flex-direction:column;gap:8px;}
+.price-row{display:flex;justify-content:space-between;font-size:13px;color:var(--grey-3);}
+.price-row--total{border-top:1px solid var(--grey-6);padding-top:8px;margin-top:2px;font-weight:700;font-size:15px;color:var(--black);}
+
 .action-row{display:flex;gap:12px;padding-top:24px;border-top:1px solid var(--grey-7);}
 .btn-cart{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--black);color:var(--white);font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;padding:18px 24px;border:none;cursor:none;position:relative;overflow:hidden;}
 .btn-cart::after{content:'';position:absolute;inset:0;background:var(--grey-2);transform:translateX(-100%);transition:transform .35s;}
@@ -408,40 +432,102 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
         {% endif %}
       </div>
 
-      <form id="addToCartForm" method="POST" action="{% url 'cart-page' %}">
+      {# ── Per-product customization config ──────────────────────────────── #}
+      {% with pname=product.name|lower %}
+      {% comment %}
+        PRODUCT_CONFIG: maps product name keywords → colours / sizes.
+        artwork_size surcharge, placement, printing options are common to all.
+      {% endcomment %}
+
+      {# Colour options & sizes are rendered dynamically via JS config below #}
+      <form id="addToCartForm" method="POST" action="{% url 'cart-page' %}" enctype="multipart/form-data">
         {% csrf_token %}
-        <input type="hidden" name="action"     value="add_item"/>
-        <input type="hidden" name="product_id" value="{{ product.id }}"/>
-        <input type="hidden" name="name"       value="{{ product.name }}"/>
-        <input type="hidden" name="price"      value="{{ product.price }}"/>
-        <input type="hidden" name="image_url"  value="{% if product.image %}{{ product.image.url }}{% endif %}"/>
-        <input type="hidden" name="variant"    id="variantField" value=""/>
+        <input type="hidden" name="action"          value="add_item"/>
+        <input type="hidden" name="product_id"      value="{{ product.id }}"/>
+        <input type="hidden" name="name"            value="{{ product.name }}"/>
+        <input type="hidden" name="price"           value="{{ product.price }}"/>
+        <input type="hidden" name="image_url"       value="{% if product.image %}{{ product.image.url }}{% endif %}"/>
+        {# variant is built by JS and captures ALL customisation choices #}
+        <input type="hidden" name="variant"         id="variantField" value=""/>
+        {# price_override lets JS pass the final price including add-ons #}
+        <input type="hidden" name="price_override"  id="priceOverride" value="{{ product.price }}"/>
 
         <div class="custom-form">
+
+          {# ── STEP 1 · COLOUR ──────────────────────────────────────────── #}
           <div class="field-block">
-            <div class="field-label"><span class="step-num">1</span> Enter Custom Text</div>
-            <input class="field-input" type="text" id="customText" placeholder="e.g., M. JORDAN"
-                   oninput="document.getElementById('livePreviewText').textContent=this.value||'Your Text'"/>
+            <div class="field-label"><span class="step-num">1</span> Choose Colour</div>
+            <div class="colour-select-wrap">
+              <select class="field-input js-colour" id="colourSelect" name="colour">
+                <option value="">— Select a colour —</option>
+              </select>
+              <div class="colour-swatch" id="colourSwatch"></div>
+            </div>
           </div>
+
+          {# ── STEP 2 · SIZE ────────────────────────────────────────────── #}
           <div class="field-block">
-            <div class="field-label"><span class="step-num">2</span> Choose Font Style</div>
+            <div class="field-label"><span class="step-num">2</span> Select Size</div>
+            <div class="size-row js-size-row" id="sizeRow" style="margin-top:10px;flex-wrap:wrap;">
+              {# populated by JS #}
+            </div>
+            <input type="hidden" name="size" id="sizeField" value=""/>
+            <p class="size-note" id="sizeNote" style="font-size:11px;color:var(--grey-4);margin-top:6px;"></p>
+          </div>
+
+          {# ── STEP 3 · ARTWORK SIZE ────────────────────────────────────── #}
+          <div class="field-block">
+            <div class="field-label"><span class="step-num">3</span> Artwork Size</div>
             <div class="font-grid">
-              <button type="button" class="font-btn active js-font" data-font="Serif">Serif</button>
-              <button type="button" class="font-btn js-font" data-font="Modern">Modern</button>
-              <button type="button" class="font-btn js-font" data-font="Script">Script</button>
+              <button type="button" class="font-btn active js-art-size" data-size="Small" data-inches="4" data-add="0">Small <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">4 inches</span></button>
+              <button type="button" class="font-btn js-art-size" data-size="Medium" data-inches="6" data-add="3">Medium <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">6 inches · +£3</span></button>
+              <button type="button" class="font-btn js-art-size" data-size="Large" data-inches="8" data-add="5">Large <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">8 inches · +£5</span></button>
             </div>
           </div>
+
+          {# ── STEP 4 · PLACEMENT ───────────────────────────────────────── #}
           <div class="field-block">
-            <div class="field-label"><span class="step-num">3</span> Select Size</div>
-            <div class="size-row" style="margin-top:10px;">
-              <button type="button" class="size-btn js-size" data-size="S">S</button>
-              <button type="button" class="size-btn js-size" data-size="M">M</button>
-              <button type="button" class="size-btn active js-size" data-size="L">L</button>
-              <button type="button" class="size-btn js-size" data-size="XL">XL</button>
-              <button type="button" class="size-btn js-size" data-size="2XL">2XL</button>
+            <div class="field-label"><span class="step-num">4</span> Placement</div>
+            <div class="placement-grid" id="placementGrid">
+              {% for p in "Front Left,Front Centre,Front Right,Front Full,Back Left,Back Centre,Back Right,Back Full"|split:"," %}
+              <button type="button" class="placement-btn js-placement" data-placement="{{ p }}">{{ p }}</button>
+              {% endfor %}
+            </div>
+            <input type="hidden" name="placement" id="placementField" value=""/>
+          </div>
+
+          {# ── STEP 5 · PRINTING SIDE ───────────────────────────────────── #}
+          <div class="field-block">
+            <div class="field-label"><span class="step-num">5</span> Printing Side</div>
+            <div class="font-grid" style="grid-template-columns:repeat(3,1fr);">
+              <button type="button" class="font-btn active js-print-side" data-side="Front Only" data-add="0">Front Only</button>
+              <button type="button" class="font-btn js-print-side" data-side="Back Only" data-add="0">Back Only</button>
+              <button type="button" class="font-btn js-print-side" data-side="Front & Back" data-add="3">Front &amp; Back <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">+£3</span></button>
             </div>
           </div>
-        </div>
+
+          {# ── STEP 6 · UPLOAD ARTWORK ──────────────────────────────────── #}
+          <div class="field-block">
+            <div class="field-label"><span class="step-num">6</span> Upload Artwork</div>
+            <label class="artwork-upload-label" id="artworkLabel" for="artworkFile">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span id="artworkLabelText">Click to upload artwork</span>
+              <span style="font-size:11px;color:var(--grey-4);display:block;margin-top:4px;">PNG, JPG, SVG, PDF — max 25 MB</span>
+            </label>
+            <input type="file" name="artwork_file" id="artworkFile" accept=".png,.jpg,.jpeg,.svg,.pdf,.gif,.webp" style="display:none;"
+                   onchange="handleArtworkChange(this)"/>
+          </div>
+
+          {# ── LIVE PRICE BREAKDOWN ─────────────────────────────────────── #}
+          <div class="price-breakdown" id="priceBreakdown">
+            <div class="price-row"><span>Base price</span><span id="pbBase">£{{ product.price|floatformat:2 }}</span></div>
+            <div class="price-row" id="pbArtRow" style="display:none;"><span>Artwork size add-on</span><span id="pbArt">£0.00</span></div>
+            <div class="price-row" id="pbPrintRow" style="display:none;"><span>Front &amp; Back add-on</span><span id="pbPrint">£0.00</span></div>
+            <div class="price-row" id="pbSizeRow" style="display:none;"><span>Size add-on (XXS / 4XL+)</span><span id="pbSizeAddon">£0.00</span></div>
+            <div class="price-row price-row--total"><span>Total</span><span id="pbTotal">£{{ product.price|floatformat:2 }}</span></div>
+          </div>
+
+        </div>{# /custom-form #}
 
         <div class="action-row">
           {% if product.stock is not None and product.stock <= 0 %}
@@ -475,6 +561,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
           {% endif %}
         </div>
       </form>
+      {% endwith %}
 
       <div class="info-cards">
         <div class="info-card">
@@ -607,30 +694,255 @@ function switchThumb(btn,url){
   if(main&&url) main.src=url;
 }
 
-/* Variant selectors */
-var selectedSize='L',selectedFont='Serif';
-function updateVariant(){document.getElementById('variantField').value='Size '+selectedSize+' · Font '+selectedFont;}
-updateVariant();
-document.querySelectorAll('.js-size').forEach(function(btn){
-  btn.addEventListener('click',function(){
-    document.querySelectorAll('.js-size').forEach(function(b){b.classList.remove('active');});
-    this.classList.add('active');selectedSize=this.dataset.size;updateVariant();
-  });
-});
-document.querySelectorAll('.js-font').forEach(function(btn){
-  btn.addEventListener('click',function(){
-    document.querySelectorAll('.js-font').forEach(function(b){b.classList.remove('active');});
-    this.classList.add('active');selectedFont=this.dataset.font;updateVariant();
-  });
-});
+/* ═══════════════════════════════════════════════════════════════════════
+   PRODUCT CUSTOMISATION ENGINE
+   Maps product names → per-product colours & sizes.
+   All add-on logic (artwork size, print side, oversize sizes) is common.
+═══════════════════════════════════════════════════════════════════════ */
+(function(){
+  var BASE_PRICE = parseFloat('{{ product.price }}') || 0;
+  var PRODUCT_NAME = '{{ product.name|lower|escapejs }}';
 
-/* ── Add to Cart AJAX ──
-   Sends form to cartpage via AJAX.
-   On success: shows ✓ confirmation, updates header cart badge.
-   On failure: falls back to normal form submit (page redirect to cart). */
+  /* ── Colour palettes ── */
+  var COMMON_COLOURS = ['White','Black','Off White','Dark Grey','Deep Blue','Forest Green',
+    'Fuchsia','Grey Heather','Kelly Green','Light Blue','Cream','Lime Green','Navy Blue',
+    'Orange','Yellow','Grey','Red','Turquoise','Light Royal Blue','Light Grey','Tropical Blue'];
+  var BASIC_LS_COLOURS  = ['White','Black','Charcoal','Brown','Standard Grey'];
+  var STD_LS_COLOURS    = ['White','Black','Off White','French Navy','Red','Forest Green','Dark Beige','Grey'];
+  var PREM_LS_COLOURS   = ['White','Black'];
+  var BASIC_HOODIE_COLOURS = ['White','Black','Purple','Blue','Red','Grey','Orange','Sky Blue','Deep Green','Green','Khaki','Pink'];
+  var PREM_HOODIE_COLOURS  = ['White','Black'];
+  var STD_PLUS_COLOURS     = ['White','Black','+ 35 More Colours'];
+
+  /* ── Size sets ── */
+  var SIZES = {
+    basic_tee:      {sizes:['S','M','L','XL','2XL','3XL'], note:''},
+    standard_tee:   {sizes:['XXS','XS','S','M','L','XL','2XL','3XL','4XL','5XL'], note:'XXS & 4XL+ +£2', addSizes:['XXS','4XL','5XL']},
+    premium_tee:    {sizes:['S','M','L','XL','2XL','3XL'], note:''},
+    basic_ls:       {sizes:['XS','S','M','L','XL','2XL','3XL','4XL'], note:''},
+    standard_ls:    {sizes:['XS','S','M','L','XL','2XL','3XL','4XL'], note:''},
+    premium_ls:     {sizes:['S','M','L','XL','2XL'], note:''},
+    basic_hoodie:   {sizes:['S','M','L','XL','2XL','3XL','4XL'], note:''},
+    standard_hoodie:{sizes:['S','M','L','XL','2XL','3XL','4XL'], note:''},
+    premium_hoodie: {sizes:['XS','S','M','L','XL','2XL','3XL','4XL','5XL'], note:''},
+    std_sweater:    {sizes:['XS','S','M','L','XL','2XL','3XL','4XL'], note:''},
+    std_zip:        {sizes:['XS','S','M','L','XL','2XL','3XL','4XL'], note:''},
+    prem_zip:       {sizes:['XS','S','M','L','XL','2XL','3XL','4XL'], note:''},
+  };
+
+  /* ── Resolve product config from name ── */
+  function resolveProduct(name){
+    var n = name;
+    // Long sleeve
+    if(n.indexOf('long sleeve')!==-1||n.indexOf('ls')!==-1){
+      if(n.indexOf('premium')!==-1) return {colours:PREM_LS_COLOURS,  config:SIZES.premium_ls};
+      if(n.indexOf('basic')!==-1)   return {colours:BASIC_LS_COLOURS, config:SIZES.basic_ls};
+      return {colours:STD_LS_COLOURS, config:SIZES.standard_ls};
+    }
+    // Zip up hoodie
+    if(n.indexOf('zip')!==-1){
+      if(n.indexOf('premium')!==-1) return {colours:STD_PLUS_COLOURS, config:SIZES.prem_zip};
+      return {colours:STD_PLUS_COLOURS, config:SIZES.std_zip};
+    }
+    // Sweater
+    if(n.indexOf('sweater')!==-1||n.indexOf('sweatshirt')!==-1){
+      return {colours:STD_PLUS_COLOURS, config:SIZES.std_sweater};
+    }
+    // Hoodie
+    if(n.indexOf('hoodie')!==-1){
+      if(n.indexOf('premium')!==-1) return {colours:PREM_HOODIE_COLOURS,  config:SIZES.premium_hoodie};
+      if(n.indexOf('standard')!==-1) return {colours:BASIC_HOODIE_COLOURS, config:SIZES.standard_hoodie};
+      return {colours:BASIC_HOODIE_COLOURS, config:SIZES.basic_hoodie};
+    }
+    // T-shirt (default)
+    if(n.indexOf('premium')!==-1) return {colours:COMMON_COLOURS, config:SIZES.premium_tee};
+    if(n.indexOf('standard')!==-1) return {colours:COMMON_COLOURS, config:SIZES.standard_tee};
+    return {colours:COMMON_COLOURS, config:SIZES.basic_tee};
+  }
+
+  var resolved = resolveProduct(PRODUCT_NAME);
+
+  /* ── Colour swatch hex map (best-effort) ── */
+  var SWATCH = {
+    'white':'#FFFFFF','black':'#1a1a1a','off white':'#F5F0E8','dark grey':'#555555',
+    'deep blue':'#1B3A6B','forest green':'#228B22','fuchsia':'#FF00FF','grey heather':'#B0B0B0',
+    'kelly green':'#4CBB17','light blue':'#ADD8E6','cream':'#FFFDD0','lime green':'#32CD32',
+    'navy blue':'#001F5B','orange':'#FF6600','yellow':'#FFD700','grey':'#888888',
+    'red':'#CC0000','turquoise':'#40E0D0','light royal blue':'#4169E1','light grey':'#D3D3D3',
+    'tropical blue':'#00827F','charcoal':'#36454F','brown':'#8B4513','standard grey':'#9E9E9E',
+    'french navy':'#002FA7','dark beige':'#C3A882','purple':'#6A0DAD','blue':'#2255CC',
+    'sky blue':'#87CEEB','deep green':'#006400','green':'#008000','khaki':'#C3B091',
+    'pink':'#FFB6C1',
+  };
+
+  /* ── Populate colour dropdown ── */
+  var colourSelect = document.getElementById('colourSelect');
+  var colourSwatch = document.getElementById('colourSwatch');
+  if(colourSelect){
+    resolved.colours.forEach(function(c){
+      var opt = document.createElement('option');
+      opt.value = c; opt.textContent = c;
+      colourSelect.appendChild(opt);
+    });
+    colourSelect.addEventListener('change', function(){
+      var hex = SWATCH[(this.value||'').toLowerCase()] || 'transparent';
+      colourSwatch.style.background = hex;
+      colourSwatch.style.border = this.value.toLowerCase()==='white' ? '1px solid var(--grey-5)' : '1px solid transparent';
+      buildVariant();
+    });
+  }
+
+  /* ── Populate size buttons ── */
+  var sizeRow  = document.getElementById('sizeRow');
+  var sizeNote = document.getElementById('sizeNote');
+  var selectedSize = '';
+  if(sizeRow && resolved.config){
+    var cfg = resolved.config;
+    if(sizeNote) sizeNote.textContent = cfg.note || '';
+    cfg.sizes.forEach(function(s, idx){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'size-btn js-size' + (idx===0?' active':'');
+      btn.dataset.size = s;
+      btn.dataset.add  = (cfg.addSizes && cfg.addSizes.indexOf(s)!==-1) ? '2' : '0';
+      btn.textContent  = s;
+      if(idx===0) selectedSize = s;
+      btn.addEventListener('click', function(){
+        document.querySelectorAll('.js-size').forEach(function(b){b.classList.remove('active');});
+        this.classList.add('active');
+        selectedSize = this.dataset.size;
+        document.getElementById('sizeField').value = selectedSize;
+        updatePrice();buildVariant();
+      });
+      sizeRow.appendChild(btn);
+    });
+    if(cfg.sizes.length>0) document.getElementById('sizeField').value = cfg.sizes[0];
+  }
+
+  /* ── Art size selection ── */
+  var artAdd = 0;
+  document.querySelectorAll('.js-art-size').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.js-art-size').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active');
+      artAdd = parseFloat(this.dataset.add)||0;
+      updatePrice();buildVariant();
+    });
+  });
+
+  /* ── Placement selection ── */
+  var selectedPlacement = '';
+  document.querySelectorAll('.js-placement').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.js-placement').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active');
+      selectedPlacement = this.dataset.placement;
+      document.getElementById('placementField').value = selectedPlacement;
+      buildVariant();
+    });
+  });
+
+  /* ── Print side selection ── */
+  var printAdd = 0;
+  document.querySelectorAll('.js-print-side').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.js-print-side').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active');
+      printAdd = parseFloat(this.dataset.add)||0;
+      updatePrice();buildVariant();
+    });
+  });
+
+  /* ── Price update ── */
+  function updatePrice(){
+    var activeSizeBtn = document.querySelector('.js-size.active');
+    var sizeAddon = activeSizeBtn ? (parseFloat(activeSizeBtn.dataset.add)||0) : 0;
+    var total = BASE_PRICE + artAdd + printAdd + sizeAddon;
+
+    var pbArtRow   = document.getElementById('pbArtRow');
+    var pbPrintRow = document.getElementById('pbPrintRow');
+    var pbSizeRow  = document.getElementById('pbSizeRow');
+
+    if(pbArtRow)   { pbArtRow.style.display   = artAdd>0   ? 'flex':'none'; document.getElementById('pbArt').textContent   = '£'+artAdd.toFixed(2); }
+    if(pbPrintRow) { pbPrintRow.style.display  = printAdd>0 ? 'flex':'none'; document.getElementById('pbPrint').textContent = '£'+printAdd.toFixed(2); }
+    if(pbSizeRow)  { pbSizeRow.style.display   = sizeAddon>0? 'flex':'none'; document.getElementById('pbSizeAddon').textContent = '£'+sizeAddon.toFixed(2); }
+
+    document.getElementById('pbTotal').textContent = '£'+total.toFixed(2);
+    document.getElementById('priceOverride').value = total.toFixed(2);
+    /* update visible price in header too */
+    var priceEl = document.querySelector('.product-price');
+    if(priceEl) priceEl.textContent = '£'+total.toFixed(2);
+  }
+
+  /* ── Build variant string ── */
+  function buildVariant(){
+    var colour   = (colourSelect && colourSelect.value) || '';
+    var artBtn   = document.querySelector('.js-art-size.active');
+    var artSize  = artBtn ? artBtn.dataset.size+' ('+artBtn.dataset.inches+' inches)' : '';
+    var printBtn = document.querySelector('.js-print-side.active');
+    var printSide= printBtn ? printBtn.dataset.side : '';
+    var size     = document.getElementById('sizeField').value;
+    var placement= selectedPlacement;
+
+    var parts = [];
+    if(colour)    parts.push('Colour: '+colour);
+    if(size)      parts.push('Size: '+size);
+    if(artSize)   parts.push('Artwork: '+artSize);
+    if(placement) parts.push('Placement: '+placement);
+    if(printSide) parts.push('Printing: '+printSide);
+
+    document.getElementById('variantField').value = parts.join(' · ');
+  }
+
+  buildVariant(); updatePrice();
+})();
+
+/* ── Artwork file change handler ── */
+function handleArtworkChange(input){
+  var label = document.getElementById('artworkLabel');
+  var txt   = document.getElementById('artworkLabelText');
+  if(input.files && input.files[0]){
+    var f = input.files[0];
+    if(f.size > 25*1024*1024){
+      alert('File is too large. Max size is 25 MB.');
+      input.value='';return;
+    }
+    label.classList.add('has-file');
+    txt.textContent = '✓ ' + f.name;
+  } else {
+    label.classList.remove('has-file');
+    txt.textContent = 'Click to upload artwork';
+  }
+}
+
+/* ── Add to Cart ──
+   If artwork is attached we do a full form POST (can't send files via AJAX without FormData streaming).
+   We still use AJAX for no-file adds so the cart badge updates without a page reload.           */
 var form=document.getElementById('addToCartForm');
 if(form){
   form.addEventListener('submit',function(e){
+    /* Validation */
+    var colour    = document.getElementById('colourSelect') ? document.getElementById('colourSelect').value : '';
+    var size      = document.getElementById('sizeField') ? document.getElementById('sizeField').value : '';
+    var placement = document.getElementById('placementField') ? document.getElementById('placementField').value : '';
+    if(!colour)    { alert('Please choose a colour.'); e.preventDefault(); return; }
+    if(!size)      { alert('Please select a size.');   e.preventDefault(); return; }
+    if(!placement) { alert('Please choose a placement.'); e.preventDefault(); return; }
+
+    /* Override price with calculated total */
+    var overrideInput = document.getElementById('priceOverride');
+    var priceInput    = form.querySelector('input[name="price"]');
+    if(overrideInput && priceInput) priceInput.value = overrideInput.value;
+
+    var artworkFile = document.getElementById('artworkFile');
+    var hasFile = artworkFile && artworkFile.files && artworkFile.files.length > 0;
+
+    if(hasFile){
+      /* Full POST — let the browser handle multipart, page will redirect to cart */
+      return; /* allow default submit */
+    }
+
+    /* No file — use AJAX to avoid page reload */
     e.preventDefault();
     var btn=document.getElementById('addToCartBtn');
     var sp=btn?btn.querySelector('span'):null;
@@ -650,7 +962,6 @@ if(form){
       return r.json();
     })
     .then(function(data){
-      /* Restore button with confirmation tick */
       if(btn) btn.disabled=false;
       if(sp){
         sp.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>&nbsp;Added!';
@@ -658,7 +969,6 @@ if(form){
           sp.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>&nbsp;Add to Cart';
         },2200);
       }
-      /* Update header cart badge — cartpage returns { cart_count, subtotal, total } */
       if(typeof data.cart_count !== 'undefined'){
         var badge=document.getElementById('cartBadge');
         if(badge){
@@ -670,7 +980,7 @@ if(form){
     .catch(function(err){
       console.warn('Cart AJAX error, falling back:',err);
       if(btn) btn.disabled=false;
-      form.submit(); /* full POST → redirects to cart page */
+      form.submit();
     });
   });
 }
