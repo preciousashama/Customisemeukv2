@@ -216,11 +216,20 @@ def send_order_confirmation_email(order) -> bool:
     try:
         for item in order.items.all():
             line_total = item.price * item.quantity
+            image_tag = ""
+            if hasattr(item, "image_url") and item.image_url:
+                image_tag = f'<img src="{item.image_url}" width="48" height="48" style="object-fit:cover;border-radius:4px;margin-right:12px;vertical-align:middle;" />'
+            
             items_html += f"""
             <tr>
               <td style="padding:12px 0;border-bottom:1px solid #e8e8e6;font-size:13px;color:#1a1a1a;">
-                {item.name}
-                {"<br/><span style='font-size:11px;color:#888;'>" + item.variant + "</span>" if item.variant else ""}
+                <div style="display:flex;align-items:center;">
+                  {image_tag}
+                  <span>
+                    {item.name}
+                    {"<br/><span style='font-size:11px;color:#888;'>" + item.variant + "</span>" if item.variant else ""}
+                  </span>
+                </div>
               </td>
               <td style="padding:12px 0;border-bottom:1px solid #e8e8e6;font-size:13px;color:#888;text-align:center;">
                 {item.quantity}
