@@ -557,47 +557,65 @@ def stripe_webhook(request):
 
 def _create_order_from_session(sess):
     try:
-        from orderapp.models import Order
-        from orderapp.views import _build_items_from_stripe, _get_attr
-        from decimal import Decimal
-
-        if Order.objects.filter(stripe_session_id=sess["id"]).exists():
-            logger.info("Order already exists for session %s — skipping webhook create", sess["id"])
-            return
-
-        full_sess = stripe.checkout.Session.retrieve(sess["id"])
-
-        customer_details = full_sess.customer_details or {}
-        shipping_details = full_sess.shipping_details
-        addr = shipping_details.address if shipping_details else None
-
+        full_sess = stripe.checkout.Session.retrieve(
+            sess["id"],
+            expand=["line_items"],
+        )
+        shipping = full_sess.get("shipping_details") or full_sess.get("customer_details") or {}
+        addr     = (shipping.get("address") or {})
+ 
         order = Order.objects.create(
-            guest_email           = _get_attr(customer_details, "email", ""),
-            guest_name            = _get_attr(customer_details, "name",  ""),
+            guest_email           = full_sess.get("customer_email", "") or "",
+            guest_name            = shipping.get("name", "") or "",
             status                = "confirmed",
             stripe_session_id     = full_sess["id"],
             stripe_payment_intent = full_sess.get("payment_intent", "") or "",
-            shipping_name         = _get_attr(shipping_details, "name", "") if shipping_details else "",
-            shipping_line1        = addr.line1        if addr else "",
-            shipping_line2        = addr.line2        if addr else "",
-            shipping_city         = addr.city         if addr else "",
-            shipping_postcode     = addr.postal_code  if addr else "",
-            shipping_country      = addr.country      if addr else "GB",
+            shipping_name         = shipping.get("name", "") or "",
+            shipping_line1        = addr.get("line1", "") or "",
+            shipping_line2        = addr.get("line2", "") or "",
+            shipping_city         = addr.get("city", "") or "",
+            shipping_county       = addr.get("state", "") or "",
+            shipping_postcode     = addr.get("postal_code", "") or "",
+            shipping_country      = addr.get("country", "") or "GB",
         )
-
-        subtotal, shipping_total = _build_items_from_stripe(full_sess["id"], order)
-        order.subtotal      = subtotal
-        order.total         = Decimal(str(full_sess.get("amount_total", 0) or 0)) / 100
-        order.shipping_cost = shipping_total if shipping_total else (order.total - subtotal)
-        order.save()
-
+ 
+        # Build items from Stripe line_items
+        subtotal = Decimal("0.00")
+        line_items = (full_sess.get("line_items") or {}).get("data", [])
+        for li in line_items:
+            price_obj   = li.get("price") or {}
+            prod_obj    = price_obj.get("product") or {}
+            name        = prod_obj.get("name", "Item") if isinstance(prod_obj, dict) else "Item"
+            unit_amount = price_obj.get("unit_amount", 0) or 0
+            price_dec   = Decimal(unit_amount) / 100
+            qty         = li.get("quantity", 1)
+ 
+            # Skip shipping line item
+            if name == "Standard Shipping":
+                order.shipping_cost = price_dec
+                continue
+ 
+            OrderItem.objects.create(
+                order    = order,
+                name     = name,
+                sku      = "",
+                price    = price_dec,
+                quantity = qty,
+            )
+            subtotal += price_dec * qty
+ 
+        order.subtotal = subtotal
+        order.total    = subtotal + order.shipping_cost
+        order.save(update_fields=["subtotal", "shipping_cost", "total"])
+ 
+        # Send confirmation email
         try:
             send_order_confirmation_email(order)
         except Exception as e:
             logger.error("Webhook email error for order %s: %s", order.order_number, e)
-
-        logger.info("Order %s created from webhook for session %s", order.order_number, full_sess["id"])
-
+ 
+        logger.info("Order %s created from webhook for session %s", order.order_number, sess["id"])
+ 
     except Exception as e:
         logger.error("Failed to create order from webhook session %s: %s", sess.get("id"), e)
 
