@@ -489,8 +489,8 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
           <div class="field-block">
             <div class="field-label"><span class="step-num">4</span> Placement</div>
             <div class="placement-grid" id="placementGrid">
-              {% for p in "Front Left,Front Centre,Front Right,Front Full,Back Left,Back Centre,Back Right,Back Full"|split:"," %}
-              <button type="button" class="placement-btn js-placement" data-placement="{{ p }}">{{ p }}</button>
+              {% for p in placements %}
+                <button type="button" class="placement-btn js-placement" data-placement="{{ p }}">{{ p }}</button>
               {% endfor %}
             </div>
             <input type="hidden" name="placement" id="placementField" value=""/>
