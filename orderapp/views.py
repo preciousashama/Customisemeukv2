@@ -403,7 +403,7 @@ def email_debug_view(request):
     # ── 2. Check sib_api_v3_sdk installed ─────────────────────────────────
     try:
         import sib_api_v3_sdk
-        log("sib_api_v3_sdk installed", sib_api_v3_sdk.__version__, ok=True)
+        log("sib_api_v3_sdk installed", ok=True)
     except ImportError:
         log("sib_api_v3_sdk installed", "NOT INSTALLED — run: pip install sib-api-v3-sdk", ok=False)
         lines.append("</table>")
