@@ -263,13 +263,14 @@ def orderconfirmpage(request):
         stripe_session_id=session_id,
         defaults={
             "stripe_payment_intent": session.payment_intent or "",
-            "status":      "confirmed",
-            "guest_email": guest_email,
-            "guest_name":  guest_name,
+            "status":                "confirmed",
+            "guest_email":           guest_email,
+            "guest_name":            guest_name,
         }
     )
 
     if created:
+        # Attach shipping address
         shipping_details = session.shipping_details
         if shipping_details:
             addr = shipping_details.address
@@ -283,38 +284,92 @@ def orderconfirmpage(request):
 
         if request.user.is_authenticated:
             order.customer = request.user
-        order.save()
 
-        subtotal, shipping_total = _build_items_from_stripe(session_id, order)
+        order.save()
+        items_built = False
+        try:
+            subtotal, shipping_total = _build_items_from_stripe(session_id, order)
+            items_built = order.items.exists()
+        except Exception as exc:
+            logger.error(
+                "Error building items for order %s (session %s): %s",
+                order.order_number, session_id, exc,
+            )
+            subtotal      = Decimal("0.00")
+            shipping_total = Decimal("0.00")
 
         order.subtotal      = subtotal
         order.total         = Decimal(str(session.amount_total or 0)) / 100
         order.shipping_cost = shipping_total if shipping_total else (order.total - subtotal)
+        order.email_confirmation_sent = False
         order.save()
-
-        # Send confirmation email
-        try:
-            send_order_confirmation_email(order)
-        except Exception as e:
+        if items_built:
+            order.refresh_from_db()
+            _send_confirmation_email(order)
+        else:
             logger.error(
-                "Failed to send order confirmation email for %s: %s",
-                order.order_number, e
+                "Order %s created but no items were built — confirmation email "
+                "NOT sent. Investigate Stripe line items for session %s.",
+                order.order_number, session_id,
             )
 
     else:
         has_bad_items = order.items.filter(name="Item").exists()
-        if not order.items.exists() or has_bad_items:
+        needs_rebuild = not order.items.exists() or has_bad_items
+
+        if needs_rebuild:
             logger.warning(
-                "Order %s already existed but has missing/bad items — re-fetching from Stripe.",
+                "Order %s already existed but has missing/bad items — "
+                "re-fetching from Stripe.",
                 order.order_number,
             )
-            # Delete bad placeholder rows before rebuilding
             order.items.filter(name="Item").delete()
-            subtotal, shipping_total = _build_items_from_stripe(session_id, order)
+            try:
+                subtotal, shipping_total = _build_items_from_stripe(session_id, order)
+            except Exception as exc:
+                logger.error(
+                    "Error rebuilding items for order %s: %s",
+                    order.order_number, exc,
+                )
+                subtotal      = Decimal("0.00")
+                shipping_total = Decimal("0.00")
+
             order.subtotal      = subtotal
             order.total         = Decimal(str(session.amount_total or 0)) / 100
             order.shipping_cost = shipping_total if shipping_total else (order.total - subtotal)
             order.save()
 
+        if not getattr(order, "email_confirmation_sent", True):
+            order.refresh_from_db()
+            if order.items.exists():
+                _send_confirmation_email(order)
 
     return render(request, "order-confirm.html", {"order": order})
+
+
+def _send_confirmation_email(order):
+    try:
+        sent = send_order_confirmation_email(order)
+    except Exception as exc:
+        logger.error(
+            "Unexpected exception sending confirmation email for order %s: %s",
+            order.order_number, exc,
+        )
+        sent = False
+
+    if sent:
+        try:
+            Order.objects.filter(pk=order.pk).update(email_confirmation_sent=True)
+            order.email_confirmation_sent = True
+        except Exception:
+            pass
+        logger.info(
+            "Order confirmation email sent for %s → %s",
+            order.order_number, order.customer_email_addr,
+        )
+    else:
+        logger.error(
+            "send_order_confirmation_email returned False for order %s "
+            "(to: %s). Check BREVO_API_KEY and Brevo logs.",
+            order.order_number, order.customer_email_addr,
+        )

@@ -203,56 +203,95 @@ def send_admin_login_alert(user, ip: Optional[str] = None) -> bool:
 
 
 
-def send_order_confirmation_email(order) -> bool:  
-    to_email = (order.customer_email_addr or "").strip()
+def send_order_confirmation_email(order) -> bool:
+    try:
+        to_email = (order.customer_email_addr or "").strip()
+    except Exception:
+        to_email = ""
     if not to_email:
-        logger.warning("Order %s has no email — skipping confirmation email", order.order_number)
+        to_email = (getattr(order, "guest_email", "") or "").strip()
+ 
+    if not to_email:
+        logger.warning(
+            "Order %s has no resolvable email address — skipping confirmation email",
+            order.order_number,
+        )
         return False
+    try:
+        to_name = (order.customer_name or "").strip() or to_email
+    except Exception:
+        to_name = to_email
  
-    to_name  = order.customer_name or to_email
     site_url = getattr(settings, "SITE_URL", "").rstrip("/")
- 
     items_html = ""
     try:
-        for item in order.items.all():
-            line_total = item.price * item.quantity
+        for item in order.items.all().order_by("id"):
+            try:
+                line_total = item.price * item.quantity
+            except Exception:
+                line_total = 0
+ 
             image_tag = ""
-            if hasattr(item, "image_url") and item.image_url:
-                image_tag = f'<img src="{item.image_url}" width="48" height="48" style="object-fit:cover;border-radius:4px;margin-right:12px;vertical-align:middle;" />'
-            
+            if getattr(item, "image_url", ""):
+                image_tag = (
+                    f'<img src="{item.image_url}" width="48" height="48" '
+                    f'style="object-fit:cover;border-radius:4px;margin-right:12px;'
+                    f'vertical-align:middle;border:1px solid #e8e8e6;" />'
+                )
+ 
+            variant_html = ""
+            if getattr(item, "variant", ""):
+                variant_html = (
+                    f"<br/><span style='font-size:11px;color:#888;'>"
+                    f"{item.variant}</span>"
+                )
+ 
             items_html += f"""
             <tr>
-              <td style="padding:12px 0;border-bottom:1px solid #e8e8e6;font-size:13px;color:#1a1a1a;">
+              <td style="padding:12px 0;border-bottom:1px solid #e8e8e6;
+                         font-size:13px;color:#1a1a1a;">
                 <div style="display:flex;align-items:center;">
                   {image_tag}
-                  <span>
-                    {item.name}
-                    {"<br/><span style='font-size:11px;color:#888;'>" + item.variant + "</span>" if item.variant else ""}
-                  </span>
+                  <span>{item.name}{variant_html}</span>
                 </div>
               </td>
-              <td style="padding:12px 0;border-bottom:1px solid #e8e8e6;font-size:13px;color:#888;text-align:center;">
+              <td style="padding:12px 0;border-bottom:1px solid #e8e8e6;
+                         font-size:13px;color:#888;text-align:center;">
                 {item.quantity}
               </td>
-              <td style="padding:12px 0;border-bottom:1px solid #e8e8e6;font-size:13px;color:#1a1a1a;text-align:right;">
+              <td style="padding:12px 0;border-bottom:1px solid #e8e8e6;
+                         font-size:13px;color:#1a1a1a;text-align:right;">
                 £{line_total:.2f}
               </td>
             </tr>"""
     except Exception as e:
-        logger.warning("Could not build items table for order %s: %s", order.order_number, e)
+        logger.warning(
+            "Could not build items table for order %s: %s", order.order_number, e
+        )
  
-    
-    shipping_parts = filter(None, [
-        order.shipping_name,
-        order.shipping_line1,
-        order.shipping_line2,
-        f"{order.shipping_city} {order.shipping_postcode}".strip(),
-        order.shipping_country,
-    ])
-    shipping_html = "<br/>".join(shipping_parts) or "Not provided"
+    shipping_parts = list(filter(None, [
+        getattr(order, "shipping_name",     "") or "",
+        getattr(order, "shipping_line1",    "") or "",
+        getattr(order, "shipping_line2",    "") or "",
+        " ".join(filter(None, [
+            getattr(order, "shipping_city",     "") or "",
+            getattr(order, "shipping_postcode", "") or "",
+        ])).strip(),
+        getattr(order, "shipping_country",  "") or "",
+    ]))
+    shipping_html = "<br/>".join(part for part in shipping_parts if part) or "Not provided"
+
+    try:
+        subtotal_val      = float(order.subtotal or 0)
+        total_val         = float(order.total or 0)
+        shipping_cost_val = float(order.shipping_cost or 0)
+    except (TypeError, ValueError):
+        subtotal_val = total_val = shipping_cost_val = 0.0
  
-    # Totals
-    shipping_label = "Complimentary" if order.shipping_cost == 0 else f"£{order.shipping_cost:.2f}"
+    shipping_label = (
+        "Complimentary" if shipping_cost_val == 0
+        else f"£{shipping_cost_val:.2f}"
+    )
  
     tracking_url = f"{site_url}/order/tracking/"
  
@@ -275,22 +314,21 @@ def send_order_confirmation_email(order) -> bool:
       <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
         <thead>
           <tr>
-            <th style="font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
-                       color:#888;padding-bottom:10px;border-bottom:2px solid #0a0a0a;text-align:left;">
-              Item
-            </th>
-            <th style="font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
-                       color:#888;padding-bottom:10px;border-bottom:2px solid #0a0a0a;text-align:center;">
-              Qty
-            </th>
-            <th style="font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
-                       color:#888;padding-bottom:10px;border-bottom:2px solid #0a0a0a;text-align:right;">
-              Price
-            </th>
+            <th style="font-size:10px;font-weight:600;letter-spacing:.14em;
+                       text-transform:uppercase;color:#888;padding-bottom:10px;
+                       border-bottom:2px solid #0a0a0a;text-align:left;">Item</th>
+            <th style="font-size:10px;font-weight:600;letter-spacing:.14em;
+                       text-transform:uppercase;color:#888;padding-bottom:10px;
+                       border-bottom:2px solid #0a0a0a;text-align:center;">Qty</th>
+            <th style="font-size:10px;font-weight:600;letter-spacing:.14em;
+                       text-transform:uppercase;color:#888;padding-bottom:10px;
+                       border-bottom:2px solid #0a0a0a;text-align:right;">Price</th>
           </tr>
         </thead>
         <tbody>
-          {items_html}
+          {items_html if items_html else
+           '<tr><td colspan="3" style="padding:16px 0;font-size:13px;color:#888;'
+           'text-align:center;">Item details unavailable — see your Stripe receipt.</td></tr>'}
         </tbody>
       </table>
  
@@ -298,30 +336,46 @@ def send_order_confirmation_email(order) -> bool:
       <table style="width:100%;border-collapse:collapse;margin-bottom:32px;">
         <tr>
           <td style="padding:8px 0;font-size:13px;color:#888;">Subtotal</td>
-          <td style="padding:8px 0;font-size:13px;color:#1a1a1a;text-align:right;">£{order.subtotal:.2f}</td>
+          <td style="padding:8px 0;font-size:13px;color:#1a1a1a;
+                     text-align:right;">£{subtotal_val:.2f}</td>
         </tr>
         <tr>
           <td style="padding:8px 0;font-size:13px;color:#888;">Shipping</td>
-          <td style="padding:8px 0;font-size:13px;color:#1a1a1a;text-align:right;">{shipping_label}</td>
+          <td style="padding:8px 0;font-size:13px;color:#1a1a1a;
+                     text-align:right;">{shipping_label}</td>
         </tr>
         <tr style="border-top:1px solid #e8e8e6;">
-          <td style="padding:12px 0 4px;font-size:14px;font-weight:600;color:#0a0a0a;">Total</td>
+          <td style="padding:12px 0 4px;font-size:14px;font-weight:600;
+                     color:#0a0a0a;">Total</td>
           <td style="padding:12px 0 4px;font-family:Georgia,serif;font-size:20px;
-                     font-weight:400;color:#0a0a0a;text-align:right;">£{order.total:.2f}</td>
+                     font-weight:400;color:#0a0a0a;text-align:right;">
+            £{total_val:.2f}
+          </td>
         </tr>
       </table>
  
       <!-- Shipping Address -->
-      <div style="background:#f2f2f0;border:1px solid #e8e8e6;padding:20px 24px;margin-bottom:32px;">
-        <p style="font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
-                  color:#888;margin-bottom:10px;">Shipping To</p>
-        <p style="font-size:13px;color:#4a4a4a;line-height:1.7;">{shipping_html}</p>
-        <p style="font-size:12px;color:#888;margin-top:8px;">Estimated delivery: 3–5 business days</p>
+      <div style="background:#f2f2f0;border:1px solid #e8e8e6;
+                  padding:20px 24px;margin-bottom:32px;">
+        <p style="font-size:10px;font-weight:600;letter-spacing:.14em;
+                  text-transform:uppercase;color:#888;margin-bottom:10px;">
+          Shipping To
+        </p>
+        <p style="font-size:13px;color:#4a4a4a;line-height:1.7;">
+          {shipping_html}
+        </p>
+        <p style="font-size:12px;color:#888;margin-top:8px;">
+          Estimated delivery: 3–5 business days
+        </p>
       </div>
+ 
+      {_btn(tracking_url, "Track Your Order")}
  
       <p style="color:#888;font-size:12px;margin-top:32px;line-height:1.6;">
         Questions? Reply to this email or visit
-        <a href="{site_url}/contact/" style="color:#0a0a0a;">{site_url}/contact/</a>
+        <a href="{site_url}/contact/" style="color:#0a0a0a;">
+          {site_url}/contact/
+        </a>
       </p>
     """
  
