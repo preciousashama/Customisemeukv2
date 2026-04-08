@@ -191,7 +191,6 @@ def wishlistpage(request):
         action     = request.POST.get("action", "")
         product_id = request.POST.get("product_id", "")
 
-        # ── toggle (heart button on any page) ──────────────────
         if action == "toggle":
             product = get_object_or_404(Product, pk=product_id)
             obj, created = Wishlist.objects.get_or_create(
@@ -207,7 +206,7 @@ def wishlistpage(request):
                 return JsonResponse({"state": state, "count": count})
             return redirect("wishlist-page")
 
-        # ── move one item from wishlist to cart ────────────────
+    
         if action == "move_to_cart":
             item = get_object_or_404(Wishlist, user=request.user, product_id=product_id)
             product = item.product
@@ -236,7 +235,6 @@ def wishlistpage(request):
             messages.success(request, f'"{product.name}" moved to your cart.')
             return redirect("wishlist-page")
 
-        # ── add ALL wishlist items to cart ─────────────────────
         if action == "add_all_to_cart":
             items = Wishlist.objects.filter(user=request.user).select_related("product")
             cart  = _get_cart(request)
@@ -264,7 +262,7 @@ def wishlistpage(request):
             messages.success(request, f"{added} item(s) added to your cart.")
             return redirect("cart-page")
 
-        # ── remove one item ────────────────────────────────────
+       
         if action == "remove":
             Wishlist.objects.filter(user=request.user, product_id=product_id).delete()
             count = Wishlist.objects.filter(user=request.user).count()
@@ -272,7 +270,7 @@ def wishlistpage(request):
                 return JsonResponse({"ok": True, "count": count})
             return redirect("wishlist-page")
 
-    # GET ──────────────────────────────────────────────────────
+  
     wish_items = (
         Wishlist.objects
         .filter(user=request.user)
@@ -411,7 +409,7 @@ def create_checkout_session(request):
                 "quantity": item["quantity"],
             })
  
-    # ── Shipping line item ─────────────────────────────────────────
+  
     if totals["shipping"] > 0:
         line_items.append({
             "price_data": {

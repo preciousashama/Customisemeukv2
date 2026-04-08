@@ -92,8 +92,8 @@ def contactpage(request):     return render(request, "contact.html")
 
 _ACTIVATION_MAX_AGE = getattr(settings, "REGISTRATION_TOKEN_MAX_AGE", 86_400)
 
-# Salt keeps registration tokens separate from any other signed values
-_ACTIVATION_SALT = "customiseme-uk-registration-v1"
+
+_ACTIVATION_SALT = "customiseme-uk-registration-v2"
 
 
 @require_http_methods(["GET", "POST"])
@@ -110,9 +110,9 @@ def registerpage(request):
         return render(request, "register.html", {"form": form})
 
     cd    = form.cleaned_data
-    email = cd["email"]   # already lowercased + stripped by clean_email()
+    email = cd["email"]  
 
-    # Double-check: form's clean_email() already does this, but be explicit.
+    
     if User.objects.filter(email=email).exists():
         form.add_error("email", "An account with this email already exists.")
         return render(request, "register.html", {"form": form})
@@ -125,13 +125,12 @@ def registerpage(request):
     }
     token = django_signing.dumps(payload, salt=_ACTIVATION_SALT)
 
-    # Send activation email (link points to GET /activate/<token>/).
+   
     send_pending_verification_email(email, cd.get("full_name", ""), token)
     logger.info("Registration pending (email not yet verified): %s", email)
 
-    # Show "check your inbox" message — form is hidden, nothing saved yet.
     return render(request, "register.html", {
-        "form":             CustomerRegisterForm(),  # fresh form kept for the template
+        "form":             CustomerRegisterForm(),
         "register_pending": True,
         "pending_email":    email,
     })
@@ -519,7 +518,6 @@ def admin_dashboard_data(request):
             slide.save()
             messages.success(request, f'Slide "{title}" updated.')
         else:
-            # ── Create: assign image AFTER instantiation, then save ──
             s = CarouselSlide(title=title, subtitle=subtitle)
             if image:
                 s.image = image
@@ -555,7 +553,7 @@ def admin_dashboard_data(request):
         messages.success(request, f'Order #{order.order_number} status updated to "{new_status}".')
         return redirect(f"{request.path}?tab=orders&q={redirect_to}")
  
-    # ══ § 03  Products ════════════════════════════════════════
+  
     if action in ("add_product", "edit_product"):
         name        = request.POST.get("product_name", "").strip()
         sku         = request.POST.get("product_sku", "").strip()

@@ -107,13 +107,11 @@ def _fetch_line_items(session_id):
 def _is_shipping_line_item(stripe_name, item_meta, description):
     shipping_keywords = ("standard shipping", "shipping", "delivery", "postage")
 
-    # Only keyword-match if we have a meaningful name to check
     if stripe_name:
         combined = (stripe_name + " " + description).lower()
         if any(kw in combined for kw in shipping_keywords):
             return True
 
-    # Explicit metadata flag always wins regardless of name
     if (item_meta.get("is_shipping") or "").lower() in ("true", "1", "yes"):
         return True
 
