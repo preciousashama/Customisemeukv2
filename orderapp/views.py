@@ -373,3 +373,141 @@ def _send_confirmation_email(order):
             "(to: %s). Check BREVO_API_KEY and Brevo logs.",
             order.order_number, order.customer_email_addr,
         )
+
+
+
+def email_debug_view(request):
+    lines = []
+ 
+    def log(label, value="", ok=True):
+        icon = "✅" if ok else "❌"
+        lines.append(f"<tr><td>{icon} <strong>{label}</strong></td><td><code>{value}</code></td></tr>")
+ 
+    lines.append("<h2>Email Debug Report</h2><table border='1' cellpadding='6'>")
+ 
+    # ── 1. Check settings ──────────────────────────────────────────────────
+    brevo_key = getattr(settings, "BREVO_API_KEY", None)
+    log("BREVO_API_KEY set", bool(brevo_key), ok=bool(brevo_key))
+    if brevo_key:
+        log("BREVO_API_KEY value (masked)", brevo_key[:8] + "..." + brevo_key[-4:], ok=True)
+ 
+    from_email = getattr(settings, "DEFAULT_FROM_EMAIL", None)
+    from_name  = getattr(settings, "DEFAULT_FROM_NAME",  None)
+    log("DEFAULT_FROM_EMAIL", from_email or "NOT SET", ok=bool(from_email))
+    log("DEFAULT_FROM_NAME",  from_name  or "NOT SET", ok=bool(from_name))
+ 
+    site_url = getattr(settings, "SITE_URL", None)
+    log("SITE_URL", site_url or "NOT SET", ok=bool(site_url))
+ 
+    # ── 2. Check sib_api_v3_sdk installed ─────────────────────────────────
+    try:
+        import sib_api_v3_sdk
+        log("sib_api_v3_sdk installed", sib_api_v3_sdk.__version__, ok=True)
+    except ImportError:
+        log("sib_api_v3_sdk installed", "NOT INSTALLED — run: pip install sib-api-v3-sdk", ok=False)
+        lines.append("</table>")
+        return HttpResponse("<br>".join(lines))
+ 
+    # ── 3. Try initialising Brevo client ──────────────────────────────────
+    try:
+        cfg = sib_api_v3_sdk.Configuration()
+        cfg.api_key["api-key"] = brevo_key
+        api = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(cfg))
+        log("Brevo API client created", "OK", ok=True)
+    except Exception as e:
+        log("Brevo API client creation", f"FAILED: {e}", ok=False)
+        lines.append("</table>")
+        return HttpResponse("<br>".join(lines))
+ 
+    # ── 4. Send a real test email ──────────────────────────────────────────
+    to_addr = request.GET.get("to", from_email)  # default to sender itself
+    if not to_addr:
+        log("Test recipient", "No ?to= param and no DEFAULT_FROM_EMAIL", ok=False)
+        lines.append("</table>")
+        return HttpResponse("<br>".join(lines))
+ 
+    log("Sending test email to", to_addr, ok=True)
+    try:
+        api.send_transac_email(sib_api_v3_sdk.SendSmtpEmail(
+            to=[{"email": to_addr, "name": "Debug Test"}],
+            sender={"name": from_name or "CustomiseMe UK", "email": from_email},
+            subject="[DEBUG] CustomiseMe UK Email Test",
+            html_content=(
+                "<h2>Email test successful</h2>"
+                "<p>If you received this, Brevo is configured correctly.</p>"
+            ),
+        ))
+        log("Test email sent", f"→ {to_addr}", ok=True)
+    except Exception as e:
+        log("Test email FAILED", str(e), ok=False)
+        lines.append(f"<tr><td colspan='2'><pre>{traceback.format_exc()}</pre></td></tr>")
+ 
+    # ── 5. Test with a real Order if order_number provided ────────────────
+    order_number = request.GET.get("order_number")
+    if order_number:
+        lines.append(f"<tr><td colspan='2'><strong>Testing real order: {order_number}</strong></td></tr>")
+        try:
+            from orderapp.models import Order
+            order = Order.objects.prefetch_related("items").get(
+                order_number__iexact=order_number
+            )
+            log("Order found", str(order.pk), ok=True)
+ 
+            # Check email resolution
+            try:
+                addr = order.customer_email_addr
+                log("order.customer_email_addr", addr or "EMPTY", ok=bool(addr))
+            except Exception as e:
+                log("order.customer_email_addr", f"ERROR: {e}", ok=False)
+ 
+            # Check guest_email directly
+            guest = getattr(order, "guest_email", "N/A")
+            log("order.guest_email", guest or "EMPTY", ok=bool(guest))
+ 
+            # Check customer FK
+            if order.customer_id:
+                try:
+                    log("order.customer.email", order.customer.email, ok=True)
+                except Exception as e:
+                    log("order.customer.email", f"ERROR: {e}", ok=False)
+            else:
+                log("order.customer", "No FK — guest order", ok=True)
+ 
+            # Check items
+            items = list(order.items.all())
+            log("order.items count", str(len(items)), ok=len(items) > 0)
+            for item in items:
+                log(f"  item: {item.name}", f"qty={item.quantity} price=£{item.price}", ok=True)
+ 
+            # Check totals
+            log("order.subtotal",      str(order.subtotal),      ok=bool(order.subtotal))
+            log("order.total",         str(order.total),         ok=bool(order.total))
+            log("order.shipping_cost", str(order.shipping_cost), ok=True)
+ 
+            # Check shipping fields
+            log("order.shipping_name",     getattr(order, "shipping_name",     "N/A"), ok=True)
+            log("order.shipping_line1",    getattr(order, "shipping_line1",    "N/A"), ok=True)
+            log("order.shipping_city",     getattr(order, "shipping_city",     "N/A"), ok=True)
+            log("order.shipping_postcode", getattr(order, "shipping_postcode", "N/A"), ok=True)
+            log("order.shipping_country",  getattr(order, "shipping_country",  "N/A"), ok=True)
+ 
+            # Check email_confirmation_sent flag
+            sent_flag = getattr(order, "email_confirmation_sent", "FIELD MISSING")
+            log("order.email_confirmation_sent", str(sent_flag), ok=True)
+ 
+            # Now actually try sending the real confirmation email
+            lines.append("<tr><td colspan='2'><strong>Attempting send_order_confirmation_email()...</strong></td></tr>")
+            from accounts.email_service import send_order_confirmation_email
+            try:
+                result = send_order_confirmation_email(order)
+                log("send_order_confirmation_email() returned", str(result), ok=result)
+            except Exception as e:
+                log("send_order_confirmation_email() raised", str(e), ok=False)
+                lines.append(f"<tr><td colspan='2'><pre>{traceback.format_exc()}</pre></td></tr>")
+ 
+        except Exception as e:
+            log(f"Order lookup for {order_number}", f"FAILED: {e}", ok=False)
+ 
+    lines.append("</table>")
+    lines.append("<br><p style='color:red'><strong>REMOVE THIS VIEW BEFORE DEPLOYING TO PRODUCTION.</strong></p>")
+    return HttpResponse("\n".join(lines))
