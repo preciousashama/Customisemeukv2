@@ -163,11 +163,6 @@ def _resolve_product_obj(django_pid, stripe_price_id, stripe_name,
 
 
 def _build_items_from_stripe(session_id, order):
-    """
-    Fetch line items from Stripe and create OrderItem rows for the given order.
-    Returns (subtotal, shipping_cost) as Decimals.
-    Extracted so the repair management command can reuse it without duplicating logic.
-    """
     stripe.api_key = settings.STRIPE_SECRET_KEY
 
     line_items = _fetch_line_items(session_id)
@@ -248,10 +243,6 @@ def _build_items_from_stripe(session_id, order):
     return subtotal, shipping_total
 
 
-# ─────────────────────────────────────────────────────────────
-# Views
-# ─────────────────────────────────────────────────────────────
-
 def orderconfirmpage(request):
     session_id = request.GET.get("session_id")
     if not session_id:
@@ -317,21 +308,20 @@ def orderconfirmpage(request):
             )
 
     else:
-        # FIX: Order already existed (e.g. page refresh) but items may have
-        # failed silently on the first visit. Re-run item building if empty.
-        if not order.items.exists():
+        has_bad_items = order.items.filter(name="Item").exists()
+        if not order.items.exists() or has_bad_items:
             logger.warning(
-                "Order %s already existed but has no items — re-fetching from Stripe.",
+                "Order %s already existed but has missing/bad items — re-fetching from Stripe.",
                 order.order_number,
             )
+            # Delete bad placeholder rows before rebuilding
+            order.items.filter(name="Item").delete()
             subtotal, shipping_total = _build_items_from_stripe(session_id, order)
             order.subtotal      = subtotal
             order.total         = Decimal(str(session.amount_total or 0)) / 100
             order.shipping_cost = shipping_total if shipping_total else (order.total - subtotal)
             order.save()
 
-    # ── Build debug context (rendered by the debug panel in order-confirm.html) ──
-    # Set DEBUG=True in your Django settings temporarily to see this panel.
     debug_ctx = None
     if settings.DEBUG:
         raw_items = _fetch_line_items(session_id)
@@ -365,5 +355,3 @@ def orderconfirmpage(request):
         }
 
     return render(request, "order-confirm.html", {"order": order, "debug": debug_ctx})
-
-
