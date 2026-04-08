@@ -50,8 +50,6 @@
     transition: width .3s, height .3s;
   }
 
-  
-
   /* --- PAGE LAYOUT --- */
   .page-wrap { flex: 1; padding-top: 136px; }
   .page-inner {
@@ -164,6 +162,27 @@
     font-size: 14px; color: var(--grey-3); line-height: 1.9;
   }
 
+  /* Terms list */
+  .terms-list { list-style: none; display: flex; flex-direction: column; gap: 0; }
+  .terms-list li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0 20px;
+    align-items: start;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--grey-7);
+    font-size: 14px; color: var(--grey-3); line-height: 1.8;
+  }
+  .terms-list li:last-child { border-bottom: none; }
+  .terms-label {
+    font-family: var(--sans); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--black); white-space: nowrap;
+    padding-top: 3px;
+    min-width: 160px;
+  }
+  .terms-text { flex: 1; }
+
   /* --- CONTACT CTA --- */
   .contact-cta {
     background: var(--black); color: var(--white);
@@ -214,7 +233,6 @@
   }
   .btn-cta-secondary:hover { border-color: var(--grey-4); color: var(--white); }
 
-  /* Decorative dashes */
   .cta-deco {
     position: absolute; right: 48px; top: 48px; bottom: 48px;
     width: 1px; background: var(--grey-2);
@@ -291,6 +309,8 @@
     footer { padding: 60px 24px 32px; }
     .footer-top { grid-template-columns: 1fr; }
     .doc-footer { flex-direction: column; align-items: flex-start; }
+    .terms-list li { grid-template-columns: 1fr; gap: 6px; }
+    .terms-label { min-width: auto; }
   }
   @media (max-width: 1100px) {
     .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
@@ -330,7 +350,7 @@
   }
 
   /* =============================================
-     HEADER — TWO-ROW STRUCTURE (desktop)
+     HEADER
      ============================================= */
   header, #mainHeader {
     position: fixed;
@@ -346,7 +366,6 @@
     flex-direction: column;
   }
 
-  /* Top row: search */
   .header-top-row {
     display: flex; align-items: center; justify-content: center;
     padding: 8px 48px;
@@ -373,26 +392,21 @@
   .search-wrap input::placeholder { color: var(--grey-5); }
   .search-icon { color: var(--grey-4); flex-shrink: 0; }
 
-  /* Bottom row: logo | nav | icons */
   .header-bottom-row {
     display: flex; align-items: center; justify-content: space-between;
     padding: 0 48px; height: 68px;
   }
 
-  /* Logo */
   .logo {
     display: flex; align-items: center; gap: 14px;
     text-decoration: none; color: inherit; flex-shrink: 0;
   }
-  .logo img {
-    width: 48px; height: 48px; object-fit: contain;
-  }
+  .logo img { width: 48px; height: 48px; object-fit: contain; }
   .logo-text {
     font-family: var(--serif); font-size: 24px; font-weight: 500;
     letter-spacing: 0.12em; text-transform: uppercase; color: var(--black);
   }
 
-  /* Nav */
   nav { display: flex; align-items: center; gap: 32px; position: relative; }
   .nav-item { position: static; }
   nav > .nav-item > a {
@@ -417,7 +431,6 @@
   }
   .nav-item:hover > a .chevron { transform: rotate(-135deg) translateY(-2px); }
 
-  /* Mega Menu */
   .mega-menu {
     position: fixed;
     top: calc(34px + 34px + 68px);
@@ -451,7 +464,6 @@
   }
   .mega-col ul li a:hover { color: var(--black); padding-left: 6px; }
 
-  /* Icon group */
   .header-icons {
     display: flex; align-items: center; gap: 4px; flex-shrink: 0;
   }
@@ -491,7 +503,6 @@
     width: 1px; height: 28px; background: var(--grey-6); margin: 0 6px;
   }
 
-  /* Hamburger */
   .hamburger {
     display: none; flex-direction: column;
     justify-content: center; align-items: center; gap: 5px;
@@ -506,7 +517,6 @@
   .hamburger.active span:nth-child(2) { opacity: 0; width: 0; }
   .hamburger.active span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 
-  /* Mobile nav */
   .mobile-nav {
     display: none; position: fixed;
     top: calc(28px + 56px); left: 0; right: 0;
@@ -536,13 +546,9 @@
   .mobile-nav.open a:nth-child(5) { transition-delay: .25s; }
   .mobile-nav.open a:nth-child(6) { transition-delay: .30s; }
 
-  /* Page content offset */
   .page-wrap { padding-top: 136px !important; }
-
-  /* Progress bar offset */
   .progress-track { top: calc(34px + 102px) !important; }
 
-  /* ── RESPONSIVE ── */
   @media (max-width: 768px) {
     .promo-ticker { height: 28px; }
     .promo-ticker-item { font-size: 9.5px; padding: 0 24px; }
@@ -557,7 +563,6 @@
     .mobile-nav { display: block; top: calc(28px + 56px); }
     .page-wrap { padding-top: 84px !important; }
   }
-
 </style>
 </head>
 <body>
@@ -565,9 +570,6 @@
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
 
-<!-- ============================================================
-     PROMO TICKER — infinite scrolling banner
-     ============================================================ -->
 <div class="promo-ticker" id="promoTicker">
   <div class="promo-ticker-track">
     <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
@@ -585,12 +587,7 @@
   </div>
 </div>
 
-<!-- ============================================================
-     HEADER — two-row: search on top, logo|nav|icons below
-     ============================================================ -->
 <header id="mainHeader">
-
-  <!-- ROW 1: Search bar -->
   <div class="header-top-row">
     <div class="search-wrap">
       <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -598,12 +595,9 @@
     </div>
   </div>
 
-  <!-- ROW 2: Logo | Nav | Icons -->
   <div class="header-bottom-row">
-
     <a class="logo" href="{% url 'home-page' %}">
       <img src="{% static 'icon.png' %}" alt="CustomiseMe UK Logo"/>
-      <!-- <span class="logo-text">CustomiseMe UK</span> -->
     </a>
 
     <nav>
@@ -701,8 +695,7 @@
         </div>
       </div>
 
-      <div class="nav-item"><a href="{% url 'about-page' %}">About</a></div>
-      <!-- <div class="nav-item"><a href="{% url 'contact-page' %}">Contact</a></div> -->
+      <div class="nav-item"><a href="{% url 'privacy-page' %}">Privacy</a></div>
     </nav>
 
     <div class="header-icons">
@@ -731,18 +724,14 @@
       </button>
     </div>
 
-      <button class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
 </header>
 
-
-
-
-<!-- MOBILE NAV -->
 <div class="mobile-nav" id="mobileNav" aria-hidden="true">
   <a href="{% url 'home-page' %}">Home</a>
   <a href="{% url 'shop-page' %}">Shop</a>
-  <a href="{% url 'about-page' %}">About</a>
+  <a href="{% url 'privacy-page' %}">Privacy</a>
 </div>
 
 <div class="page-wrap">
@@ -832,6 +821,54 @@
       </div>
     </section>
 
+    <section class="policy-section">
+      <div class="section-heading">
+        <span class="section-num">§ 05</span>
+        <h2 class="section-title">Terms &amp; Conditions</h2>
+      </div>
+      <div class="policy-body">
+        <p>By placing an order with CustomiseMe UK, you agree to the following terms. Please read them carefully before purchasing.</p>
+      </div>
+      <ul class="terms-list">
+        <li>
+          <span class="terms-label">Emergency Orders</span>
+          <span class="terms-text">Last-minute emergency orders may be accepted at our discretion. Such orders will incur an additional charge of 50% of the total order value, applied at checkout. Emergency orders are collection only and are not eligible for delivery. The collection address will be provided via email once the order has been processed.</span>
+        </li>
+        <li>
+          <span class="terms-label">Use of Product Images</span>
+          <span class="terms-text">By placing an order with us, you grant permission for us to use photographs or images of your completed product for promotional and marketing purposes. If you wish to opt out, please include the note "please do not use for promotion" in the additional information box at checkout.</span>
+        </li>
+        <li>
+          <span class="terms-label">Production Timeline</span>
+          <span class="terms-text">Production will commence only after full payment has been received and confirmed.</span>
+        </li>
+        <li>
+          <span class="terms-label">Design Services</span>
+          <span class="terms-text">If you require us to create a custom design or artwork, a consultation must be booked at least 3 days in advance. Once the design has been finalised, a separate order must be placed for the product.</span>
+        </li>
+        <li>
+          <span class="terms-label">Order Accuracy</span>
+          <span class="terms-text">Customers are responsible for ensuring that all order details, including sizes, colours, spelling, and design specifications, are accurate at the time of purchase. We are not liable for errors submitted by the customer.</span>
+        </li>
+        <li>
+          <span class="terms-label">Returns &amp; Refunds</span>
+          <span class="terms-text">Due to the customised nature of our products, all sales are final. We do not accept returns or offer refunds unless the item is faulty or incorrect.</span>
+        </li>
+        <li>
+          <span class="terms-label">Turnaround Time</span>
+          <span class="terms-text">Estimated production and processing times will be provided at the time of order. While we aim to meet all deadlines, delays may occur during busy periods.</span>
+        </li>
+        <li>
+          <span class="terms-label">Collection &amp; Delivery</span>
+          <span class="terms-text">Customers will be notified once their order is ready for collection or dispatch. We are not responsible for delays caused by third-party delivery services.</span>
+        </li>
+        <li>
+          <span class="terms-label">Cancellations &amp; Amendments</span>
+          <span class="terms-text">Orders cannot be cancelled or modified once production has begun. Any changes requested prior to production may be subject to additional charges.</span>
+        </li>
+      </ul>
+    </section>
+
     <!-- CONTACT CTA -->
     <div class="contact-cta">
       <div class="cta-overline">Get in Touch</div>
@@ -849,7 +886,6 @@
           Help Centre
         </button>
       </div>
-    </div>
     </div>
 
   </div>
@@ -875,7 +911,7 @@
     <div class="footer-col">
       <h4>Quick Links</h4>
       <ul>
-        <li><a href="{% url 'about-page' %}">About Us</a></li>
+        <li><a href="{% url 'privacy-page' %}">Privacy</a></li>
         <li><a href="{% url 'shop-page' %}">Shop All</a></li>
       </ul>
     </div>
@@ -899,7 +935,8 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script>
   // Custom cursor
   const cursor = document.getElementById('cursor');
   const ring = document.getElementById('cursor-ring');

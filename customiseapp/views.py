@@ -47,7 +47,7 @@ def _get_cart(request):
 
 def _cart_totals(cart):
     subtotal = sum(i["line_total"] for i in cart)
-    shipping  = Decimal("0.00") if subtotal >= 100 else Decimal("4.99")
+    shipping  = Decimal("0.00") if subtotal >= 100 else Decimal("6.99")
     total     = subtotal + shipping
     return {"subtotal": subtotal, "shipping": shipping, "total": total}
 
