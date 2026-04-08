@@ -167,6 +167,10 @@ def productpage(request, slug=None):
  
     is_wished   = False
     wish_count  = 0
+    placements = [
+        "Front Left", "Front Centre", "Front Right", "Front Full",
+        "Back Left", "Back Centre", "Back Right", "Back Full"
+    ]
     if request.user.is_authenticated and product:
         is_wished  = Wishlist.objects.filter(user=request.user, product=product).exists()
         wish_count = Wishlist.objects.filter(user=request.user).count()
@@ -180,6 +184,7 @@ def productpage(request, slug=None):
         "is_wished":  is_wished,
         "wish_count": wish_count,
         "cart_count": cart_count,
+        "placements":placements,
     })
 
 
