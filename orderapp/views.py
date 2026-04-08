@@ -365,3 +365,38 @@ def orderconfirmpage(request):
         }
 
     return render(request, "order-confirm.html", {"order": order, "debug": debug_ctx})
+
+
+
+
+def orderconfirm_debug(request):
+    """TEMPORARY DEBUG VIEW — remove after fixing. 
+       Visit: /order/confirm/debug/?session_id=cs_xxxx"""
+    session_id = request.GET.get("session_id")
+    if not session_id:
+        from django.http import JsonResponse
+        return JsonResponse({"error": "Pass ?session_id=cs_xxxx"})
+
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    raw_items = _fetch_line_items(session_id)
+
+    output = []
+    for li in raw_items:
+        price_obj  = getattr(li, "price", None)
+        item_meta  = dict(getattr(li, "metadata", {}) or {})
+        stripe_name, stripe_prod_meta, stripe_images = _resolve_stripe_product(price_obj)
+        desc = getattr(li, "description", "") or ""
+        output.append({
+            "stripe_name":      stripe_name,
+            "description":      desc,
+            "is_shipping":      _is_shipping_line_item(stripe_name, item_meta, desc),
+            "unit_amount_pence": getattr(getattr(li, "price", None), "unit_amount", "?"),
+            "quantity":         getattr(li, "quantity", "?"),
+            "price_id":         getattr(price_obj, "id", "?") if price_obj else "?",
+            "stripe_prod_meta": stripe_prod_meta,
+            "item_meta":        item_meta,
+            "images":           stripe_images,
+        })
+
+    from django.http import JsonResponse
+    return JsonResponse({"session_id": session_id, "line_items": output}, json_dumps_params={"indent": 2})
