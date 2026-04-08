@@ -744,10 +744,10 @@
         <span class="hdr-icon-badge">{{cart_count}}</span>
       {% endif %}
       </button>
-      <button class="hdr-icon-btn" title="My account" aria-label="My account">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        <span class="hdr-icon-label">Account</span>
-      </button>
+      <a href="{% url 'me' %}" class="hdr-icon-btn" title="My account" aria-label="My account">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span class="hdr-icon-label">Account</span>
+     </a>
     </div>
 
       <button class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
@@ -763,6 +763,11 @@
     <a href="{% url 'shop-page' %}">Shop</a>
     <a href="{% url 'design-studio-page' %}">Design Studio</a>
     <a href="{% url 'premium-page' %}">Premium Services</a>
+    {% if user.is_authenticated %}
+    <a href="{% url 'me' %}">My Account</a>
+    {% else %}
+    <a href="{% url 'login-page' %}">Sign In</a>
+    {% endif %}
 </div>
 
 <div class="page-wrap">

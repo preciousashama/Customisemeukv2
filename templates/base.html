@@ -677,20 +677,11 @@ footer {
         <span class="hdr-icon-badge" id="cartCount">{{ cart_count }}</span>
       </a>
       <div class="hdr-account-wrap" id="accountWrap">
-        <button class="hdr-account-btn" id="accountBtn"
-                aria-label="My account" aria-haspopup="true" aria-expanded="false">
+        <a href="{% url 'me' %}" class="hdr-account-btn" aria-label="My account">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           <span class="hdr-icon-label">Account <span class="hdr-account-chevron"></span></span>
-        </button>
+        </a>
         <div class="hdr-account-menu" id="accountMenu" role="menu">
-          {% comment %} <a href="{% url 'me' %}" class="hdr-account-item" role="menuitem">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            My Account
-          </a> {% endcomment %}
-          {% comment %} <a href="{% url 'password-change' %}" class="hdr-account-item" role="menuitem">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            Change Password
-          </a> {% endcomment %}
           <form method="post" action="{% url 'logout' %}" style="margin:0;">
             {% csrf_token %}
             <button type="submit" class="hdr-account-item hdr-account-item--danger" role="menuitem">
