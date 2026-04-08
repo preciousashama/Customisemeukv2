@@ -110,6 +110,9 @@ class OrderItem(models.Model):
     variant  = models.CharField(max_length=200, blank=True,
                                 help_text="e.g. 'Size M · Navy'")
     image_url = models.URLField(blank=True)
+
+    class Meta:
+         unique_together = [("order", "sku")]
  
     def __str__(self):
         return f"{self.name} × {self.quantity}"
