@@ -293,7 +293,6 @@ def send_order_confirmation_email(order) -> bool:
         else f"£{shipping_cost_val:.2f}"
     )
  
-    tracking_url = f"{site_url}/order/tracking/"
  
     body = f"""
       <h2 style="font-family:Georgia,serif;font-size:28px;font-weight:300;
@@ -369,7 +368,6 @@ def send_order_confirmation_email(order) -> bool:
         </p>
       </div>
  
-      {_btn(tracking_url, "Track Your Order")}
  
       <p style="color:#888;font-size:12px;margin-top:32px;line-height:1.6;">
         Questions? Reply to this email or visit
