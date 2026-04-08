@@ -374,7 +374,8 @@ def _send_confirmation_email(order):
             order.order_number, order.customer_email_addr,
         )
 
-
+import traceback
+from django.http import HttpResponse
 
 def email_debug_view(request):
     lines = []
