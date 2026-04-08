@@ -117,13 +117,28 @@ def _fetch_line_items(session_id):
 
 
 def _is_shipping_line_item(stripe_name, item_meta, description):
-    """Return True if this line item represents a shipping charge."""
+    """
+    Return True ONLY if this line item is definitely a shipping charge.
+
+    FIX: We now require stripe_name to be non-empty before keyword-matching.
+    Previously, when stripe_name was "" (product not expanded), the function
+    would fall through and match on description alone — silently swallowing
+    real product items whose description happened to contain 'shipping' or
+    'delivery'. Now we only match on stripe_name when we actually have one,
+    and we still allow the metadata flag as an explicit override.
+    """
     shipping_keywords = ("standard shipping", "shipping", "delivery", "postage")
-    combined = (stripe_name + " " + description).lower()
-    if any(kw in combined for kw in shipping_keywords):
-        return True
+
+    # Only keyword-match if we have a meaningful name to check
+    if stripe_name:
+        combined = (stripe_name + " " + description).lower()
+        if any(kw in combined for kw in shipping_keywords):
+            return True
+
+    # Explicit metadata flag always wins regardless of name
     if (item_meta.get("is_shipping") or "").lower() in ("true", "1", "yes"):
         return True
+
     return False
 
 
@@ -176,6 +191,13 @@ def _build_items_from_stripe(session_id, order):
         item_meta   = dict(getattr(item, "metadata", {}) or {})
 
         stripe_name, stripe_prod_meta, stripe_images = _resolve_stripe_product(price_obj)
+
+        # FIX: Log what we got from Stripe so it appears in the debug panel
+        logger.debug(
+            "Line item — stripe_name=%r description=%r is_shipping=%s",
+            stripe_name, description,
+            _is_shipping_line_item(stripe_name, item_meta, description),
+        )
 
         # Identify and tally shipping; skip creating an OrderItem for it
         if _is_shipping_line_item(stripe_name, item_meta, description):
@@ -240,7 +262,7 @@ def orderconfirmpage(request):
     request.session.modified = True
     request.session.save()
 
-    stripe.api_key = settings.STRIPE_SECRET_KEY  # was never set here before
+    stripe.api_key = settings.STRIPE_SECRET_KEY
 
     try:
         session = stripe.checkout.Session.retrieve(session_id)
@@ -294,4 +316,52 @@ def orderconfirmpage(request):
                 order.order_number, e
             )
 
-    return render(request, "order-confirm.html", {"order": order})
+    else:
+        # FIX: Order already existed (e.g. page refresh) but items may have
+        # failed silently on the first visit. Re-run item building if empty.
+        if not order.items.exists():
+            logger.warning(
+                "Order %s already existed but has no items — re-fetching from Stripe.",
+                order.order_number,
+            )
+            subtotal, shipping_total = _build_items_from_stripe(session_id, order)
+            order.subtotal      = subtotal
+            order.total         = Decimal(str(session.amount_total or 0)) / 100
+            order.shipping_cost = shipping_total if shipping_total else (order.total - subtotal)
+            order.save()
+
+    # ── Build debug context (rendered by the debug panel in order-confirm.html) ──
+    # Set DEBUG=True in your Django settings temporarily to see this panel.
+    debug_ctx = None
+    if settings.DEBUG:
+        raw_items = _fetch_line_items(session_id)
+        debug_line_items = []
+        for li in raw_items:
+            price_obj  = getattr(li, "price", None)
+            item_meta  = dict(getattr(li, "metadata", {}) or {})
+            stripe_name, _, _ = _resolve_stripe_product(price_obj)
+            desc = getattr(li, "description", "") or ""
+            debug_line_items.append({
+                "stripe_name": stripe_name,
+                "description": desc,
+                "is_shipping": _is_shipping_line_item(stripe_name, item_meta, desc),
+                "unit_amount": getattr(getattr(li, "price", None), "unit_amount", "?"),
+                "stripe_meta": item_meta,
+            })
+        debug_ctx = {
+            "session_id":       session_id,
+            "line_items_count": len(raw_items),
+            "line_items":       debug_line_items,
+            "order_items": [
+                {
+                    "name":       i.name,
+                    "sku":        i.sku,
+                    "price":      i.price,
+                    "image_url":  i.image_url,
+                    "product_pk": str(i.product_id) if i.product_id else None,
+                }
+                for i in order.items.all()
+            ],
+        }
+
+    return render(request, "order-confirm.html", {"order": order, "debug": debug_ctx})
