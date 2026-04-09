@@ -453,8 +453,7 @@
     border-bottom: 1px solid var(--grey-6);
     padding: 48px 80px 56px;
     opacity: 0; pointer-events: none;
-    transform: translateY(-8px);
-    transition: opacity 0.2s ease 0.5s, transform 0.2s ease 0.5s;
+    transition: opacity 0.2s ease 0.5s;
     z-index: 90;
     box-shadow: 0 20px 60px rgba(0,0,0,0.08);
   }
@@ -467,8 +466,8 @@
     background: transparent;
   }
   .nav-item:hover .mega-menu {
-    opacity: 1; pointer-events: all; transform: translateY(0);
-    transition: opacity 0.2s ease 0s, transform 0.2s ease 0s;
+    opacity: 1; pointer-events: all;
+    transition: opacity 0.2s ease 0s;
   }
   .mega-menu-grid { display: grid; gap: 48px; align-items: start; }
   .mega-menu-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
