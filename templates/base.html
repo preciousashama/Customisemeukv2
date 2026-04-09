@@ -560,11 +560,13 @@ footer {
 <header id="mainHeader">
 
   <!-- Row 1: Search -->
-  <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
-  <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-  <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
-         value="{{ request.GET.q|default:'' }}"/>
+  <div class="header-top-row">
+    <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
+    <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
+          value="{{ request.GET.q|default:'' }}"/>
   </form>
+  </div>
 
   <!-- Row 2: Logo | Nav | Icons -->
   <div class="header-bottom-row">
