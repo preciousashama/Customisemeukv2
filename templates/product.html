@@ -50,7 +50,7 @@ nav>.nav-item>a:hover,nav>.nav-item>a.active{color:var(--black);}
 nav>.nav-item>a:hover::after,nav>.nav-item>a.active::after{width:100%;}
 nav>.nav-item>a .chevron{display:inline-block;width:7px;height:7px;border-right:1px solid currentColor;border-bottom:1px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .2s;flex-shrink:0;}
 .nav-item:hover>a .chevron{transform:rotate(-135deg) translateY(-2px);}
-.mega-menu { position: fixed; top: calc(34px + 34px + 68px); left: 0; right: 0; background: var(--white); border-bottom: 1px solid var(--grey-6); padding: 48px 80px 56px; opacity: 0; pointer-events: none; transform: translateY(-8px); transition: opacity 0.2s ease 0.15s, transform 0.2s ease 0.15s; z-index: 90; box-shadow: 0 20px 60px rgba(0,0,0,0.08); }
+.mega-menu { position: fixed; top: calc(34px + 34px + 68px); left: 0; right: 0; background: var(--white); border-bottom: 1px solid var(--grey-6); padding: 48px 80px 56px; opacity: 0; pointer-events: none; transform: translateY(-8px); transition: opacity 0.2s ease 0.5s, transform 0.2s ease 0.5s; z-index: 90; box-shadow: 0 20px 60px rgba(0,0,0,0.08); }
 .mega-menu::before { content: ''; position: fixed; top: calc(34px + 34px + 68px - 16px); left: 0; right: 0; height: 16px; background: transparent; }
 .nav-item:hover .mega-menu { opacity: 1; pointer-events: all; transform: translateY(0); transition: opacity 0.2s ease 0s, transform 0.2s ease 0s; }
 .mega-menu-grid{display:grid;gap:48px;align-items:start;}
