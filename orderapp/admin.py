@@ -66,7 +66,7 @@ class OrderAdmin(admin.ModelAdmin):
         "guest_name", "guest_email",
         "subtotal", "shipping_cost", "tax", "total",
         "stripe_session_id", "stripe_payment_intent",
-        "created_at", "updated_at",
+        "created_at", "updated_at","email_confirmation_sent",
         "shipping_address_block",
     )
 

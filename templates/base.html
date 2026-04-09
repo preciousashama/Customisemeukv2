@@ -179,7 +179,6 @@ nav > .nav-item > a .chevron {
   transition: transform 0.2s; flex-shrink: 0;
 }
 .nav-item:hover > a .chevron { transform: rotate(-135deg) translateY(-2px); }
-/* Mega menu */
 .mega-menu {
   position: fixed;
   top: calc(34px + 34px + 68px);
@@ -190,10 +189,36 @@ nav > .nav-item > a .chevron {
   opacity: 0; pointer-events: none;
   transform: translateY(-8px);
   transition: opacity 0.25s ease, transform 0.25s ease;
+  /* delay on hide so cursor has time to reach the menu */
+  transition-delay: 0s;
   z-index: 90;
   box-shadow: 0 20px 60px rgba(0,0,0,0.08);
 }
-.nav-item:hover .mega-menu { opacity: 1; pointer-events: all; transform: translateY(0); }
+
+/* Invisible bridge fills the gap between nav link and mega menu */
+.mega-menu::before {
+  content: '';
+  position: fixed;
+  top: calc(34px + 34px + 68px - 16px); /* reaches up 16px above menu */
+  left: 0; right: 0;
+  height: 16px;
+  background: transparent;
+}
+
+.nav-item:hover .mega-menu {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+  transition-delay: 0s;
+}
+
+/* Delay the hide by 150ms so cursor can travel into the menu */
+.nav-item .mega-menu {
+  transition: opacity 0.2s ease 0.15s, transform 0.2s ease 0.15s;
+}
+.nav-item:hover .mega-menu {
+  transition: opacity 0.2s ease 0s, transform 0.2s ease 0s;
+}
 .mega-menu-grid { display: grid; gap: 48px; align-items: start; }
 .mega-menu-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
 .mega-menu-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
