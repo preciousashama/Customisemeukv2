@@ -125,10 +125,23 @@ def shoppage(request):
     q    = request.GET.get("q", "").strip()
     sort = request.GET.get("sort", "")
 
+    CATEGORY_ALIASES = {
+        "apparel":          ["Apparel"],
+        "accessories":      ["Accessories"],
+        "party-essentials": ["Party Essential"],
+        "stickers-labels":  ["Sticker and label"],
+        "gifts":            ["Gift"],
+        "others":           ["Others"],
+        "bags":             ["Accessories", "Apparel"],
+    }
+
     if cat:
-        qs = qs.filter(category__iexact=cat)
+        matched_cats = CATEGORY_ALIASES.get(cat.lower(), [cat])
+        qs = qs.filter(category__in=matched_cats)
+
     if q:
         qs = (qs.filter(name__icontains=q) | qs.filter(description__icontains=q)).distinct()
+
     qs = qs.order_by("price" if sort == "price_asc" else
                      "-price" if sort == "price_desc" else "name")
 
@@ -144,13 +157,16 @@ def shoppage(request):
         "active_cat":  cat,
         "search_query": q,
         "sort":        sort,
-        "categories":  Product.objects.filter(is_active=True)
-                               .values_list("category", flat=True)
-                               .distinct().order_by("category"),
+        "categories":  [
+            {"label": "Apparel",           "value": "apparel"},
+            {"label": "Accessories",       "value": "accessories"},
+            {"label": "Party Essentials",  "value": "party-essentials"},
+            {"label": "Stickers & Labels", "value": "stickers-labels"},
+            {"label": "Gifts",             "value": "gifts"},
+            {"label": "Others",            "value": "others"},
+        ],
         "wished_ids":  wished_ids,
     })
-
-
 
 
 def productpage(request, slug=None):
@@ -178,13 +194,16 @@ def productpage(request, slug=None):
     cart       = request.session.get("cart", [])
     cart_count = sum(int(item.get("quantity", 1)) for item in cart)
  
+    product_category = (product.category or "").strip().lower() if product else ""
+ 
     return render(request, "product.html", {
-        "product":    product,
-        "related":    related,
-        "is_wished":  is_wished,
-        "wish_count": wish_count,
-        "cart_count": cart_count,
-        "placements":placements,
+        "product":          product,
+        "related":          related,
+        "is_wished":        is_wished,
+        "wish_count":       wish_count,
+        "cart_count":       cart_count,
+        "placements":       placements,
+        "product_category": product_category,
     })
 
 
@@ -300,7 +319,7 @@ def cartpage(request):
         product_id = request.POST.get("product_id", "")
         cart       = _get_cart(request)
         is_ajax    = request.headers.get("x-requested-with") == "XMLHttpRequest"
-
+ 
         if action == "add_item":
             colour        = request.POST.get("colour",       "").strip()
             size          = request.POST.get("size",         "").strip()
@@ -308,9 +327,8 @@ def cartpage(request):
             placement     = request.POST.get("placement",    "").strip()
             printing_side = request.POST.get("printing_side","").strip()
             variant       = request.POST.get("variant",      "").strip()
-            # Use price_override (JS-calculated with add-ons) if present
             raw_price     = request.POST.get("price_override") or request.POST.get("price", "0")
-
+ 
             existing = next((i for i in cart if
                              i.get("product_id") == product_id and
                              i.get("variant") == variant), None)
@@ -330,8 +348,12 @@ def cartpage(request):
                     "placement":     placement,
                     "printing_side": printing_side,
                 })
-
-            artwork_file = request.FILES.get("artwork_file")
+ 
+            artwork_file      = request.FILES.get("artwork_file")
+            artwork_file_back = request.FILES.get("artwork_file_back")
+            raw_qty           = request.POST.get("quantity", "").strip()
+            item_quantity     = int(raw_qty) if raw_qty.isdigit() else None
+            additional_info   = request.POST.get("additional_info", "").strip()
             try:
                 from .models import ProductCustomisation, Product as _Product
                 from decimal import Decimal as _D, InvalidOperation as _IE
@@ -340,16 +362,19 @@ def cartpage(request):
                 except _IE:
                     fp = None
                 pc = ProductCustomisation(
-                    user            = request.user if request.user.is_authenticated else None,
-                    session_key     = request.session.session_key or "",
-                    colour          = colour,
-                    size            = size,
-                    artwork_size    = artwork_size,
-                    placement       = placement,
-                    printing_side   = printing_side,
-                    variant_summary = variant,
-                    final_price     = fp,
-                    artwork_filename= artwork_file.name if artwork_file else "",
+                    user                  = request.user if request.user.is_authenticated else None,
+                    session_key           = request.session.session_key or "",
+                    colour                = colour,
+                    size                  = size,
+                    artwork_size          = artwork_size,
+                    placement             = placement,
+                    printing_side         = printing_side,
+                    variant_summary       = variant,
+                    final_price           = fp,
+                    artwork_filename      = artwork_file.name if artwork_file else "",
+                    artwork_filename_back = artwork_file_back.name if artwork_file_back else "",
+                    quantity              = item_quantity,
+                    additional_info       = additional_info,
                 )
                 try:
                     pc.product = _Product.objects.get(pk=product_id)
@@ -357,10 +382,12 @@ def cartpage(request):
                     pass
                 if artwork_file:
                     pc.artwork_file = artwork_file
+                if artwork_file_back:
+                    pc.artwork_file_back = artwork_file_back
                 pc.save()
             except Exception as _e:
                 logger.warning("Could not save ProductCustomisation: %s", _e)
-
+ 
         elif action == "update_qty":
             qty = max(0, int(request.POST.get("quantity", 1)))
             if qty == 0:
@@ -370,13 +397,13 @@ def cartpage(request):
                     if item.get("product_id") == product_id:
                         item["quantity"] = qty
                         break
-
+ 
         elif action == "remove_item":
             cart = [i for i in cart if i.get("product_id") != product_id]
-
+ 
         elif action == "clear_cart":
             cart = []
-
+ 
         _save_cart(request, cart)
         if is_ajax:
             enriched = _get_cart(request)
@@ -388,7 +415,7 @@ def cartpage(request):
                 "total":      str(totals["total"]),
             })
         return redirect("cart-page")
-
+ 
     # GET
     enriched    = _get_cart(request)
     totals      = _cart_totals(enriched)

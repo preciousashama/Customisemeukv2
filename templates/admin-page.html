@@ -5,6 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>CustomiseMe UK | Admin Dashboard</title>
+<link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 :root{--black:#0a0a0a;--white:#f8f8f6;--grey-1:#1a1a1a;--grey-2:#2e2e2e;--grey-3:#4a4a4a;--grey-4:#888888;--grey-5:#b0b0b0;--grey-6:#d4d4d4;--grey-7:#e8e8e6;--grey-8:#f2f2f0;--accent:#c8a96e;--accent-dark:#a8893e;--serif:'Cormorant Garamond',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;--danger:#c0392b;--success:#27ae60;}
@@ -269,6 +270,8 @@ tr:hover .product-thumb{filter:grayscale(0%);}
 .cust-status.cancelled{border-color:var(--danger);color:#7f1d1d;background:#fee2e2;}
 .cust-artwork-link{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--grey-3);text-decoration:none;border:1px solid var(--grey-6);padding:5px 10px;background:var(--grey-8);transition:border-color .2s,color .2s;white-space:nowrap;}
 .cust-artwork-link:hover{border-color:var(--grey-3);color:var(--black);}
+/* NEW: badge for Front / Back label on artwork links */
+.cust-artwork-side{font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--grey-5);padding:1px 4px;background:var(--grey-7);border:1px solid var(--grey-6);}
 .cust-note-panel{display:none;margin-top:8px;}
 .cust-note-panel.open{display:block;}
 
@@ -335,7 +338,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
 
 <!-- MOBILE TOP BAR -->
 <div class="mobile-topbar" id="mobileTopbar">
-  <a class="sidebar-logo" href="{% url 'home-page' %}"><img src="{% static 'icon.png' %}" alt="CustomiseMe UK"/></a>
+  <a class="sidebar-logo" href="{% url 'home-page' %}"><img src="{% static 'fulllogo.png' %}" alt="CustomiseMe UK"/></a>
   <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open navigation" aria-expanded="false">
     <span></span><span></span><span></span>
   </button>
@@ -558,7 +561,19 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
         <div class="field {% if form_errors.product_image %}has-error{% endif %}" style="margin-bottom:16px;"><label>Product Image</label>{% if edit_product and edit_product.image %}<div class="img-current"><img src="{{ edit_product.image.url }}" alt="{{ edit_product.name }}"/><span>Current — upload new to replace.</span></div>{% endif %}<div class="file-input-wrap"><label class="file-input-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg><span id="productFileLabel">Choose image (JPEG / PNG / WebP, max 8 MB)</span><input type="file" name="product_image" accept="image/jpeg,image/png,image/webp,image/gif" id="productImageInput"/></label></div><img class="img-thumb-preview" id="productThumb" src="" alt="Preview"/>{% if form_errors.product_image %}<span class="field-error-msg">{{ form_errors.product_image }}</span>{% endif %}</div>
         <div class="form-row-grid" style="margin-bottom:16px;"><div class="field {% if form_errors.product_name %}has-error{% endif %}"><label for="product_name">Product Name <span style="color:var(--danger);">*</span></label><input type="text" id="product_name" name="product_name" placeholder="e.g. Custom Embroidered Hoodie" value="{{ edit_product.name|default:'' }}"/>{% if form_errors.product_name %}<span class="field-error-msg">{{ form_errors.product_name }}</span>{% endif %}</div><div class="field {% if form_errors.product_sku %}has-error{% endif %}"><label for="product_sku">SKU <span style="color:var(--danger);">*</span></label><input type="text" id="product_sku" name="product_sku" placeholder="e.g. EMB-HD-01" value="{{ edit_product.sku|default:'' }}"/>{% if form_errors.product_sku %}<span class="field-error-msg">{{ form_errors.product_sku }}</span>{% endif %}</div></div>
         <div class="form-row-grid" style="margin-bottom:16px;"><div class="field {% if form_errors.product_price %}has-error{% endif %}"><label for="product_price">Price (£) <span style="color:var(--danger);">*</span></label><input type="number" id="product_price" name="product_price" placeholder="0.00" min="0" step="0.01" value="{{ edit_product.price|default:'' }}"/>{% if form_errors.product_price %}<span class="field-error-msg">{{ form_errors.product_price }}</span>{% endif %}</div><div class="field {% if form_errors.product_stock %}has-error{% endif %}"><label for="product_stock">Stock <span style="color:var(--danger);">*</span></label><input type="number" id="product_stock" name="product_stock" placeholder="0" min="0" value="{{ edit_product.stock|default:'' }}"/>{% if form_errors.product_stock %}<span class="field-error-msg">{{ form_errors.product_stock }}</span>{% endif %}</div></div>
-        <div class="form-row-grid" style="margin-bottom:16px;"><div class="field"><label for="product_category">Category</label><select id="product_category" name="product_category"><option value="">Select…</option><option {% if edit_product.category == "Apparel" %}selected{% endif %}>Apparel</option><option {% if edit_product.category == "Accessories" %}selected{% endif %}>Accessories</option><option {% if edit_product.category == "Party Essentials" %}selected{% endif %}>Party Essentials</option><option {% if edit_product.category == "Stickers & Labels" %}selected{% endif %}>Stickers &amp; Labels</option><option {% if edit_product.category == "Gifts" %}selected{% endif %}>Gifts</option><option {% if edit_product.category == "Other" %}selected{% endif %}>Other</option></select></div><div class="field"><label for="product_description">Description</label><textarea id="product_description" name="product_description" placeholder="Brief description…">{{ edit_product.description|default:'' }}</textarea></div></div>
+        <div class="form-row-grid" style="margin-bottom:16px;">
+          <div class="field"><label for="product_category">Category</label>
+            <select id="product_category" name="product_category">
+              <option value="">Select…</option>
+              <option value="Apparel & Accessories" {% if edit_product.category == "Apparel & Accessories" %}selected{% endif %}>Apparel &amp; Accessories</option>
+              <option value="Stickers and Labels" {% if edit_product.category == "Stickers and Labels" %}selected{% endif %}>Stickers &amp; Labels</option>
+              <option value="Party Essentials and Decoration" {% if edit_product.category == "Party Essentials and Decoration" %}selected{% endif %}>Party Essentials &amp; Decoration</option>
+              <option value="Gifts" {% if edit_product.category == "Gifts" %}selected{% endif %}>Gifts</option>
+              <option value="Other" {% if edit_product.category == "Other" %}selected{% endif %}>Other</option>
+            </select>
+          </div>
+          <div class="field"><label for="product_description">Description</label><textarea id="product_description" name="product_description" placeholder="Brief description…">{{ edit_product.description|default:'' }}</textarea></div>
+        </div>
         <div class="form-actions"><button type="submit" class="btn-primary"><div class="btn-inner"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>{% if edit_product %}Save Changes{% else %}Add Product{% endif %}</div></button><a class="btn-ghost" href="?tab=products">Cancel</a></div>
       </form>
     </div>
@@ -566,7 +581,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
     <table class="product-table">
       <thead><tr><th style="width:50%">Product Details</th><th>Stock</th><th>Price</th><th class="r">Actions</th></tr></thead>
       <tbody>
-        {% for product in products %}<tr><td><div class="product-cell">{% if product.image %}<img class="product-thumb" src="{{ product.image.url }}" alt="{{ product.name }}"/>{% else %}<div class="product-thumb-placeholder"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>{% endif %}<div><div class="product-name">{{ product.name }}</div><div class="product-sku">SKU: {{ product.sku }}</div></div></div></td><td><span class="{% if product.stock <= 5 %}stock-low{% else %}stock-ok{% endif %}">{{ product.stock }} unit{{ product.stock|pluralize }}{% if product.stock <= 5 and product.stock > 0 %} — low{% endif %}</span></td><td><span class="product-price">£{{ product.price|floatformat:2 }}</span></td><td class="r"><div class="product-actions"><a class="btn-icon" href="?tab=products&edit_product={{ product.id }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></a><form method="POST" action="{% url 'admin-page' %}" class="delete-form" onsubmit="return confirm('Delete {{ product.name }}?')">{% csrf_token %}<input type="hidden" name="action" value="delete_product"/><input type="hidden" name="product_id" value="{{ product.id }}"/><button type="submit" class="btn-icon danger"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button></form></div></td></tr>
+        {% for product in products %}<tr><td><div class="product-cell">{% if product.image %}<img class="product-thumb" src="{{ product.image.url }}" alt="{{ product.name }}"/>{% else %}<div class="product-thumb-placeholder"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>{% endif %}<div><div class="product-name">{{ product.name }}</div><div class="product-sku">SKU: {{ product.sku }} {% if product.category %}<span style="color:var(--grey-5);">· {{ product.category }}</span>{% endif %}</div></div></div></td><td><span class="{% if product.stock <= 5 %}stock-low{% else %}stock-ok{% endif %}">{{ product.stock }} unit{{ product.stock|pluralize }}{% if product.stock <= 5 and product.stock > 0 %} — low{% endif %}</span></td><td><span class="product-price">£{{ product.price|floatformat:2 }}</span></td><td class="r"><div class="product-actions"><a class="btn-icon" href="?tab=products&edit_product={{ product.id }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></a><form method="POST" action="{% url 'admin-page' %}" class="delete-form" onsubmit="return confirm('Delete {{ product.name }}?')">{% csrf_token %}<input type="hidden" name="action" value="delete_product"/><input type="hidden" name="product_id" value="{{ product.id }}"/><button type="submit" class="btn-icon danger"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button></form></div></td></tr>
         {% empty %}<tr class="empty-row"><td colspan="4">{% if search_query %}No products match "{{ search_query }}".{% else %}No products yet.{% endif %}</td></tr>{% endfor %}
       </tbody>
     </table>
@@ -616,7 +631,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
           <th style="width:17%">Customer</th>
           <th style="width:17%">Product</th>
           <th style="width:24%">Customisation</th>
-          <th style="width:11%">Artwork</th>
+          <th style="width:13%">Artwork</th>
           <th style="width:7%">Price</th>
           <th style="width:8%">Date</th>
           <th>Fulfilment</th>
@@ -647,7 +662,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             {% endif %}
           </td>
 
-          {# ── Customisation pills ── #}
+          {# ── Customisation pills — updated to show qty + additional_info ── #}
           <td>
             <div style="display:flex;flex-wrap:wrap;align-items:center;">
               {% if cust.colour %}
@@ -659,6 +674,9 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
               {% if cust.size %}
                 <span class="cust-pill highlight">{{ cust.size }}</span>
               {% endif %}
+              {% if cust.quantity %}
+                <span class="cust-pill highlight">Qty: {{ cust.quantity }}</span>
+              {% endif %}
               {% if cust.artwork_size %}
                 <span class="cust-pill">{{ cust.artwork_size }}</span>
               {% endif %}
@@ -669,18 +687,32 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
                 <span class="cust-pill">{{ cust.placement }}</span>
               {% endif %}
             </div>
+            {% if cust.additional_info %}
+              <div style="font-size:11px;color:var(--grey-3);margin-top:6px;line-height:1.5;max-width:220px;">
+                <span style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--grey-5);">Note: </span>{{ cust.additional_info|truncatechars:120 }}
+              </div>
+            {% endif %}
           </td>
 
-          {# ── Artwork file ── #}
+          {# ── Artwork files — front + optional back ── #}
           <td>
-            {% if cust.artwork_file %}
-              <a class="cust-artwork-link" href="{{ cust.artwork_file.url }}" target="_blank" rel="noopener">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                {{ cust.artwork_filename|default:"File"|truncatechars:16 }}
-              </a>
-            {% else %}
-              <span style="font-size:12px;color:var(--grey-5);font-style:italic;">None</span>
-            {% endif %}
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              {% if cust.artwork_file %}
+                <a class="cust-artwork-link" href="{{ cust.artwork_file.url }}" target="_blank" rel="noopener">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span>{% if cust.artwork_file_back %}<span class="cust-artwork-side">Front</span> {% endif %}{{ cust.artwork_filename|default:"File"|truncatechars:14 }}</span>
+                </a>
+              {% endif %}
+              {% if cust.artwork_file_back %}
+                <a class="cust-artwork-link" href="{{ cust.artwork_file_back.url }}" target="_blank" rel="noopener">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span><span class="cust-artwork-side">Back</span> {{ cust.artwork_filename_back|default:"File"|truncatechars:14 }}</span>
+                </a>
+              {% endif %}
+              {% if not cust.artwork_file and not cust.artwork_file_back %}
+                <span style="font-size:12px;color:var(--grey-5);font-style:italic;">None</span>
+              {% endif %}
+            </div>
           </td>
 
           {# ── Final price ── #}
@@ -745,7 +777,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
       <div class="footer-brand">
         <p>Dedicated to creating meaningful, personalised items that tell your unique story.</p>
         <div class="footer-socials">
-          <a class="social-btn" href="#" aria-label="Instagram"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+          <a class="social-btn" href="https://www.instagram.com/customisemeuk/" aria-label="Instagram"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
         </div>
       </div>
       <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="{% url 'privacy-page' %}">Privacy</a></li></ul></div>

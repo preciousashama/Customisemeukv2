@@ -275,25 +275,15 @@
 {% endblock %}
 
 {% block content %}
-
-<!-- ═══ PAGE HERO ═══ -->
-<section class="page-hero">
-  <div class="page-hero-inner">
-    <div class="page-hero-text">
-      <div class="page-hero-overline fade-up">Handcrafted Collection</div>
-      <h1 class="fade-up d1">Personalized<br/><em>Gifts</em></h1>
-      <p class="page-hero-sub fade-up d2">Unique, handcrafted items tailored specifically for you and your loved ones. Every stitch tells a story.</p>
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <div class="page-hero-text">
+        <div class="page-hero-overline fade-up">Shop Collection</div>
+        <h1 class="fade-up d1">Shop <em>Now</em></h1>
+      </div>
     </div>
-    <div class="page-hero-stat fade-up d3">
-      {# Live product count from DB #}
-      <div class="page-hero-stat-num">{{ products.count }}<span>+</span></div>
-      <div class="page-hero-stat-label">Curated pieces</div>
-    </div>
-  </div>
-</section>
+  </section>
 
-
-<!-- ═══ SHOP CONTENT ═══ -->
 <main class="shop-layout">
 
 
@@ -303,19 +293,17 @@
   <div class="filter-bar">
     <div class="filter-chips">
 
-      
       <a href="{% url 'shop-page' %}{% if search_query %}?q={{ search_query }}{% endif %}"
-         class="filter-chip{% if not active_cat %} active{% endif %}">
+        class="filter-chip{% if not active_cat %} active{% endif %}">
         All Items
       </a>
 
       <div class="filter-divider"></div>
 
-      {# One chip per distinct category from the database #}
       {% for cat in categories %}
-      <a href="{% url 'shop-page' %}?cat={{ cat }}{% if search_query %}&amp;q={{ search_query }}{% endif %}"
-         class="filter-chip{% if active_cat == cat %} active{% endif %}">
-        {{ cat }}
+      <a href="{% url 'shop-page' %}?cat={{ cat.value }}{% if search_query %}&amp;q={{ search_query }}{% endif %}"
+        class="filter-chip{% if active_cat == cat.value %} active{% endif %}">
+        {{ cat.label }}
       </a>
       {% endfor %}
 

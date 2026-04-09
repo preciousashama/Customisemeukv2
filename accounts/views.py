@@ -675,26 +675,22 @@ def admin_dashboard_data(request):
        return _handle_update_send_request(request)
  
     if action == "update_customisation_status":
-        cust_id     = request.POST.get("customisation_id", "").strip()
-        new_status  = request.POST.get("customisation_status", "").strip()
-        admin_note  = request.POST.get("customisation_note", "").strip()
+        cust_id    = request.POST.get("customisation_id", "").strip()
+        new_status = request.POST.get("customisation_status", "").strip()
+        admin_note = request.POST.get("customisation_note", "").strip()
         VALID = {"pending", "in_production", "completed", "on_hold", "cancelled"}
         if new_status not in VALID:
             messages.error(request, "Invalid customisation status.")
             return redirect(f"{request.path}?tab=customisations")
         cust = get_object_or_404(ProductCustomisation, pk=cust_id)
-        try:
-            cust.fulfilment_status = new_status
-            cust.admin_note = admin_note
-            cust.save(update_fields=["fulfilment_status", "admin_note"])
-        except Exception:
-            cust.variant_summary = (
-                cust.variant_summary.split(" ║ STATUS:")[0]
-                + f" ║ STATUS: {new_status}"
-                + (f" | NOTE: {admin_note}" if admin_note else "")
-            )
-            cust.save(update_fields=["variant_summary"])
-        messages.success(request, f"Customisation #{str(cust_id)[:8]} updated to '{new_status}'.")
+        cust.fulfilment_status = new_status
+        cust.admin_note        = admin_note
+        cust.save(update_fields=["fulfilment_status", "admin_note", "updated_at"])
+        messages.success(
+            request,
+            f"Customisation #{str(cust_id)[:8]} updated to '{new_status}'."
+            + (" Note saved." if admin_note else "")
+        )
         return redirect(f"{request.path}?tab=customisations")
  
     messages.error(request, "Unknown action.")

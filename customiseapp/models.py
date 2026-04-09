@@ -323,20 +323,39 @@ class ProductCustomisation(models.Model):
     printing_side   = models.CharField(max_length=30, blank=True,
                                        help_text="Front Only / Back Only / Front & Back")
  
-    # Artwork file
     artwork_file    = models.FileField(
         upload_to="product-customisations/",
         storage=_firebase_storage,
         blank=True, null=True,
+        help_text="Front artwork (or only artwork for single-side products).",
     )
     artwork_filename = models.CharField(max_length=255, blank=True)
+ 
+    artwork_file_back = models.FileField(
+        upload_to="product-customisations/back/",
+        storage=_firebase_storage,
+        blank=True, null=True,
+        help_text="Back artwork — populated only when printing side is 'Front & Back'.",
+    )
+    artwork_filename_back = models.CharField(max_length=255, blank=True)
+ 
+    # Quantity — used for Stickers & Labels and Party Essentials categories
+    quantity = models.PositiveIntegerField(
+        null=True, blank=True,
+        help_text="Selected quantity (stickers, party items, etc.).",
+    )
+ 
+    # Additional free-text field — used for Party Essentials
+    additional_info = models.TextField(
+        blank=True,
+        help_text="Extra info provided by customer (e.g. party text, font choice).",
+    )
  
     # Final calculated price passed from the form
     final_price     = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True,
     )
  
-    # Full variant string for display in cart / order
     variant_summary = models.TextField(blank=True)
  
     # Admin-facing fields

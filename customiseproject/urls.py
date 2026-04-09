@@ -6,7 +6,7 @@ from customiseapp.views import page_not_found_view
 handler404 = page_not_found_view
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('super$$$/', admin.site.urls),
     path('account/', include('accounts.urls')),
     path('', include('customiseapp.urls')),
     path('order/', include('orderapp.urls')),

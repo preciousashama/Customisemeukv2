@@ -5,6 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>CustomiseMe UK | {{ product.name|default:"Product" }}</title>
+<link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 :root {
@@ -264,14 +265,15 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
 <!-- HEADER -->
 <header id="mainHeader">
   <div class="header-top-row">
-    <div class="search-wrap">
-      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" placeholder="Search products, designs, categories…"/>
-    </div>
+    <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
+  <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+  <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
+         value="{{ request.GET.q|default:'' }}"/>
+</form>
   </div>
   <div class="header-bottom-row">
     <a class="logo" href="{% url 'home-page' %}">
-      <img src="{% static 'icon.png' %}" alt="CustomiseMe UK"/>
+      <img src="{% static 'fulllogo.png' %}" alt="CustomiseMe UK"/>
     </a>
     <nav>
       <div class="nav-item"><a href="{% url 'home-page' %}">Home</a></div>
@@ -455,9 +457,10 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
 
         <div class="custom-form">
 
-          {# ── STEP 1 · COLOUR ──────────────────────────────────────────── #}
-          <div class="field-block">
-            <div class="field-label"><span class="step-num">1</span> Choose Colour</div>
+
+          {# -- Colour -- #}
+          <div class="field-block" id="blockColour">
+            <div class="field-label"><span class="step-num" id="stepColour">1</span> Choose Colour</div>
             <div class="colour-select-wrap">
               <select class="field-input js-colour" id="colourSelect" name="colour">
                 <option value="">— Select a colour —</option>
@@ -466,19 +469,17 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             </div>
           </div>
 
-          {# ── STEP 2 · SIZE ────────────────────────────────────────────── #}
-          <div class="field-block">
-            <div class="field-label"><span class="step-num">2</span> Select Size</div>
-            <div class="size-row js-size-row" id="sizeRow" style="margin-top:10px;flex-wrap:wrap;">
-              {# populated by JS #}
-            </div>
+          {# -- Size (Apparel / Other only) -- #}
+          <div class="field-block" id="blockSize">
+            <div class="field-label"><span class="step-num" id="stepSize">2</span> Select Size</div>
+            <div class="size-row js-size-row" id="sizeRow" style="margin-top:10px;flex-wrap:wrap;"></div>
             <input type="hidden" name="size" id="sizeField" value=""/>
             <p class="size-note" id="sizeNote" style="font-size:11px;color:var(--grey-4);margin-top:6px;"></p>
           </div>
 
-          {# ── STEP 3 · ARTWORK SIZE ────────────────────────────────────── #}
-          <div class="field-block">
-            <div class="field-label"><span class="step-num">3</span> Artwork Size</div>
+          {# -- Artwork Size (Apparel / Other only) -- #}
+          <div class="field-block" id="blockArtSize">
+            <div class="field-label"><span class="step-num" id="stepArtSize">3</span> Artwork Size</div>
             <div class="font-grid">
               <button type="button" class="font-btn active js-art-size" data-size="Small" data-inches="4" data-add="0">Small <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">4 inches</span></button>
               <button type="button" class="font-btn js-art-size" data-size="Medium" data-inches="6" data-add="3">Medium <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">6 inches · +£3</span></button>
@@ -486,9 +487,9 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             </div>
           </div>
 
-          {# ── STEP 4 · PLACEMENT ───────────────────────────────────────── #}
-          <div class="field-block">
-            <div class="field-label"><span class="step-num">4</span> Placement</div>
+          {# -- Placement (Apparel / Other only) -- #}
+          <div class="field-block" id="blockPlacement">
+            <div class="field-label"><span class="step-num" id="stepPlacement">4</span> Placement</div>
             <div class="placement-grid" id="placementGrid">
               {% for p in placements %}
                 <button type="button" class="placement-btn js-placement" data-placement="{{ p }}">{{ p }}</button>
@@ -497,34 +498,88 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             <input type="hidden" name="placement" id="placementField" value=""/>
           </div>
 
-          {# ── STEP 5 · PRINTING SIDE ───────────────────────────────────── #}
-          <div class="field-block">
-            <div class="field-label"><span class="step-num">5</span> Printing Side</div>
+          {# -- Printing Side (Apparel / Other only) -- #}
+          <div class="field-block" id="blockPrintSide">
+            <div class="field-label"><span class="step-num" id="stepPrintSide">5</span> Printing Side</div>
             <div class="font-grid" style="grid-template-columns:repeat(3,1fr);">
-              <button type="button" class="font-btn active js-print-side" data-side="Front Only" data-add="0">Front Only</button>
-              <button type="button" class="font-btn js-print-side" data-side="Back Only" data-add="0">Back Only</button>
-              <button type="button" class="font-btn js-print-side" data-side="Front & Back" data-add="3">Front &amp; Back <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">+£3</span></button>
+              <button type="button" class="font-btn active js-print-side" data-side="Front Only"    data-add="0">Front Only</button>
+              <button type="button" class="font-btn js-print-side"        data-side="Back Only"     data-add="0">Back Only</button>
+              <button type="button" class="font-btn js-print-side"        data-side="Front & Back"  data-add="3">Front &amp; Back <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">+£3</span></button>
             </div>
           </div>
 
-          {# ── STEP 6 · UPLOAD ARTWORK ──────────────────────────────────── #}
-          <div class="field-block">
-            <div class="field-label"><span class="step-num">6</span> Upload Artwork</div>
+          {# -- Quantity (Stickers / Party only) -- #}
+          <div class="field-block" id="blockQuantity" style="display:none;">
+            <div class="field-label"><span class="step-num" id="stepQuantity">2</span> Quantity</div>
+            <select class="field-input" id="quantitySelect" name="quantity">
+              <option value="">— Select quantity —</option>
+            </select>
+          </div>
+
+          {# -- Party: Text field -- #}
+          <div class="field-block" id="blockPartyText" style="display:none;">
+            <div class="field-label"><span class="step-num" id="stepPartyText">3</span> Custom Text</div>
+            <input type="text" class="field-input" name="party_text" id="partyText" maxlength="50" placeholder="Up to 50 characters…"/>
+          </div>
+
+          {# -- Party: Font field -- #}
+          <div class="field-block" id="blockPartyFont" style="display:none;">
+            <div class="field-label"><span class="step-num" id="stepPartyFont">4</span> Font</div>
+            <select class="field-input" name="party_font" id="partyFontSelect">
+              <option value="">— Select a font —</option>
+              <option value="Classic Serif">Classic Serif</option>
+              <option value="Modern Sans">Modern Sans</option>
+              <option value="Brush Script">Brush Script</option>
+              <option value="Bold Block">Bold Block</option>
+              <option value="Elegant Italic">Elegant Italic</option>
+            </select>
+          </div>
+
+          {# -- Upload Artwork (front / single side) -- #}
+          <div class="field-block" id="blockArtwork">
+            <div class="field-label"><span class="step-num" id="stepArtwork">6</span> Upload Artwork <span id="artworkSideLabel" style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:var(--grey-4);margin-left:4px;">(front)</span></div>
             <label class="artwork-upload-label" id="artworkLabel" for="artworkFile">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               <span id="artworkLabelText">Click to upload artwork</span>
               <span style="font-size:11px;color:var(--grey-4);display:block;margin-top:4px;">PNG, JPG, SVG, PDF — max 25 MB</span>
             </label>
-            <input type="file" name="artwork_file" id="artworkFile" accept=".png,.jpg,.jpeg,.svg,.pdf,.gif,.webp" style="display:none;"
-                   onchange="handleArtworkChange(this)"/>
+            <input type="file" name="artwork_file" id="artworkFile" accept=".png,.jpg,.jpeg,.svg,.pdf,.gif,.webp" style="display:none;" onchange="handleArtworkChange(this,'artworkLabel','artworkLabelText')"/>
           </div>
 
-          {# ── LIVE PRICE BREAKDOWN ─────────────────────────────────────── #}
+          {# -- Upload Artwork BACK (shown only when Front & Back is selected) -- #}
+          <div class="field-block" id="blockArtworkBack" style="display:none;">
+            <div class="field-label"><span class="step-num" id="stepArtworkBack">7</span> Upload Artwork <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:var(--grey-4);margin-left:4px;">(back)</span></div>
+            <label class="artwork-upload-label" id="artworkLabelBack" for="artworkFileBack">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span id="artworkLabelTextBack">Click to upload back artwork</span>
+              <span style="font-size:11px;color:var(--grey-4);display:block;margin-top:4px;">PNG, JPG, SVG, PDF — max 25 MB</span>
+            </label>
+            <input type="file" name="artwork_file_back" id="artworkFileBack" accept=".png,.jpg,.jpeg,.svg,.pdf,.gif,.webp" style="display:none;" onchange="handleArtworkChange(this,'artworkLabelBack','artworkLabelTextBack')"/>
+          </div>
+
+          {# -- Artwork Disclaimer (all categories) -- #}
+          <div class="field-block" id="blockDisclaimer">
+            <div style="background:var(--grey-8);border:1px solid var(--grey-7);padding:14px 16px;font-size:12px;color:var(--grey-3);line-height:1.7;">
+              <strong style="font-weight:600;letter-spacing:0.06em;">Artwork Disclaimer</strong><br/>
+              Your artwork will be printed exactly as uploaded, including any background visible in the file.
+              If you prefer your artwork printed without a background (showing only the design itself),
+              please upload your file as a <strong>PNG with a transparent background</strong>.
+              This ensures that only the intended elements of your artwork are printed.
+            </div>
+          </div>
+
+          {# -- Additional Information (Party Essentials only) -- #}
+          <div class="field-block" id="blockAdditional" style="display:none;">
+            <div class="field-label"><span class="step-num" id="stepAdditional">5</span> Additional Information</div>
+            <textarea class="field-input" name="additional_info" id="additionalInfo" rows="3" placeholder="Any extra details for your order…" style="resize:vertical;"></textarea>
+          </div>
+
+          {# -- Live Price Breakdown -- #}
           <div class="price-breakdown" id="priceBreakdown">
             <div class="price-row"><span>Base price</span><span id="pbBase">£{{ product.price|floatformat:2 }}</span></div>
-            <div class="price-row" id="pbArtRow" style="display:none;"><span>Artwork size add-on</span><span id="pbArt">£0.00</span></div>
+            <div class="price-row" id="pbArtRow"   style="display:none;"><span>Artwork size add-on</span><span id="pbArt">£0.00</span></div>
             <div class="price-row" id="pbPrintRow" style="display:none;"><span>Front &amp; Back add-on</span><span id="pbPrint">£0.00</span></div>
-            <div class="price-row" id="pbSizeRow" style="display:none;"><span>Size add-on (XXS / 4XL+)</span><span id="pbSizeAddon">£0.00</span></div>
+            <div class="price-row" id="pbSizeRow"  style="display:none;"><span>Size add-on (XXS / 4XL+)</span><span id="pbSizeAddon">£0.00</span></div>
             <div class="price-row price-row--total"><span>Total</span><span id="pbTotal">£{{ product.price|floatformat:2 }}</span></div>
           </div>
 
@@ -605,7 +660,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
       <p>Dedicated to creating meaningful, personalised items that tell your unique story. Every piece is handcrafted with love in our studio.</p>
       <div class="footer-socials">
         <a class="social-btn" href="#" aria-label="Facebook"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
-        <a class="social-btn" href="#" aria-label="Instagram"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+        <a class="social-btn" href="https://www.instagram.com/customisemeuk/" aria-label="Instagram"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
         <a class="social-btn" href="#" aria-label="TikTok"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.84 4.84 0 01-1.01-.06z"/></svg></a>
       </div>
     </div>
@@ -695,19 +750,54 @@ function switchThumb(btn,url){
   if(main&&url) main.src=url;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
-   PRODUCT CUSTOMISATION ENGINE
-   Maps product names → per-product colours & sizes.
-   All add-on logic (artwork size, print side, oversize sizes) is common.
-═══════════════════════════════════════════════════════════════════════ */
+
 (function(){
-  var BASE_PRICE = parseFloat('{{ product.price }}') || 0;
-  var PRODUCT_NAME = '{{ product.name|lower|escapejs }}';
+  var BASE_PRICE       = parseFloat('{{ product.price }}') || 0;
+  var PRODUCT_NAME     = '{{ product.name|lower|escapejs }}';
+  var PRODUCT_CATEGORY = '{{ product_category|escapejs }}'; // e.g. "apparel & accessories"
+
+  /* ── Detect category bucket ── */
+  var CAT_APPAREL = PRODUCT_CATEGORY.indexOf('apparel') !== -1 ||
+                    PRODUCT_CATEGORY.indexOf('accessori') !== -1;
+  var CAT_STICKER = PRODUCT_CATEGORY.indexOf('sticker') !== -1 ||
+                    PRODUCT_CATEGORY.indexOf('label') !== -1;
+  var CAT_PARTY   = PRODUCT_CATEGORY.indexOf('party') !== -1 ||
+                    PRODUCT_CATEGORY.indexOf('decoration') !== -1;
+  /* fallback → treat as generic apparel-like */
+  if(!CAT_APPAREL && !CAT_STICKER && !CAT_PARTY) CAT_APPAREL = true;
+
+  /* ── Show / hide blocks ── */
+  function showBlock(id){ var el=document.getElementById(id); if(el) el.style.display=''; }
+  function hideBlock(id){ var el=document.getElementById(id); if(el) el.style.display='none'; }
+
+  if(CAT_APPAREL){
+    showBlock('blockColour'); showBlock('blockSize'); showBlock('blockArtSize');
+    showBlock('blockPlacement'); showBlock('blockPrintSide');
+    showBlock('blockArtwork'); hideBlock('blockArtworkBack');
+    hideBlock('blockQuantity'); hideBlock('blockPartyText');
+    hideBlock('blockPartyFont'); hideBlock('blockAdditional');
+  } else if(CAT_STICKER){
+    showBlock('blockColour');
+    hideBlock('blockSize'); hideBlock('blockArtSize');
+    hideBlock('blockPlacement'); hideBlock('blockPrintSide');
+    showBlock('blockQuantity'); showBlock('blockArtwork');
+    hideBlock('blockArtworkBack'); hideBlock('blockPartyText');
+    hideBlock('blockPartyFont'); hideBlock('blockAdditional');
+  } else if(CAT_PARTY){
+    showBlock('blockColour');
+    hideBlock('blockSize'); hideBlock('blockArtSize');
+    hideBlock('blockPlacement'); hideBlock('blockPrintSide');
+    showBlock('blockQuantity'); showBlock('blockPartyText');
+    showBlock('blockPartyFont'); showBlock('blockArtwork');
+    hideBlock('blockArtworkBack'); showBlock('blockAdditional');
+  }
 
   /* ── Colour palettes ── */
   var COMMON_COLOURS = ['White','Black','Off White','Dark Grey','Deep Blue','Forest Green',
     'Fuchsia','Grey Heather','Kelly Green','Light Blue','Cream','Lime Green','Navy Blue',
     'Orange','Yellow','Grey','Red','Turquoise','Light Royal Blue','Light Grey','Tropical Blue'];
+  var STICKER_COLOURS  = ['White','Transparent'];
+  var PARTY_COLOURS    = ['Red','Blue','Yellow','Green','Orange','Purple','Pink','Brown','Black','White'];
   var BASIC_LS_COLOURS  = ['White','Black','Charcoal','Brown','Standard Grey'];
   var STD_LS_COLOURS    = ['White','Black','Off White','French Navy','Red','Forest Green','Dark Beige','Grey'];
   var PREM_LS_COLOURS   = ['White','Black'];
@@ -717,9 +807,9 @@ function switchThumb(btn,url){
 
   /* ── Size sets ── */
   var SIZES = {
-    basic_tee:      {sizes:['S','M','L','XL','2XL','3XL'], note:''},
+    basic_tee:      {sizes:['XS','S','M','L','XL','2XL','3XL'], note:''},
     standard_tee:   {sizes:['XXS','XS','S','M','L','XL','2XL','3XL','4XL','5XL'], note:'XXS & 4XL+ +£2', addSizes:['XXS','4XL','5XL']},
-    premium_tee:    {sizes:['S','M','L','XL','2XL','3XL'], note:''},
+    premium_tee:    {sizes:['XS','S','M','L','XL','2XL','3XL'], note:''},
     basic_ls:       {sizes:['XS','S','M','L','XL','2XL','3XL','4XL'], note:''},
     standard_ls:    {sizes:['XS','S','M','L','XL','2XL','3XL','4XL'], note:''},
     premium_ls:     {sizes:['S','M','L','XL','2XL'], note:''},
@@ -729,41 +819,43 @@ function switchThumb(btn,url){
     std_sweater:    {sizes:['XS','S','M','L','XL','2XL','3XL','4XL'], note:''},
     std_zip:        {sizes:['XS','S','M','L','XL','2XL','3XL','4XL'], note:''},
     prem_zip:       {sizes:['XS','S','M','L','XL','2XL','3XL','4XL'], note:''},
+    generic:        {sizes:['XS','S','M','L','XL','2XL','3XL'], note:''},
   };
+
+  /* ── Quantity options per category ── */
+  var STICKER_QTYS = [1, 6, 12, 24, 50, 100];
+  var PARTY_QTYS   = [1, 10, 20, 50, 100];
 
   /* ── Resolve product config from name ── */
   function resolveProduct(name){
+    if(CAT_STICKER) return {colours:STICKER_COLOURS,  config:null};
+    if(CAT_PARTY)   return {colours:PARTY_COLOURS,    config:null};
     var n = name;
-    // Long sleeve
-    if(n.indexOf('long sleeve')!==-1||n.indexOf('ls')!==-1){
+    if(n.indexOf('long sleeve')!==-1||n.indexOf(' ls ')!==-1){
       if(n.indexOf('premium')!==-1) return {colours:PREM_LS_COLOURS,  config:SIZES.premium_ls};
       if(n.indexOf('basic')!==-1)   return {colours:BASIC_LS_COLOURS, config:SIZES.basic_ls};
       return {colours:STD_LS_COLOURS, config:SIZES.standard_ls};
     }
-    // Zip up hoodie
     if(n.indexOf('zip')!==-1){
       if(n.indexOf('premium')!==-1) return {colours:STD_PLUS_COLOURS, config:SIZES.prem_zip};
       return {colours:STD_PLUS_COLOURS, config:SIZES.std_zip};
     }
-    // Sweater
     if(n.indexOf('sweater')!==-1||n.indexOf('sweatshirt')!==-1){
       return {colours:STD_PLUS_COLOURS, config:SIZES.std_sweater};
     }
-    // Hoodie
     if(n.indexOf('hoodie')!==-1){
-      if(n.indexOf('premium')!==-1) return {colours:PREM_HOODIE_COLOURS,  config:SIZES.premium_hoodie};
+      if(n.indexOf('premium')!==-1)  return {colours:PREM_HOODIE_COLOURS,  config:SIZES.premium_hoodie};
       if(n.indexOf('standard')!==-1) return {colours:BASIC_HOODIE_COLOURS, config:SIZES.standard_hoodie};
       return {colours:BASIC_HOODIE_COLOURS, config:SIZES.basic_hoodie};
     }
-    // T-shirt (default)
-    if(n.indexOf('premium')!==-1) return {colours:COMMON_COLOURS, config:SIZES.premium_tee};
+    if(n.indexOf('premium')!==-1)  return {colours:COMMON_COLOURS, config:SIZES.premium_tee};
     if(n.indexOf('standard')!==-1) return {colours:COMMON_COLOURS, config:SIZES.standard_tee};
-    return {colours:COMMON_COLOURS, config:SIZES.basic_tee};
+    return {colours:COMMON_COLOURS, config:SIZES.generic};
   }
 
   var resolved = resolveProduct(PRODUCT_NAME);
 
-  /* ── Colour swatch hex map (best-effort) ── */
+  /* ── Colour swatch hex map ── */
   var SWATCH = {
     'white':'#FFFFFF','black':'#1a1a1a','off white':'#F5F0E8','dark grey':'#555555',
     'deep blue':'#1B3A6B','forest green':'#228B22','fuchsia':'#FF00FF','grey heather':'#B0B0B0',
@@ -773,7 +865,7 @@ function switchThumb(btn,url){
     'tropical blue':'#00827F','charcoal':'#36454F','brown':'#8B4513','standard grey':'#9E9E9E',
     'french navy':'#002FA7','dark beige':'#C3A882','purple':'#6A0DAD','blue':'#2255CC',
     'sky blue':'#87CEEB','deep green':'#006400','green':'#008000','khaki':'#C3B091',
-    'pink':'#FFB6C1',
+    'pink':'#FFB6C1','transparent':'rgba(255,255,255,0)',
   };
 
   /* ── Populate colour dropdown ── */
@@ -786,14 +878,16 @@ function switchThumb(btn,url){
       colourSelect.appendChild(opt);
     });
     colourSelect.addEventListener('change', function(){
-      var hex = SWATCH[(this.value||'').toLowerCase()] || 'transparent';
+      var key = (this.value||'').toLowerCase();
+      var hex = SWATCH[key] || 'transparent';
       colourSwatch.style.background = hex;
-      colourSwatch.style.border = this.value.toLowerCase()==='white' ? '1px solid var(--grey-5)' : '1px solid transparent';
+      colourSwatch.style.border = key==='white' ? '1px solid var(--grey-5)' :
+                                   key==='transparent' ? '1px dashed var(--grey-5)' : '1px solid transparent';
       buildVariant();
     });
   }
 
-  /* ── Populate size buttons ── */
+  /* ── Populate size buttons (Apparel / Other only) ── */
   var sizeRow  = document.getElementById('sizeRow');
   var sizeNote = document.getElementById('sizeNote');
   var selectedSize = '';
@@ -813,11 +907,23 @@ function switchThumb(btn,url){
         this.classList.add('active');
         selectedSize = this.dataset.size;
         document.getElementById('sizeField').value = selectedSize;
-        updatePrice();buildVariant();
+        updatePrice(); buildVariant();
       });
       sizeRow.appendChild(btn);
     });
     if(cfg.sizes.length>0) document.getElementById('sizeField').value = cfg.sizes[0];
+  }
+
+  /* ── Populate quantity dropdown (Stickers / Party) ── */
+  var quantitySelect = document.getElementById('quantitySelect');
+  if(quantitySelect && (CAT_STICKER || CAT_PARTY)){
+    var qtys = CAT_STICKER ? STICKER_QTYS : PARTY_QTYS;
+    qtys.forEach(function(q){
+      var opt = document.createElement('option');
+      opt.value = q; opt.textContent = q;
+      quantitySelect.appendChild(opt);
+    });
+    quantitySelect.addEventListener('change', buildVariant);
   }
 
   /* ── Art size selection ── */
@@ -827,7 +933,7 @@ function switchThumb(btn,url){
       document.querySelectorAll('.js-art-size').forEach(function(b){b.classList.remove('active');});
       this.classList.add('active');
       artAdd = parseFloat(this.dataset.add)||0;
-      updatePrice();buildVariant();
+      updatePrice(); buildVariant();
     });
   });
 
@@ -843,14 +949,21 @@ function switchThumb(btn,url){
     });
   });
 
-  /* ── Print side selection ── */
+  /* ── Print side selection — also shows/hides back-artwork block ── */
   var printAdd = 0;
   document.querySelectorAll('.js-print-side').forEach(function(btn){
     btn.addEventListener('click',function(){
       document.querySelectorAll('.js-print-side').forEach(function(b){b.classList.remove('active');});
       this.classList.add('active');
       printAdd = parseFloat(this.dataset.add)||0;
-      updatePrice();buildVariant();
+      var isFrontAndBack = (this.dataset.side === 'Front & Back');
+      /* Show back-artwork upload only when Front & Back is chosen */
+      var backBlock = document.getElementById('blockArtworkBack');
+      if(backBlock) backBlock.style.display = isFrontAndBack ? '' : 'none';
+      /* Update front artwork side label */
+      var sideLabel = document.getElementById('artworkSideLabel');
+      if(sideLabel) sideLabel.textContent = isFrontAndBack ? '(front)' : '';
+      updatePrice(); buildVariant();
     });
   });
 
@@ -864,55 +977,65 @@ function switchThumb(btn,url){
     var pbPrintRow = document.getElementById('pbPrintRow');
     var pbSizeRow  = document.getElementById('pbSizeRow');
 
-    if(pbArtRow)   { pbArtRow.style.display   = artAdd>0   ? 'flex':'none'; document.getElementById('pbArt').textContent   = '£'+artAdd.toFixed(2); }
-    if(pbPrintRow) { pbPrintRow.style.display  = printAdd>0 ? 'flex':'none'; document.getElementById('pbPrint').textContent = '£'+printAdd.toFixed(2); }
-    if(pbSizeRow)  { pbSizeRow.style.display   = sizeAddon>0? 'flex':'none'; document.getElementById('pbSizeAddon').textContent = '£'+sizeAddon.toFixed(2); }
+    if(pbArtRow)   { pbArtRow.style.display   = artAdd>0    ? 'flex':'none'; document.getElementById('pbArt').textContent        = '£'+artAdd.toFixed(2); }
+    if(pbPrintRow) { pbPrintRow.style.display  = printAdd>0  ? 'flex':'none'; document.getElementById('pbPrint').textContent      = '£'+printAdd.toFixed(2); }
+    if(pbSizeRow)  { pbSizeRow.style.display   = sizeAddon>0 ? 'flex':'none'; document.getElementById('pbSizeAddon').textContent  = '£'+sizeAddon.toFixed(2); }
 
-    document.getElementById('pbTotal').textContent = '£'+total.toFixed(2);
-    document.getElementById('priceOverride').value = total.toFixed(2);
-    /* update visible price in header too */
+    document.getElementById('pbTotal').textContent     = '£'+total.toFixed(2);
+    document.getElementById('priceOverride').value     = total.toFixed(2);
     var priceEl = document.querySelector('.product-price');
     if(priceEl) priceEl.textContent = '£'+total.toFixed(2);
   }
 
-  /* ── Build variant string ── */
+  /* ── Build variant summary string ── */
   function buildVariant(){
-    var colour   = (colourSelect && colourSelect.value) || '';
-    var artBtn   = document.querySelector('.js-art-size.active');
-    var artSize  = artBtn ? artBtn.dataset.size+' ('+artBtn.dataset.inches+' inches)' : '';
-    var printBtn = document.querySelector('.js-print-side.active');
-    var printSide= printBtn ? printBtn.dataset.side : '';
-    var size     = document.getElementById('sizeField').value;
-    var placement= selectedPlacement;
+    var colour    = (colourSelect && colourSelect.value) || '';
+    var artBtn    = document.querySelector('.js-art-size.active');
+    var artSize   = artBtn ? artBtn.dataset.size+' ('+artBtn.dataset.inches+' inches)' : '';
+    var printBtn  = document.querySelector('.js-print-side.active');
+    var printSide = printBtn ? printBtn.dataset.side : '';
+    var size      = (document.getElementById('sizeField') && document.getElementById('sizeField').value) || '';
+    var placement = selectedPlacement;
+    var qty       = (quantitySelect && quantitySelect.value) ? 'Qty: '+quantitySelect.value : '';
+    var partyText = (document.getElementById('partyText') && document.getElementById('partyText').value) ? 'Text: '+document.getElementById('partyText').value : '';
+    var partyFont = (document.getElementById('partyFontSelect') && document.getElementById('partyFontSelect').value) ? 'Font: '+document.getElementById('partyFontSelect').value : '';
 
     var parts = [];
     if(colour)    parts.push('Colour: '+colour);
     if(size)      parts.push('Size: '+size);
+    if(qty)       parts.push(qty);
     if(artSize)   parts.push('Artwork: '+artSize);
     if(placement) parts.push('Placement: '+placement);
     if(printSide) parts.push('Printing: '+printSide);
+    if(partyText) parts.push(partyText);
+    if(partyFont) parts.push(partyFont);
 
     document.getElementById('variantField').value = parts.join(' · ');
   }
+
+  /* Party text live listener */
+  var partyTxtEl = document.getElementById('partyText');
+  if(partyTxtEl) partyTxtEl.addEventListener('input', buildVariant);
 
   buildVariant(); updatePrice();
 })();
 
 /* ── Artwork file change handler ── */
-function handleArtworkChange(input){
-  var label = document.getElementById('artworkLabel');
-  var txt   = document.getElementById('artworkLabelText');
+function handleArtworkChange(input, labelId, txtId){
+  /* labelId / txtId default to the front-artwork elements */
+  var label = document.getElementById(labelId || 'artworkLabel');
+  var txt   = document.getElementById(txtId   || 'artworkLabelText');
   if(input.files && input.files[0]){
     var f = input.files[0];
     if(f.size > 25*1024*1024){
       alert('File is too large. Max size is 25 MB.');
-      input.value='';return;
+      input.value=''; return;
     }
-    label.classList.add('has-file');
-    txt.textContent = '✓ ' + f.name;
+    if(label) label.classList.add('has-file');
+    if(txt)   txt.textContent = '✓ ' + f.name;
   } else {
-    label.classList.remove('has-file');
-    txt.textContent = 'Click to upload artwork';
+    if(label) label.classList.remove('has-file');
+    if(txt)   txt.textContent = labelId === 'artworkLabelBack' ? 'Click to upload back artwork' : 'Click to upload artwork';
   }
 }
 
@@ -922,24 +1045,35 @@ function handleArtworkChange(input){
 var form=document.getElementById('addToCartForm');
 if(form){
   form.addEventListener('submit',function(e){
-    /* Validation */
+    /* Validation — category-aware */
+    var catRaw    = '{{ product_category|escapejs }}';
+    var isStickerV = catRaw.indexOf('sticker')!==-1 || catRaw.indexOf('label')!==-1;
+    var isPartyV   = catRaw.indexOf('party')!==-1   || catRaw.indexOf('decoration')!==-1;
     var colour    = document.getElementById('colourSelect') ? document.getElementById('colourSelect').value : '';
     var size      = document.getElementById('sizeField') ? document.getElementById('sizeField').value : '';
     var placement = document.getElementById('placementField') ? document.getElementById('placementField').value : '';
-    if(!colour)    { alert('Please choose a colour.'); e.preventDefault(); return; }
-    if(!size)      { alert('Please select a size.');   e.preventDefault(); return; }
-    if(!placement) { alert('Please choose a placement.'); e.preventDefault(); return; }
+    if(!colour) { alert('Please choose a colour.'); e.preventDefault(); return; }
+    if(!isStickerV && !isPartyV){
+      if(!size)      { alert('Please select a size.');      e.preventDefault(); return; }
+      if(!placement) { alert('Please choose a placement.'); e.preventDefault(); return; }
+    }
+    if((isStickerV || isPartyV)){
+      var qty = document.getElementById('quantitySelect') ? document.getElementById('quantitySelect').value : '';
+      if(!qty){ alert('Please select a quantity.'); e.preventDefault(); return; }
+    }
 
     /* Override price with calculated total */
     var overrideInput = document.getElementById('priceOverride');
     var priceInput    = form.querySelector('input[name="price"]');
     if(overrideInput && priceInput) priceInput.value = overrideInput.value;
 
-    var artworkFile = document.getElementById('artworkFile');
-    var hasFile = artworkFile && artworkFile.files && artworkFile.files.length > 0;
+    var artworkFile     = document.getElementById('artworkFile');
+    var artworkFileBack = document.getElementById('artworkFileBack');
+    var hasFile = (artworkFile     && artworkFile.files     && artworkFile.files.length > 0) ||
+                  (artworkFileBack && artworkFileBack.files && artworkFileBack.files.length > 0);
 
     if(hasFile){
-      /* Full POST — let the browser handle multipart, page will redirect to cart */
+      /* Full multipart POST — browser handles file upload, page will redirect to cart */
       return; /* allow default submit */
     }
 
