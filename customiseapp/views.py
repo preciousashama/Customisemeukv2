@@ -162,7 +162,6 @@ def shoppage(request):
             {"label": "Accessories",       "value": "accessories"},
             {"label": "Party Essentials",  "value": "party-essentials"},
             {"label": "Stickers & Labels", "value": "stickers-labels"},
-            {"label": "Gifts",             "value": "gifts"},
             {"label": "Others",            "value": "others"},
         ],
         "wished_ids":  wished_ids,

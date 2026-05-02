@@ -338,7 +338,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
 
 <!-- MOBILE TOP BAR -->
 <div class="mobile-topbar" id="mobileTopbar">
-  <a class="sidebar-logo" href="{% url 'admin-page' %}"><img src="{% static 'fulllogo.png' %}" alt="CustomiseMe UK"/></a>
+  <a class="sidebar-logo" href="{% url 'admin-page' %}"><img src="{% static 'new-logo.png' %}" alt="CustomiseMe UK"/></a>
   <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open navigation" aria-expanded="false">
     <span></span><span></span><span></span>
   </button>
@@ -563,13 +563,14 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
         <div class="form-row-grid" style="margin-bottom:16px;"><div class="field {% if form_errors.product_price %}has-error{% endif %}"><label for="product_price">Price (£) <span style="color:var(--danger);">*</span></label><input type="number" id="product_price" name="product_price" placeholder="0.00" min="0" step="0.01" value="{{ edit_product.price|default:'' }}"/>{% if form_errors.product_price %}<span class="field-error-msg">{{ form_errors.product_price }}</span>{% endif %}</div><div class="field {% if form_errors.product_stock %}has-error{% endif %}"><label for="product_stock">Stock <span style="color:var(--danger);">*</span></label><input type="number" id="product_stock" name="product_stock" placeholder="0" min="0" value="{{ edit_product.stock|default:'' }}"/>{% if form_errors.product_stock %}<span class="field-error-msg">{{ form_errors.product_stock }}</span>{% endif %}</div></div>
         <div class="form-row-grid" style="margin-bottom:16px;">
           <div class="field"><label for="product_category">Category</label>
-            <select id="product_category" name="product_category">
-              <option value="">Select…</option>
-              <option value="Apparel & Accessories" {% if edit_product.category == "Apparel & Accessories" %}selected{% endif %}>Apparel &amp; Accessories</option>
-              <option value="Stickers and Labels" {% if edit_product.category == "Stickers and Labels" %}selected{% endif %}>Stickers &amp; Labels</option>
-              <option value="Party Essentials and Decoration" {% if edit_product.category == "Party Essentials and Decoration" %}selected{% endif %}>Party Essentials &amp; Decoration</option>
-              <option value="Other" {% if edit_product.category == "Other" %}selected{% endif %}>Other</option>
-            </select>
+           <select id="product_category" name="product_category">
+            <option value="">Select…</option>
+            <option value="Apparel"          {% if edit_product.category == "Apparel"          %}selected{% endif %}>Apparel</option>
+            <option value="Accessories"      {% if edit_product.category == "Accessories"      %}selected{% endif %}>Accessories</option>
+            <option value="Party Essentials" {% if edit_product.category == "Party Essentials" %}selected{% endif %}>Party Essentials</option>
+            <option value="Stickers & Labels"{% if edit_product.category == "Stickers & Labels"%}selected{% endif %}>Stickers &amp; Labels</option>
+            <option value="Other"            {% if edit_product.category == "Other"            %}selected{% endif %}>Other</option>
+          </select>
           </div>
           <div class="field"><label for="product_description">Description</label><textarea id="product_description" name="product_description" placeholder="Brief description…">{{ edit_product.description|default:'' }}</textarea></div>
         </div>

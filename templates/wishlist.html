@@ -541,7 +541,7 @@ footer { background: var(--black); color: var(--white); padding: 80px 80px 40px;
   </div>
   <div class="header-bottom-row">
     <a class="logo" href="{% url 'home-page' %}">
-      <img src="{% static 'fulllogo.png' %}" alt="CustomiseMe UK"/>
+      <img src="{% static 'new-logo.png' %}" alt="CustomiseMe UK"/>
     </a>
     <nav>
       <div class="nav-item"><a href="{% url 'home-page' %}">Home</a></div>
@@ -552,9 +552,10 @@ footer { background: var(--black); color: var(--white); padding: 80px 80px 40px;
             <div class="mega-col"><h5>Categories</h5>
               <ul>
                 <li><a href="{% url 'shop-page' %}">All Products</a></li>
-                <li><a href="{% url 'shop-page' %}?cat=Apparel+%26+Accessories">Apparel &amp; Accessories</a></li>
-                <li><a href="{% url 'shop-page' %}?cat=Stickers+and+Labels">Stickers &amp; Labels</a></li>
-                <li><a href="{% url 'shop-page' %}?cat=Party+Essentials+and+Decoration">Party Essentials &amp; Decoration</a></li>
+                <li><a href="{% url 'shop-page' %}?cat=Apparel">Apparel</a></li>
+                <li><a href="{% url 'shop-page' %}?cat=Accessories">Accessories</a></li>
+                <li><a href="{% url 'shop-page' %}?cat=Party+Essentials">Party Essentials</a></li>
+                <li><a href="{% url 'shop-page' %}?cat=Stickers+%26+Labels">Stickers &amp; Labels</a></li>
                 <li><a href="{% url 'shop-page' %}?cat=Other">Other</a></li>
               </ul>
             </div>
@@ -605,6 +606,10 @@ footer { background: var(--black); color: var(--white); padding: 80px 80px 40px;
             </ul></div>
           </div>
         </div>
+      </div>
+      <div class="nav-item">                         
+        <a href="{% url 'policy-page' %}"
+           {% block nav_policy %}{% endblock %}>Policy</a>
       </div>
     </nav>
     <div class="header-icons">

@@ -273,7 +273,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
   </div>
   <div class="header-bottom-row">
     <a class="logo" href="{% url 'home-page' %}">
-      <img src="{% static 'fulllogo.png' %}" alt="CustomiseMe UK"/>
+      <img src="{% static 'new-logo.png' %}" alt="CustomiseMe UK"/>
     </a>
     <nav>
       <div class="nav-item"><a href="{% url 'home-page' %}">Home</a></div>
@@ -282,12 +282,13 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
         <div class="mega-menu"><div class="mega-menu-grid cols-4">
           <div class="mega-col"><h5>Categories</h5>
             <ul>
-                <li><a href="{% url 'shop-page' %}">All Products</a></li>
-                <li><a href="{% url 'shop-page' %}?cat=Apparel+%26+Accessories">Apparel &amp; Accessories</a></li>
-                <li><a href="{% url 'shop-page' %}?cat=Stickers+and+Labels">Stickers &amp; Labels</a></li>
-                <li><a href="{% url 'shop-page' %}?cat=Party+Essentials+and+Decoration">Party Essentials &amp; Decoration</a></li>
-                <li><a href="{% url 'shop-page' %}?cat=Other">Other</a></li>
-              </ul>
+              <li><a href="{% url 'shop-page' %}">All Products</a></li>
+              <li><a href="{% url 'shop-page' %}?cat=Apparel">Apparel</a></li>
+              <li><a href="{% url 'shop-page' %}?cat=Accessories">Accessories</a></li>
+              <li><a href="{% url 'shop-page' %}?cat=Party+Essentials">Party Essentials</a></li>
+              <li><a href="{% url 'shop-page' %}?cat=Stickers+%26+Labels">Stickers &amp; Labels</a></li>
+              <li><a href="{% url 'shop-page' %}?cat=Other">Other</a></li>
+            </ul>
           </div>
           <div class="mega-col"><h5>Apparel</h5><ul>
             <li><a href="{% url 'shop-page' %}?cat=Apparel">T-Shirts</a></li>
@@ -329,6 +330,10 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             <li><a href="{% url 'premium-page' %}">Station Experience</a></li>
           </ul></div>
         </div></div>
+      </div>
+      <div class="nav-item">                          
+        <a href="{% url 'policy-page' %}"
+           {% block nav_policy %}{% endblock %}>Policy</a>
       </div>
     </nav>
      <div class="header-icons">
@@ -406,12 +411,6 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="color:var(--grey-5)"><rect x="3" y="3" width="18" height="18"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         </div>
         {% endif %}
-        <div class="preview-overlay">
-          <div class="preview-box">
-            {% comment %} <p class="preview-text" id="livePreviewText">Your Text</p> {% endcomment %}
-            <svg class="preview-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-          </div>
-        </div>
         <div class="preview-badge">Live Preview Mode</div>
       </div>
       <div class="thumbnails">
@@ -489,16 +488,6 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             </div>
           </div>
 
-          {# -- Placement (Apparel / Other only) -- #}
-          <div class="field-block" id="blockPlacement">
-            <div class="field-label"><span class="step-num" id="stepPlacement">4</span> Placement</div>
-            <div class="placement-grid" id="placementGrid">
-              {% for p in placements %}
-                <button type="button" class="placement-btn js-placement" data-placement="{{ p }}">{{ p }}</button>
-              {% endfor %}
-            </div>
-            <input type="hidden" name="placement" id="placementField" value=""/>
-          </div>
 
           {# -- Printing Side (Apparel / Other only) -- #}
           <div class="field-block" id="blockPrintSide">
@@ -508,6 +497,17 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
               <button type="button" class="font-btn js-print-side"        data-side="Back Only"     data-add="0">Back Only</button>
               <button type="button" class="font-btn js-print-side"        data-side="Front & Back"  data-add="3">Front &amp; Back <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">+£3</span></button>
             </div>
+          </div>
+
+           {# -- Placement (Apparel / Other only) -- #}
+          <div class="field-block" id="blockPlacement">
+            <div class="field-label"><span class="step-num" id="stepPlacement">4</span> Placement</div>
+            <div class="placement-grid" id="placementGrid">
+              {% for p in placements %}
+                <button type="button" class="placement-btn js-placement" data-placement="{{ p }}">{{ p }}</button>
+              {% endfor %}
+            </div>
+            <input type="hidden" name="placement" id="placementField" value=""/>
           </div>
 
           {# -- Quantity (Stickers / Party only) -- #}

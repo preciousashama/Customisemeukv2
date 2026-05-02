@@ -42,13 +42,24 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+CATEGORY_CHOICES = [
+    ("Apparel",           "Apparel"),
+    ("Accessories",       "Accessories"),
+    ("Party Essentials",  "Party Essentials"),
+    ("Stickers & Labels", "Stickers & Labels"),
+    ("Other",             "Other"),
+]
 
 class Product(models.Model):
     id          = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name        = models.CharField(max_length=200)
     slug        = models.SlugField(max_length=220, unique=True)
     sku         = models.CharField(max_length=60, unique=True)
-    category    = models.CharField(max_length=100, blank=True)
+    category = models.CharField(
+            max_length=100,
+            blank=True,
+            choices=CATEGORY_CHOICES,
+        )
     description = models.TextField(blank=True)
     price       = models.DecimalField(
         max_digits=10, decimal_places=2, default=Decimal("0.00")
