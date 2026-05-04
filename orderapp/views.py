@@ -187,16 +187,20 @@ def _build_items_from_stripe(session_id, order):
 
         # 2. Check the new Product Gallery (Multiple Images)
         if not image_url and product_obj:
-            # Assuming the related name in your Product model is 'images'
-            first_gallery_img = product_obj.images.first() if hasattr(product_obj, 'images') else None
-            if first_gallery_img:
-                try:
-                    image_url = first_gallery_img.image.url
-                except Exception:
-                    pass
+            if hasattr(product_obj, 'images'):
+                # Prioritize the image you marked as thumbnail in the admin
+                gallery_thumb = product_obj.images.filter(is_thumbnail=True).first()
+                # Fallback to the first image in the gallery if none marked
+                gallery_thumb = gallery_thumb or product_obj.images.first()
+                
+                if gallery_thumb:
+                    try:
+                        image_url = gallery_thumb.image.url
+                    except Exception:
+                        pass
             
             # 3. Fallback to the old single 'image' field if gallery is empty
-            elif product_obj.image:
+            if not image_url and product_obj.image:
                 try:
                     image_url = product_obj.image.url
                 except Exception:
@@ -205,7 +209,6 @@ def _build_items_from_stripe(session_id, order):
         # 4. Final metadata/fallback search
         if not image_url:
             image_url = stripe_prod_meta.get("image_url", "") or item_meta.get("image_url", "")
-
         # --- END IMAGE RESOLUTION ---
 
         amount_total = getattr(item, "amount_total", 0) or 0
