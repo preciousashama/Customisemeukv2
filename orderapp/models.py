@@ -121,16 +121,3 @@ class OrderItem(models.Model):
     @property
     def line_total(self):
         return self.price * self.quantity
-    
-class ProductImage(models.Model):
-    # Links many images to one product
-    product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='products/gallery/')
-    is_thumbnail = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['created_at']
-
-    def __str__(self):
-        return f"Image for {self.product.name}"
