@@ -145,7 +145,6 @@ def _build_items_from_stripe(session_id, order):
         logger.warning("No line items returned for session %s", session_id)
         return Decimal("0.00"), Decimal("0.00")
 
-
     product_map = {}
     stripe_price_to_product = {}
     for p in Product.objects.exclude(stripe_price_id=""):
@@ -162,24 +161,14 @@ def _build_items_from_stripe(session_id, order):
 
         stripe_name, stripe_prod_meta, stripe_images = _resolve_stripe_product(price_obj)
 
-      
-        logger.debug(
-            "Line item — stripe_name=%r description=%r is_shipping=%s",
-            stripe_name, description,
-            _is_shipping_line_item(stripe_name, item_meta, description),
-        )
-
-       
         if _is_shipping_line_item(stripe_name, item_meta, description):
             amount = getattr(item, "amount_total", 0) or 0
             shipping_total += Decimal(str(amount)) / 100
             continue
 
-       
         sku          = item_meta.get("product_sku", "") or stripe_prod_meta.get("sku", "")
         display_name = stripe_name or item_meta.get("product_name", "") or description or "Product"
 
-       
         django_pid      = stripe_prod_meta.get("django_product_id", "")
         stripe_price_id = price_obj.id if price_obj else ""
         product_obj     = _resolve_product_obj(
@@ -189,34 +178,35 @@ def _build_items_from_stripe(session_id, order):
         if not product_obj and sku:
             product_obj = Product.objects.filter(sku=sku).first()
 
+        # --- IMAGE RESOLUTION LOGIC ---
         image_url = ""
 
+        # 1. Check Stripe's own hosted images first
         if stripe_images:
             image_url = stripe_images[0]
 
-        if not image_url and product_obj and product_obj.image:
-            try:
-                image_url = product_obj.image.url
-            except Exception:
-                pass
+        # 2. Check the new Product Gallery (Multiple Images)
+        if not image_url and product_obj:
+            # Assuming the related name in your Product model is 'images'
+            first_gallery_img = product_obj.images.first() if hasattr(product_obj, 'images') else None
+            if first_gallery_img:
+                try:
+                    image_url = first_gallery_img.image.url
+                except Exception:
+                    pass
+            
+            # 3. Fallback to the old single 'image' field if gallery is empty
+            elif product_obj.image:
+                try:
+                    image_url = product_obj.image.url
+                except Exception:
+                    pass
 
+        # 4. Final metadata/fallback search
         if not image_url:
             image_url = stripe_prod_meta.get("image_url", "") or item_meta.get("image_url", "")
 
-        if not image_url:
-            fallback_product = None
-            if display_name and display_name not in ("Product", "Item"):
-                fallback_product = Product.objects.filter(name__iexact=display_name).first()
-            if not fallback_product and sku:
-                fallback_product = Product.objects.filter(sku__iexact=sku).first()
-            if fallback_product and fallback_product.image:
-                try:
-                    image_url = fallback_product.image.url
-                    # Also set product_obj so it links properly
-                    if not product_obj:
-                        product_obj = fallback_product
-                except Exception:
-                    pass
+        # --- END IMAGE RESOLUTION ---
 
         amount_total = getattr(item, "amount_total", 0) or 0
         quantity     = getattr(item, "quantity", 1) or 1
