@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from .decorators import admin_required
 from orderapp.models import Order
-from customiseapp.models import CarouselSlide, Product, DesignSubmission,SendItemRequest,ProductCustomisation
+from customiseapp.models import CarouselSlide, Product, DesignSubmission,SendItemRequest,ProductCustomisation,ProductImage
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -563,84 +563,87 @@ def admin_dashboard_data(request):
         sku         = request.POST.get("product_sku", "").strip()
         price_raw   = request.POST.get("product_price", "").strip()
         stock_raw   = request.POST.get("product_stock", "").strip()
-        category    = request.POST.get("product_category", "").strip()
+        category_id = request.POST.get("product_category", "").strip()
         description = request.POST.get("product_description", "").strip()
         image       = request.FILES.get("product_image")
         product_id  = request.POST.get("product_id")
         errors      = {}
- 
+
         if not name: errors["product_name"] = "Product name is required."
         if not sku:  errors["product_sku"]  = "SKU is required."
- 
+
         try:
             price_val = float(price_raw)
             if price_val < 0: raise ValueError
         except (ValueError, TypeError):
-            errors["product_price"] = "Enter a valid price (e.g. 29.99)."
+            errors["product_price"] = "Enter a valid price."
             price_val = None
- 
+
         try:
             stock_val = int(stock_raw)
             if stock_val < 0: raise ValueError
         except (ValueError, TypeError):
             errors["product_stock"] = "Enter a valid stock count."
             stock_val = None
- 
+
         if image:
             try:
                 validate_product_image(image)
             except ValidationError as e:
                 errors["product_image"] = e.message
- 
+
         if errors:
             edit_product = get_object_or_404(Product, pk=product_id) if product_id else None
             return render(request, "admin-page.html",
                           _build_context(request, "products",
                                          form_errors=errors, edit_product=edit_product))
- 
+
+        category_obj = Category.objects.filter(id=category_id).first() if category_id else None
+
         if action == "edit_product" and product_id:
             p             = get_object_or_404(Product, pk=product_id)
             p.name        = name
             p.sku         = sku
             p.price       = price_val
             p.stock       = stock_val
-            p.category    = category
+            p.category    = category_obj
             p.description = description
             if image:
                 if p.image:
-                    p.image.delete(save=False)   
-                p.image = image                
+                    p.image.delete(save=False)
+                p.image = image
             p.save()
             messages.success(request, f'Product "{name}" updated.')
- 
         else:
             base_slug = slugify(name)
             slug      = base_slug
             if Product.objects.filter(slug=slug).exists():
                 slug = f"{base_slug}-{str(_uuid.uuid4())[:8]}"
- 
-           
+            
+            p = Product.objects.create(
+                name=name, slug=slug, sku=sku, price=price_val,
+                stock=stock_val, category=category_obj, description=description,
+                image=image
+            )
+            messages.success(request, f'Product "{name}" added.')
+
+        gallery_files = request.FILES.getlist('product_images')
+        if gallery_files:
+            if action == "edit_product":
+                p.images.all().delete()
+            
             try:
-                p = Product(
-                    name=name, slug=slug, sku=sku,
-                    price=price_val, stock=stock_val,
-                    category=category, description=description,
-                )
-                if image:
-                    p.image = image      
-                p.save()                 
-            except Exception as exc:
-                logger.error("Product save failed: %s", exc)
-                messages.error(
-                    request,
-                    f'Product "{name}" could not be saved — image upload failed. '
-                    f'Check FIREBASE_STORAGE_BUCKET and FIREBASE_PRIVATE_KEY in your .env. '
-                    f'Error: {exc}'
-                )
-                return redirect(f"{request.path}?tab=products&add_product=1")
- 
-            messages.success(request, f'Product "{name}" added to inventory.')
- 
+                thumb_idx = int(request.POST.get('thumbnail_index', 0))
+            except:
+                thumb_idx = 0
+
+            for i, file in enumerate(gallery_files):
+                is_main = (i == thumb_idx)
+                ProductImage.objects.create(product=p, image=file, is_thumbnail=is_main)
+                if is_main:
+                    p.image = file
+                    p.save()
+
         return redirect(f"{request.path}?tab=products")
  
     if action == "delete_product":
