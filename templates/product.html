@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>CustomiseMe UK | {{ product.name|default:"Product" }}</title>
+<title>CustomiseMe UK | {% if product %}{{ product.name }}{% elif category_filter %}{{ category_filter }}{% else %}Shop{% endif %}</title>
 <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
@@ -42,7 +42,7 @@ header{position:fixed;top:34px;left:0;right:0;z-index:100;background:rgba(248,24
 .search-icon{color:var(--grey-4);flex-shrink:0;}
 .header-bottom-row{display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:68px;}
 .logo{display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit;flex-shrink:0;}
-.logo img { width: 52px; height: 52px; object-fit: contain; }
+.logo img{width:52px;height:52px;object-fit:contain;}
 nav{display:flex;align-items:center;gap:32px;position:relative;}
 .nav-item{position:static;}
 nav>.nav-item>a{font-family:var(--sans);font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey-3);text-decoration:none;position:relative;transition:color .2s;display:flex;align-items:center;gap:5px;padding:22px 0;}
@@ -51,9 +51,9 @@ nav>.nav-item>a:hover,nav>.nav-item>a.active{color:var(--black);}
 nav>.nav-item>a:hover::after,nav>.nav-item>a.active::after{width:100%;}
 nav>.nav-item>a .chevron{display:inline-block;width:7px;height:7px;border-right:1px solid currentColor;border-bottom:1px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .2s;flex-shrink:0;}
 .nav-item:hover>a .chevron{transform:rotate(-135deg) translateY(-2px);}
-.mega-menu { position: fixed; top: calc(34px + 34px + 68px); left: 0; right: 0; background: var(--white); border-bottom: 1px solid var(--grey-6); padding: 48px 80px 56px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease 0.5s; z-index: 90; box-shadow: 0 20px 60px rgba(0,0,0,0.08); }
-.mega-menu::before { content: ''; position: fixed; top: calc(34px + 34px + 68px - 16px); left: 0; right: 0; height: 16px; background: transparent; }
-.nav-item:hover .mega-menu { opacity: 1; pointer-events: all; transition: opacity 0.2s ease 0s; }
+.mega-menu{position:fixed;top:calc(34px + 34px + 68px);left:0;right:0;background:var(--white);border-bottom:1px solid var(--grey-6);padding:48px 80px 56px;opacity:0;pointer-events:none;transition:opacity 0.2s ease 0.5s;z-index:90;box-shadow:0 20px 60px rgba(0,0,0,0.08);}
+.mega-menu::before{content:'';position:fixed;top:calc(34px + 34px + 68px - 16px);left:0;right:0;height:16px;background:transparent;}
+.nav-item:hover .mega-menu{opacity:1;pointer-events:all;transition:opacity 0.2s ease 0s;}
 .mega-menu-grid{display:grid;gap:48px;align-items:start;}
 .mega-menu-grid.cols-4{grid-template-columns:repeat(4,1fr);}
 .mega-menu-grid.cols-2{grid-template-columns:repeat(2,1fr);}
@@ -73,7 +73,6 @@ nav>.nav-item>a .chevron{display:inline-block;width:7px;height:7px;border-right:
 .currency-flag{font-size:18px;line-height:1;}
 .currency-code{font-family:var(--sans);font-size:9px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;}
 .icon-divider{width:1px;height:28px;background:var(--grey-6);margin:0 6px;}
-/* Account dropdown */
 .hdr-account-wrap{position:relative;}
 .hdr-account-btn{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;cursor:none;color:var(--grey-3);padding:8px 10px;transition:color .2s;}
 .hdr-account-btn:hover,.hdr-account-wrap.open .hdr-account-btn{color:var(--black);}
@@ -89,7 +88,6 @@ nav>.nav-item>a .chevron{display:inline-block;width:7px;height:7px;border-right:
 .hdr-account-item svg{flex-shrink:0;}
 .hdr-account-item--danger{color:#c0392b;}
 .hdr-account-item--danger:hover{background:#fdf0ef;color:#a93226;}
-/* Hamburger */
 .hamburger{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:40px;height:40px;background:none;border:none;cursor:none;padding:4px;flex-shrink:0;}
 .hamburger span{display:block;width:22px;height:1.5px;background:var(--black);transition:transform .35s,opacity .25s,width .3s;transform-origin:center;}
 .hamburger.active span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
@@ -115,18 +113,57 @@ nav>.nav-item>a .chevron{display:inline-block;width:7px;height:7px;border-right:
 .breadcrumb span.sep{color:var(--grey-6);}
 .breadcrumb span.current{color:var(--black);font-weight:500;}
 
-/* PRODUCT GRID */
-.product-section{display:grid;grid-template-columns:1fr 1fr;gap:64px;padding:40px 80px 80px;max-width:1400px;margin:0 auto;}
+/* ═══════════════════════════════════════════════
+   LISTING MODE STYLES
+═══════════════════════════════════════════════ */
+.listing-hero{padding:40px 80px 32px;border-bottom:1px solid var(--grey-7);}
+.listing-overline{font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--grey-4);display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.listing-overline::before{content:'';width:24px;height:1px;background:var(--grey-5);}
+.listing-title{font-family:var(--serif);font-size:clamp(32px,3.5vw,52px);font-weight:300;letter-spacing:-0.01em;line-height:1.1;}
+.listing-meta{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:20px;}
+.listing-count{font-size:13px;color:var(--grey-4);letter-spacing:0.04em;}
+.listing-count strong{color:var(--black);font-weight:600;}
+.cat-chips{display:flex;gap:8px;flex-wrap:wrap;}
+.cat-chip{display:inline-flex;align-items:center;padding:8px 16px;font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--grey-4);text-decoration:none;border:1px solid var(--grey-6);background:var(--white);transition:border-color .2s,color .2s,background .2s;white-space:nowrap;}
+.cat-chip:hover{border-color:var(--grey-3);color:var(--black);}
+.cat-chip.active{background:var(--black);border-color:var(--black);color:var(--white);}
+.listing-body{padding:48px 80px 100px;}
+.listing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;}
+.listing-card{display:flex;flex-direction:column;position:relative;}
+.listing-img-wrap{aspect-ratio:4/5;overflow:hidden;background:var(--grey-7);border:1px solid var(--grey-7);position:relative;transition:border-color .3s;}
+.listing-card:hover .listing-img-wrap{border-color:var(--grey-4);}
+.listing-img-wrap img{width:100%;height:100%;object-fit:cover;filter:grayscale(20%);transition:filter .6s ease,transform .6s ease;}
+.listing-card:hover .listing-img-wrap img{filter:grayscale(0%);transform:scale(1.04);}
+.listing-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.listing-cta{position:absolute;bottom:0;left:0;right:0;background:rgba(10,10,10,0.88);color:var(--white);text-align:center;padding:16px;font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;transform:translateY(100%);opacity:0;transition:transform .3s ease,opacity .3s ease;backdrop-filter:blur(4px);text-decoration:none;display:block;}
+.listing-card:hover .listing-cta{transform:translateY(0);opacity:1;}
+.stock-badge{position:absolute;top:12px;left:12px;font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:4px 9px;border:1px solid;z-index:2;}
+.stock-badge.low{background:rgba(248,248,246,0.92);border-color:var(--danger);color:var(--danger);}
+.stock-badge.out{background:rgba(10,10,10,0.72);border-color:transparent;color:rgba(255,255,255,0.8);}
+.sale-badge{position:absolute;top:12px;right:12px;font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:4px 9px;background:var(--accent);color:var(--white);z-index:2;}
+.listing-wish-btn{position:absolute;top:10px;right:10px;background:rgba(248,248,246,0.9);border:1px solid var(--grey-6);width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:none;z-index:3;transition:border-color .2s,background .2s;}
+.listing-wish-btn:hover{border-color:var(--black);background:var(--white);}
+.listing-info{padding:14px 0 0;display:flex;flex-direction:column;gap:5px;}
+.listing-name{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--black);text-decoration:none;line-height:1.2;transition:color .2s;}
+.listing-name:hover{color:var(--grey-2);}
+.listing-cat-tag{font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--grey-5);}
+.listing-price-row{display:flex;align-items:center;gap:10px;margin-top:2px;}
+.listing-price{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--black);}
+.listing-compare-price{font-size:13px;color:var(--grey-5);text-decoration:line-through;}
+.listing-empty{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 40px;text-align:center;gap:20px;}
+.listing-empty h3{font-family:var(--serif);font-size:28px;font-weight:300;}
+.listing-empty p{font-size:14px;color:var(--grey-4);max-width:320px;line-height:1.7;}
+.listing-empty a{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;background:var(--black);color:var(--white);font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;text-decoration:none;}
+.listing-empty a:hover{background:var(--grey-2);}
 
-/* IMAGE PANEL */
+/* ═══════════════════════════════════════════════
+   DETAIL MODE STYLES (unchanged from original)
+═══════════════════════════════════════════════ */
+.product-section{display:grid;grid-template-columns:1fr 1fr;gap:64px;padding:40px 80px 80px;max-width:1400px;margin:0 auto;}
 .image-panel{display:flex;flex-direction:column;gap:16px;}
 .main-image-wrap{position:relative;aspect-ratio:4/5;background:var(--grey-8);overflow:hidden;border:1px solid var(--grey-7);}
 .main-image-wrap img{width:100%;height:100%;object-fit:cover;filter:grayscale(15%);transition:filter .6s,transform .6s;}
 .main-image-wrap:hover img{filter:grayscale(0%);transform:scale(1.03);}
-.preview-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;}
-.preview-box{width:32%;aspect-ratio:1/1;border:1.5px dashed rgba(10,10,10,0.25);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:rgba(248,248,246,0.08);backdrop-filter:blur(2px);}
-.preview-text{font-family:var(--serif);font-size:18px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:rgba(10,10,10,0.45);}
-.preview-icon{color:rgba(10,10,10,0.2);}
 .preview-badge{position:absolute;bottom:20px;left:20px;background:rgba(248,248,246,0.92);border:1px solid var(--grey-6);padding:7px 14px;font-size:10px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--grey-3);backdrop-filter:blur(8px);}
 .thumbnails{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
 .thumb-btn{aspect-ratio:1/1;overflow:hidden;border:1px solid var(--grey-7);background:var(--grey-8);transition:border-color .2s;display:flex;align-items:center;justify-content:center;}
@@ -134,8 +171,6 @@ nav>.nav-item>a .chevron{display:inline-block;width:7px;height:7px;border-right:
 .thumb-btn:hover{border-color:var(--grey-3);}
 .thumb-btn img{width:100%;height:100%;object-fit:cover;filter:grayscale(20%);transition:filter .3s;}
 .thumb-btn:hover img,.thumb-btn.active img{filter:grayscale(0%);}
-
-/* DETAILS PANEL */
 .details-panel{display:flex;flex-direction:column;gap:32px;}
 .product-head{display:flex;flex-direction:column;gap:10px;}
 .product-overline{font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--grey-4);display:flex;align-items:center;gap:12px;}
@@ -158,30 +193,22 @@ nav>.nav-item>a .chevron{display:inline-block;width:7px;height:7px;border-right:
 .size-btn{flex:1;padding:13px 8px;border:1px solid var(--grey-6);background:var(--grey-8);font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey-3);cursor:none;transition:border-color .2s,background .2s,color .2s;text-align:center;}
 .size-btn:hover{border-color:var(--grey-3);color:var(--black);}
 .size-btn.active{border-color:var(--black);background:var(--black);color:var(--white);}
-/* COLOUR SELECT */
 .colour-select-wrap{display:flex;align-items:center;gap:12px;}
 .colour-select-wrap .field-input{flex:1;}
 .colour-swatch{width:32px;height:32px;border:1px solid var(--grey-6);border-radius:50%;flex-shrink:0;transition:background .2s;}
-
-/* PLACEMENT GRID */
 .placement-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
 .placement-btn{padding:10px 6px;border:1px solid var(--grey-6);background:var(--grey-8);font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--grey-3);cursor:none;transition:border-color .2s,background .2s,color .2s;text-align:center;line-height:1.3;}
 .placement-btn:hover{border-color:var(--grey-3);color:var(--black);}
 .placement-btn.active{border-color:var(--black);background:var(--black);color:var(--white);}
-
-/* ARTWORK UPLOAD */
 .artwork-upload-label{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1.5px dashed var(--grey-5);padding:28px 16px;background:var(--grey-8);cursor:none;transition:border-color .2s,background .2s;text-align:center;}
 .artwork-upload-label:hover{border-color:var(--black);background:var(--white);}
 .artwork-upload-label svg{color:var(--grey-4);}
 .artwork-upload-label span{font-size:13px;font-weight:500;color:var(--grey-3);letter-spacing:0.04em;}
 .artwork-upload-label.has-file{border-color:var(--success);background:#f0faf4;}
 .artwork-upload-label.has-file svg{color:var(--success);}
-
-/* PRICE BREAKDOWN */
 .price-breakdown{background:var(--grey-8);border:1px solid var(--grey-7);padding:16px 20px;display:flex;flex-direction:column;gap:8px;}
 .price-row{display:flex;justify-content:space-between;font-size:13px;color:var(--grey-3);}
 .price-row--total{border-top:1px solid var(--grey-6);padding-top:8px;margin-top:2px;font-weight:700;font-size:15px;color:var(--black);}
-
 .action-row{display:flex;gap:12px;padding-top:24px;border-top:1px solid var(--grey-7);}
 .btn-cart{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--black);color:var(--white);font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;padding:18px 24px;border:none;cursor:none;position:relative;overflow:hidden;}
 .btn-cart::after{content:'';position:absolute;inset:0;background:var(--grey-2);transform:translateX(-100%);transition:transform .35s;}
@@ -196,8 +223,6 @@ nav>.nav-item>a .chevron{display:inline-block;width:7px;height:7px;border-right:
 .info-card-icon{color:var(--grey-4);flex-shrink:0;}
 .info-card-label{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--grey-5);font-weight:600;display:block;margin-bottom:2px;}
 .info-card-value{font-size:13px;font-weight:600;color:var(--black);}
-
-/* TABS */
 .tabs-section{padding:72px 80px;border-top:1px solid var(--grey-7);max-width:1400px;margin:0 auto;}
 .tabs-row{display:flex;gap:0;border-bottom:1px solid var(--grey-6);margin-bottom:48px;overflow-x:auto;}
 .tab-btn{padding:16px 28px;background:none;border:none;font-family:var(--sans);font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey-4);cursor:none;border-bottom:1px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color .2s,border-color .2s;}
@@ -226,7 +251,15 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
 .footer-bottom-links a:hover{color:var(--accent);}
 
 /* RESPONSIVE */
-@media(max-width:1100px){.product-section{gap:40px;padding:32px 40px 64px;}.breadcrumb{padding:24px 40px 0;}.tabs-section{padding:64px 40px;}.footer-top{grid-template-columns:1fr 1fr;gap:40px;}}
+@media(max-width:1100px){
+  .product-section{gap:40px;padding:32px 40px 64px;}
+  .breadcrumb{padding:24px 40px 0;}
+  .tabs-section{padding:64px 40px;}
+  .footer-top{grid-template-columns:1fr 1fr;gap:40px;}
+  .listing-hero{padding:32px 40px 24px;}
+  .listing-body{padding:36px 40px 80px;}
+  .listing-grid{grid-template-columns:repeat(3,1fr);}
+}
 @media(max-width:768px){
   .promo-ticker{height:28px;}.promo-ticker-item{font-size:9.5px;padding:0 24px;}
   header{top:28px;}.header-top-row{display:none;}.header-bottom-row{padding:0 20px;height:56px;}
@@ -236,8 +269,14 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
   .product-section{grid-template-columns:1fr;padding:24px 24px 64px;gap:40px;}
   .tabs-section{padding:48px 24px;}.action-row{flex-direction:column;}
   footer{padding:60px 24px 32px;}.footer-top{grid-template-columns:1fr;gap:36px;padding-bottom:40px;}
+  .listing-hero{padding:24px 24px 20px;}
+  .listing-body{padding:24px 24px 64px;}
+  .listing-grid{grid-template-columns:repeat(2,1fr);gap:16px;}
 }
-@media(max-width:480px){.info-cards{grid-template-columns:1fr;}.size-row{flex-wrap:wrap;}.size-btn{flex:0 0 calc(33.33% - 6px);}}
+@media(max-width:480px){
+  .info-cards{grid-template-columns:1fr;}.size-row{flex-wrap:wrap;}.size-btn{flex:0 0 calc(33.33% - 6px);}
+  .listing-grid{grid-template-columns:1fr 1fr;gap:12px;}
+}
 </style>
 </head>
 <body>
@@ -266,10 +305,9 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
 <header id="mainHeader">
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
-  <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-  <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
-         value="{{ request.GET.q|default:'' }}"/>
-</form>
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search" value="{{ request.GET.q|default:'' }}"/>
+    </form>
   </div>
   <div class="header-bottom-row">
     <a class="logo" href="{% url 'home-page' %}">
@@ -278,32 +316,32 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
     <nav>
       <div class="nav-item"><a href="{% url 'home-page' %}">Home</a></div>
       <div class="nav-item">
-        <a href="{% url 'shop-page' %}" class="active">Shop <span class="chevron"></span></a>
+        <a href="{% url 'product-page' %}" class="active">Shop <span class="chevron"></span></a>
         <div class="mega-menu"><div class="mega-menu-grid cols-4">
           <div class="mega-col"><h5>Categories</h5>
             <ul>
-              <li><a href="{% url 'shop-page' %}">All Products</a></li>
-              <li><a href="{% url 'shop-page' %}?cat=Apparel">Apparel</a></li>
-              <li><a href="{% url 'shop-page' %}?cat=Accessories">Accessories</a></li>
-              <li><a href="{% url 'shop-page' %}?cat=Party+Essentials">Party Essentials</a></li>
-              <li><a href="{% url 'shop-page' %}?cat=Stickers+%26+Labels">Stickers &amp; Labels</a></li>
-              <li><a href="{% url 'shop-page' %}?cat=Other">Other</a></li>
+              <li><a href="{% url 'product-page' %}">All Products</a></li>
+              <li><a href="{% url 'product-page' %}?category=Apparel">Apparel</a></li>
+              <li><a href="{% url 'product-page' %}?category=Accessories">Accessories</a></li>
+              <li><a href="{% url 'product-page' %}?category=Party+Essentials">Party Essentials</a></li>
+              <li><a href="{% url 'product-page' %}?category=Stickers+%26+Labels">Stickers &amp; Labels</a></li>
+              <li><a href="{% url 'product-page' %}?category=Other">Other</a></li>
             </ul>
           </div>
           <div class="mega-col"><h5>Apparel</h5><ul>
-            <li><a href="{% url 'shop-page' %}?cat=Apparel">T-Shirts</a></li>
-            <li><a href="{% url 'shop-page' %}?cat=Apparel">Hoodies</a></li>
-            <li><a href="{% url 'shop-page' %}?cat=Accessories">Bags</a></li>
+            <li><a href="{% url 'product-page' %}?category=Apparel">T-Shirts</a></li>
+            <li><a href="{% url 'product-page' %}?category=Apparel">Hoodies</a></li>
+            <li><a href="{% url 'product-page' %}?category=Accessories">Bags</a></li>
           </ul></div>
           <div class="mega-col"><h5>Party Essentials</h5><ul>
-            <li><a href="{% url 'shop-page' %}?cat=Party Essentials">Vinyl Banners</a></li>
-            <li><a href="{% url 'shop-page' %}?cat=Party Essentials">Plates &amp; Cups</a></li>
-            <li><a href="{% url 'shop-page' %}?cat=Party Essentials">Table Decor</a></li>
+            <li><a href="{% url 'product-page' %}?category=Party+Essentials">Vinyl Banners</a></li>
+            <li><a href="{% url 'product-page' %}?category=Party+Essentials">Plates &amp; Cups</a></li>
+            <li><a href="{% url 'product-page' %}?category=Party+Essentials">Table Decor</a></li>
           </ul></div>
           <div class="mega-col"><h5>Stickers &amp; Labels</h5><ul>
-            <li><a href="{% url 'shop-page' %}?cat=Stickers &amp; Labels">Vinyl Stickers</a></li>
-            <li><a href="{% url 'shop-page' %}?cat=Stickers &amp; Labels">Custom Labels</a></li>
-            <li><a href="{% url 'shop-page' %}?cat=Stickers &amp; Labels">Wall Decals</a></li>
+            <li><a href="{% url 'product-page' %}?category=Stickers+%26+Labels">Vinyl Stickers</a></li>
+            <li><a href="{% url 'product-page' %}?category=Stickers+%26+Labels">Custom Labels</a></li>
+            <li><a href="{% url 'product-page' %}?category=Stickers+%26+Labels">Wall Decals</a></li>
           </ul></div>
         </div></div>
       </div>
@@ -331,12 +369,11 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
           </ul></div>
         </div></div>
       </div>
-      <div class="nav-item">                          
-        <a href="{% url 'privacy-page' %}"
-           {% block nav_policy %}{% endblock %}>Policy</a>
+      <div class="nav-item">
+        <a href="{% url 'privacy-page' %}">Policy</a>
       </div>
     </nav>
-     <div class="header-icons">
+    <div class="header-icons">
       <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">🇬🇧</span><span class="currency-code">GBP £</span></button>
       <div class="icon-divider"></div>
       {% if user.is_authenticated %}
@@ -381,7 +418,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
 <!-- MOBILE NAV -->
 <div class="mobile-nav" id="mobileNav" aria-hidden="true">
   <a href="{% url 'home-page' %}">Home</a>
-  <a href="{% url 'shop-page' %}">Shop</a>
+  <a href="{% url 'product-page' %}">Shop</a>
   <a href="{% url 'design-studio-page' %}">Design Studio</a>
   <a href="{% url 'premium-page' %}">Premium Services</a>
   {% if user.is_authenticated %}
@@ -392,10 +429,98 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
 </div>
 
 <div class="page-wrap">
+
+  {# ══════════════════════════════════════════════════════════════
+     LISTING MODE — shown when no slug (category browse)
+  ══════════════════════════════════════════════════════════════ #}
+  {% if not product %}
+
   <nav class="breadcrumb">
     <a href="{% url 'home-page' %}">Home</a>
     <span class="sep">—</span>
-    <a href="{% url 'shop-page' %}{% if product.category %}?cat={{ product.category }}{% endif %}">{{ product.category|default:"Shop" }}</a>
+    {% if category_filter %}
+      <a href="{% url 'product-page' %}">Shop</a>
+      <span class="sep">—</span>
+      <span class="current">{{ category_filter }}</span>
+    {% else %}
+      <span class="current">Shop</span>
+    {% endif %}
+  </nav>
+
+  <div class="listing-hero">
+    <div class="listing-overline">{% if category_filter %}{{ category_filter }}{% else %}All Products{% endif %}</div>
+    <h1 class="listing-title">{% if category_filter %}{{ category_filter }}{% else %}Everything, Personalised{% endif %}</h1>
+    <div class="listing-meta">
+      <p class="listing-count">
+        Showing <strong>{{ products|length }}</strong> {% if products|length == 1 %}product{% else %}products{% endif %}
+        {% if category_filter %}in <strong>{{ category_filter }}</strong>{% endif %}
+      </p>
+      <nav class="cat-chips" aria-label="Filter by category">
+        <a href="{% url 'product-page' %}" class="cat-chip {% if not category_filter %}active{% endif %}">All</a>
+        <a href="{% url 'product-page' %}?category=Apparel" class="cat-chip {% if category_filter == 'Apparel' %}active{% endif %}">Apparel</a>
+        <a href="{% url 'product-page' %}?category=Accessories" class="cat-chip {% if category_filter == 'Accessories' %}active{% endif %}">Accessories</a>
+        <a href="{% url 'product-page' %}?category=Party+Essentials" class="cat-chip {% if category_filter == 'Party Essentials' %}active{% endif %}">Party Essentials</a>
+        <a href="{% url 'product-page' %}?category=Stickers+%26+Labels" class="cat-chip {% if category_filter == 'Stickers & Labels' %}active{% endif %}">Stickers &amp; Labels</a>
+        <a href="{% url 'product-page' %}?category=Other" class="cat-chip {% if category_filter == 'Other' %}active{% endif %}">Other</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="listing-body">
+    <div class="listing-grid">
+      {% for p in products %}
+      <div class="listing-card">
+        <div class="listing-img-wrap">
+          {% if p.image %}
+            <img src="{{ p.image.url }}" alt="{{ p.name }}" loading="lazy"/>
+          {% else %}
+            <div class="listing-img-placeholder">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="color:var(--grey-5)"><rect x="3" y="3" width="18" height="18"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+          {% endif %}
+          {% if p.is_out_of_stock %}<span class="stock-badge out">Out of Stock</span>
+          {% elif p.is_low_stock %}<span class="stock-badge low">Only {{ p.stock }} left</span>{% endif %}
+          {% if p.is_on_sale %}<span class="sale-badge">Sale</span>{% endif %}
+          {% if user.is_authenticated %}
+          <button class="listing-wish-btn js-wish-toggle" data-product-id="{{ p.id }}" aria-label="Save to wishlist" {% if p.is_on_sale %}style="top:44px;"{% endif %}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="{% if p.id|stringformat:'s' in wished_ids %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l7.84-7.84a5.5 5.5 0 000-7.78z"/></svg>
+          </button>
+          {% endif %}
+          {% if not p.is_out_of_stock %}
+            <a href="{% url 'product-page-detail' p.slug %}" class="listing-cta">Customise Now</a>
+          {% else %}
+            <span class="listing-cta" style="background:rgba(10,10,10,0.5);cursor:default;">Out of Stock</span>
+          {% endif %}
+        </div>
+        <div class="listing-info">
+          {% if p.category %}<span class="listing-cat-tag">{{ p.category }}</span>{% endif %}
+          <a href="{% url 'product-page-detail' p.slug %}" class="listing-name">{{ p.name }}</a>
+          <div class="listing-price-row">
+            <span class="listing-price">£{{ p.price|floatformat:2 }}</span>
+            {% if p.is_on_sale %}<span class="listing-compare-price">£{{ p.compare_at_price|floatformat:2 }}</span>{% endif %}
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="listing-empty">
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="color:var(--grey-6)"><rect x="3" y="3" width="18" height="18"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <h3>No products found</h3>
+        <p>There are no products in {% if category_filter %}<strong>{{ category_filter }}</strong>{% else %}this category{% endif %} yet. Check back soon or browse all.</p>
+        <a href="{% url 'product-page' %}">Browse All Products</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {# ══════════════════════════════════════════════════════════════
+     DETAIL MODE — shown when slug resolves a product
+  ══════════════════════════════════════════════════════════════ #}
+  {% else %}
+
+  <nav class="breadcrumb">
+    <a href="{% url 'home-page' %}">Home</a>
+    <span class="sep">—</span>
+    <a href="{% url 'product-page' %}?category={{ product.category }}">{{ product.category|default:"Shop" }}</a>
     <span class="sep">—</span>
     <span class="current">{{ product.name|default:"Product" }}</span>
   </nav>
@@ -436,30 +561,18 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
         {% endif %}
       </div>
 
-      {# ── Per-product customization config ──────────────────────────────── #}
       {% with pname=product.name|lower %}
-      {% comment %}
-        PRODUCT_CONFIG: maps product name keywords → colours / sizes.
-        artwork_size surcharge, placement, printing options are common to all.
-      {% endcomment %}
-
-      {# Colour options & sizes are rendered dynamically via JS config below #}
       <form id="addToCartForm" method="POST" action="{% url 'cart-page' %}" enctype="multipart/form-data">
         {% csrf_token %}
-        <input type="hidden" name="action"          value="add_item"/>
-        <input type="hidden" name="product_id"      value="{{ product.id }}"/>
-        <input type="hidden" name="name"            value="{{ product.name }}"/>
-        <input type="hidden" name="price"           value="{{ product.price }}"/>
-        <input type="hidden" name="image_url"       value="{% if product.image %}{{ product.image.url }}{% endif %}"/>
-        {# variant is built by JS and captures ALL customisation choices #}
-        <input type="hidden" name="variant"         id="variantField" value=""/>
-        {# price_override lets JS pass the final price including add-ons #}
-        <input type="hidden" name="price_override"  id="priceOverride" value="{{ product.price }}"/>
+        <input type="hidden" name="action"         value="add_item"/>
+        <input type="hidden" name="product_id"     value="{{ product.id }}"/>
+        <input type="hidden" name="name"           value="{{ product.name }}"/>
+        <input type="hidden" name="price"          value="{{ product.price }}"/>
+        <input type="hidden" name="image_url"      value="{% if product.image %}{{ product.image.url }}{% endif %}"/>
+        <input type="hidden" name="variant"        id="variantField" value=""/>
+        <input type="hidden" name="price_override" id="priceOverride" value="{{ product.price }}"/>
 
         <div class="custom-form">
-
-
-          {# -- Colour -- #}
           <div class="field-block" id="blockColour">
             <div class="field-label"><span class="step-num" id="stepColour">1</span> Choose Colour</div>
             <div class="colour-select-wrap">
@@ -469,16 +582,12 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
               <div class="colour-swatch" id="colourSwatch"></div>
             </div>
           </div>
-
-          {# -- Size (Apparel / Other only) -- #}
           <div class="field-block" id="blockSize">
             <div class="field-label"><span class="step-num" id="stepSize">2</span> Select Size</div>
             <div class="size-row js-size-row" id="sizeRow" style="margin-top:10px;flex-wrap:wrap;"></div>
             <input type="hidden" name="size" id="sizeField" value=""/>
             <p class="size-note" id="sizeNote" style="font-size:11px;color:var(--grey-4);margin-top:6px;"></p>
           </div>
-
-          {# -- Artwork Size (Apparel / Other only) -- #}
           <div class="field-block" id="blockArtSize">
             <div class="field-label"><span class="step-num" id="stepArtSize">3</span> Artwork Size</div>
             <div class="font-grid">
@@ -487,19 +596,14 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
               <button type="button" class="font-btn js-art-size" data-size="Large" data-inches="8" data-add="5">Large <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">8 inches · +£5</span></button>
             </div>
           </div>
-
-
-          {# -- Printing Side (Apparel / Other only) -- #}
           <div class="field-block" id="blockPrintSide">
             <div class="field-label"><span class="step-num" id="stepPrintSide">4</span> Printing Side</div>
             <div class="font-grid" style="grid-template-columns:repeat(3,1fr);">
-              <button type="button" class="font-btn active js-print-side" data-side="Front Only"    data-add="0">Front Only</button>
-              <button type="button" class="font-btn js-print-side"        data-side="Back Only"     data-add="0">Back Only</button>
-              <button type="button" class="font-btn js-print-side"        data-side="Front & Back"  data-add="3">Front &amp; Back <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">+£3</span></button>
+              <button type="button" class="font-btn active js-print-side" data-side="Front Only"   data-add="0">Front Only</button>
+              <button type="button" class="font-btn js-print-side"        data-side="Back Only"    data-add="0">Back Only</button>
+              <button type="button" class="font-btn js-print-side"        data-side="Front & Back" data-add="3">Front &amp; Back <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">+£3</span></button>
             </div>
           </div>
-
-           {# -- Placement (Apparel / Other only) -- #}
           <div class="field-block" id="blockPlacement">
             <div class="field-label"><span class="step-num" id="stepPlacement">5</span> Placement</div>
             <div class="placement-grid" id="placementGrid">
@@ -509,22 +613,16 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             </div>
             <input type="hidden" name="placement" id="placementField" value=""/>
           </div>
-
-          {# -- Quantity (Stickers / Party only) -- #}
           <div class="field-block" id="blockQuantity" style="display:none;">
             <div class="field-label"><span class="step-num" id="stepQuantity">2</span> Quantity</div>
             <select class="field-input" id="quantitySelect" name="quantity">
               <option value="">— Select quantity —</option>
             </select>
           </div>
-
-          {# -- Party: Text field -- #}
           <div class="field-block" id="blockPartyText" style="display:none;">
             <div class="field-label"><span class="step-num" id="stepPartyText">3</span> Custom Text</div>
             <input type="text" class="field-input" name="party_text" id="partyText" maxlength="50" placeholder="Up to 50 characters…"/>
           </div>
-
-          {# -- Party: Font field -- #}
           <div class="field-block" id="blockPartyFont" style="display:none;">
             <div class="field-label"><span class="step-num" id="stepPartyFont">4</span> Font</div>
             <select class="field-input" name="party_font" id="partyFontSelect">
@@ -536,8 +634,6 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
               <option value="Elegant Italic">Elegant Italic</option>
             </select>
           </div>
-
-          {# -- Upload Artwork (front / single side) -- #}
           <div class="field-block" id="blockArtwork">
             <div class="field-label"><span class="step-num" id="stepArtwork">6</span> Upload Artwork <span id="artworkSideLabel" style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:var(--grey-4);margin-left:4px;">(front)</span></div>
             <label class="artwork-upload-label" id="artworkLabel" for="artworkFile">
@@ -547,8 +643,6 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             </label>
             <input type="file" name="artwork_file" id="artworkFile" accept=".png,.jpg,.jpeg,.svg,.pdf,.gif,.webp" style="display:none;" onchange="handleArtworkChange(this,'artworkLabel','artworkLabelText')"/>
           </div>
-
-          {# -- Upload Artwork BACK (shown only when Front & Back is selected) -- #}
           <div class="field-block" id="blockArtworkBack" style="display:none;">
             <div class="field-label"><span class="step-num" id="stepArtworkBack">7</span> Upload Artwork <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:var(--grey-4);margin-left:4px;">(back)</span></div>
             <label class="artwork-upload-label" id="artworkLabelBack" for="artworkFileBack">
@@ -558,25 +652,16 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             </label>
             <input type="file" name="artwork_file_back" id="artworkFileBack" accept=".png,.jpg,.jpeg,.svg,.pdf,.gif,.webp" style="display:none;" onchange="handleArtworkChange(this,'artworkLabelBack','artworkLabelTextBack')"/>
           </div>
-
-          {# -- Artwork Disclaimer (all categories) -- #}
           <div class="field-block" id="blockDisclaimer">
             <div style="background:var(--grey-8);border:1px solid var(--grey-7);padding:14px 16px;font-size:12px;color:var(--grey-3);line-height:1.7;">
               <strong style="font-weight:600;letter-spacing:0.06em;">Artwork Disclaimer</strong><br/>
-              Your artwork will be printed exactly as uploaded, including any background visible in the file.
-              If you prefer your artwork printed without a background (showing only the design itself),
-              please upload your file as a <strong>PNG with a transparent background</strong>.
-              This ensures that only the intended elements of your artwork are printed.
+              Your artwork will be printed exactly as uploaded. For transparent background, upload a PNG with transparency.
             </div>
           </div>
-
-          {# -- Additional Information (Party Essentials only) -- #}
           <div class="field-block" id="blockAdditional" style="display:none;">
             <div class="field-label"><span class="step-num" id="stepAdditional">5</span> Additional Information</div>
             <textarea class="field-input" name="additional_info" id="additionalInfo" rows="3" placeholder="Any extra details for your order…" style="resize:vertical;"></textarea>
           </div>
-
-          {# -- Live Price Breakdown -- #}
           <div class="price-breakdown" id="priceBreakdown">
             <div class="price-row"><span>Base price</span><span id="pbBase">£{{ product.price|floatformat:2 }}</span></div>
             <div class="price-row" id="pbArtRow"   style="display:none;"><span>Artwork size add-on</span><span id="pbArt">£0.00</span></div>
@@ -584,8 +669,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             <div class="price-row" id="pbSizeRow"  style="display:none;"><span>Size add-on (XXS / 4XL+)</span><span id="pbSizeAddon">£0.00</span></div>
             <div class="price-row price-row--total"><span>Total</span><span id="pbTotal">£{{ product.price|floatformat:2 }}</span></div>
           </div>
-
-        </div>{# /custom-form #}
+        </div>
 
         <div class="action-row">
           {% if product.stock is not None and product.stock <= 0 %}
@@ -598,15 +682,9 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             </span>
           </button>
           {% endif %}
-
           {% if user.is_authenticated %}
-          <button type="button"
-                  class="product-heart js-wish-toggle{% if is_wished %} wished{% endif %}"
-                  data-product-id="{{ product.id }}"
-                  id="wishlistBtn">
-            <svg width="16" height="16" viewBox="0 0 24 24"
-                 fill="{% if is_wished %}currentColor{% else %}none{% endif %}"
-                 stroke="currentColor" stroke-width="2" id="wishHeart">
+          <button type="button" class="product-heart js-wish-toggle{% if is_wished %} wished{% endif %}" data-product-id="{{ product.id }}" id="wishlistBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{% if is_wished %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2" id="wishHeart">
               <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l7.84-7.84a5.5 5.5 0 000-7.78z"/>
             </svg>
             <span>{% if is_wished %}Saved{% else %}Save{% endif %}</span>
@@ -634,7 +712,6 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
     </div>
   </div>
 
-  <!-- TABS -->
   <div class="tabs-section">
     <div class="tabs-row">
       <button class="tab-btn active" onclick="switchTab(this,'desc')">Product Description</button>
@@ -653,7 +730,10 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
       <li>Personalised items are final sale unless defective</li>
     </ul></div>
   </div>
-</div>
+
+  {% endif %}{# end detail mode #}
+
+</div>{# /page-wrap #}
 
 <!-- FOOTER -->
 <footer>
@@ -668,7 +748,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
     </div>
     <div class="footer-col"><h4>Quick Links</h4><ul>
       <li><a href="{% url 'privacy-page' %}">Privacy</a></li>
-      <li><a href="{% url 'shop-page' %}">Shop All</a></li>
+      <li><a href="{% url 'product-page' %}">Shop All</a></li>
       <li><a href="{% url 'design-studio-page' %}">Design Studio</a></li>
     </ul></div>
     <div class="footer-col"><h4>Legal</h4><ul>
@@ -705,46 +785,23 @@ if(cursor&&ring){
 /* Hamburger */
 var hamburger=document.getElementById('hamburger'),mobileNav=document.getElementById('mobileNav');
 if(hamburger&&mobileNav){
-  hamburger.addEventListener('click',function(){
-    var open=mobileNav.classList.toggle('open');
-    hamburger.classList.toggle('active',open);
-    hamburger.setAttribute('aria-expanded',open);
-    mobileNav.setAttribute('aria-hidden',!open);
-    document.body.style.overflow=open?'hidden':'';
-  });
-  mobileNav.querySelectorAll('a').forEach(function(link){
-    link.addEventListener('click',function(){
-      mobileNav.classList.remove('open');hamburger.classList.remove('active');
-      hamburger.setAttribute('aria-expanded','false');mobileNav.setAttribute('aria-hidden','true');
-      document.body.style.overflow='';
-    });
-  });
-  document.addEventListener('click',function(e){
-    if(!hamburger.contains(e.target)&&!mobileNav.contains(e.target)){
-      mobileNav.classList.remove('open');hamburger.classList.remove('active');
-      hamburger.setAttribute('aria-expanded','false');mobileNav.setAttribute('aria-hidden','true');
-      document.body.style.overflow='';
-    }
-  });
+  hamburger.addEventListener('click',function(){var open=mobileNav.classList.toggle('open');hamburger.classList.toggle('active',open);hamburger.setAttribute('aria-expanded',open);mobileNav.setAttribute('aria-hidden',!open);document.body.style.overflow=open?'hidden':'';});
+  mobileNav.querySelectorAll('a').forEach(function(link){link.addEventListener('click',function(){mobileNav.classList.remove('open');hamburger.classList.remove('active');hamburger.setAttribute('aria-expanded','false');mobileNav.setAttribute('aria-hidden','true');document.body.style.overflow='';});});
+  document.addEventListener('click',function(e){if(!hamburger.contains(e.target)&&!mobileNav.contains(e.target)){mobileNav.classList.remove('open');hamburger.classList.remove('active');hamburger.setAttribute('aria-expanded','false');mobileNav.setAttribute('aria-hidden','true');document.body.style.overflow='';}});
 }
 
 /* Account dropdown */
-var accountBtn=document.getElementById('accountBtn'),accountWrap=document.getElementById('accountWrap');
-if(accountBtn&&accountWrap){
-  accountBtn.addEventListener('click',function(e){
-    e.stopPropagation();
-    var isOpen=accountWrap.classList.toggle('open');
-    accountBtn.setAttribute('aria-expanded',isOpen);
-  });
-  document.addEventListener('click',function(e){
-    if(!accountWrap.contains(e.target)){accountWrap.classList.remove('open');accountBtn.setAttribute('aria-expanded','false');}
-  });
-  document.addEventListener('keydown',function(e){
-    if(e.key==='Escape'){accountWrap.classList.remove('open');accountBtn.focus();}
-  });
+var accountWrap=document.getElementById('accountWrap');
+if(accountWrap){
+  var accountBtn=accountWrap.querySelector('.hdr-account-btn');
+  if(accountBtn){
+    accountBtn.addEventListener('click',function(e){e.stopPropagation();var isOpen=accountWrap.classList.toggle('open');accountBtn.setAttribute('aria-expanded',isOpen);});
+    document.addEventListener('click',function(e){if(!accountWrap.contains(e.target)){accountWrap.classList.remove('open');}});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')accountWrap.classList.remove('open');});
+  }
 }
 
-/* Thumbnail switcher */
+/* Thumbnail switcher — detail mode only */
 function switchThumb(btn,url){
   document.querySelectorAll('.thumb-btn').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
@@ -752,382 +809,13 @@ function switchThumb(btn,url){
   if(main&&url) main.src=url;
 }
 
-
-(function(){
-  var BASE_PRICE       = parseFloat('{{ product.price }}') || 0;
-  var PRODUCT_NAME     = '{{ product.name|lower|escapejs }}';
-  var PRODUCT_CATEGORY = '{{ product_category|escapejs }}'; // e.g. "apparel & accessories"
-
-  /* ── Detect category bucket ── */
-  var CAT_APPAREL = PRODUCT_CATEGORY.indexOf('apparel') !== -1 ||
-                    PRODUCT_CATEGORY.indexOf('accessori') !== -1;
-  var CAT_STICKER = PRODUCT_CATEGORY.indexOf('sticker') !== -1 ||
-                    PRODUCT_CATEGORY.indexOf('label') !== -1;
-  var CAT_PARTY   = PRODUCT_CATEGORY.indexOf('party') !== -1 ||
-                    PRODUCT_CATEGORY.indexOf('decoration') !== -1;
-  /* fallback → treat as generic apparel-like */
-  if(!CAT_APPAREL && !CAT_STICKER && !CAT_PARTY) CAT_APPAREL = true;
-
-  /* ── Show / hide blocks ── */
-  function showBlock(id){ var el=document.getElementById(id); if(el) el.style.display=''; }
-  function hideBlock(id){ var el=document.getElementById(id); if(el) el.style.display='none'; }
-
-  if(CAT_APPAREL){
-    showBlock('blockColour'); showBlock('blockSize'); showBlock('blockArtSize');
-    showBlock('blockPlacement'); showBlock('blockPrintSide');
-    showBlock('blockArtwork'); hideBlock('blockArtworkBack');
-    hideBlock('blockQuantity'); hideBlock('blockPartyText');
-    hideBlock('blockPartyFont'); hideBlock('blockAdditional');
-  } else if(CAT_STICKER){
-    showBlock('blockColour');
-    hideBlock('blockSize'); hideBlock('blockArtSize');
-    hideBlock('blockPlacement'); hideBlock('blockPrintSide');
-    showBlock('blockQuantity'); showBlock('blockArtwork');
-    hideBlock('blockArtworkBack'); hideBlock('blockPartyText');
-    hideBlock('blockPartyFont'); hideBlock('blockAdditional');
-  } else if(CAT_PARTY){
-    showBlock('blockColour');
-    hideBlock('blockSize'); hideBlock('blockArtSize');
-    hideBlock('blockPlacement'); hideBlock('blockPrintSide');
-    showBlock('blockQuantity'); showBlock('blockPartyText');
-    showBlock('blockPartyFont'); showBlock('blockArtwork');
-    hideBlock('blockArtworkBack'); showBlock('blockAdditional');
-  }
-
-  /* ── Colour palettes ── */
-  var COMMON_COLOURS = ['White','Black','Off White','Dark Grey','Deep Blue','Forest Green',
-    'Fuchsia','Grey Heather','Kelly Green','Light Blue','Cream','Lime Green','Navy Blue',
-    'Orange','Yellow','Grey','Red','Turquoise','Light Royal Blue','Light Grey','Tropical Blue'];
-  var STICKER_COLOURS  = ['White','Transparent'];
-  var PARTY_COLOURS    = ['Red','Blue','Yellow','Green','Orange','Purple','Pink','Brown','Black','White'];
-  var BASIC_LS_COLOURS  = ['White','Black','Charcoal','Brown','Standard Grey'];
-  var STD_LS_COLOURS    = ['White','Black','Off White','French Navy','Red','Forest Green','Dark Beige','Grey'];
-  var PREM_LS_COLOURS   = ['White','Black'];
-  var BASIC_HOODIE_COLOURS = ['White','Black','Purple','Blue','Red','Grey','Orange','Sky Blue','Deep Green','Green','Khaki','Pink'];
-  var PREM_HOODIE_COLOURS  = ['White','Black'];
-  var STD_PLUS_COLOURS     = ['White','Black','+ 35 More Colours'];
-
-  /* ── Size sets ── */
-  var SIZES = {
-    basic_tee:      {sizes:['XS','S','M','L','XL','2XL','3XL'], note:''},
-    standard_tee:   {sizes:['XXS','XS','S','M','L','XL','2XL','3XL','4XL','5XL'], note:'XXS & 4XL+ +£2', addSizes:['XXS','4XL','5XL']},
-    premium_tee:    {sizes:['XS','S','M','L','XL','2XL','3XL'], note:''},
-    basic_ls:       {sizes:['XS','S','M','L','XL','2XL','3XL','4XL'], note:''},
-    standard_ls:    {sizes:['XS','S','M','L','XL','2XL','3XL','4XL'], note:''},
-    premium_ls:     {sizes:['S','M','L','XL','2XL'], note:''},
-    basic_hoodie:   {sizes:['S','M','L','XL','2XL','3XL','4XL'], note:''},
-    standard_hoodie:{sizes:['S','M','L','XL','2XL','3XL','4XL'], note:''},
-    premium_hoodie: {sizes:['XS','S','M','L','XL','2XL','3XL','4XL','5XL'], note:''},
-    std_sweater:    {sizes:['XS','S','M','L','XL','2XL','3XL','4XL'], note:''},
-    std_zip:        {sizes:['XS','S','M','L','XL','2XL','3XL','4XL'], note:''},
-    prem_zip:       {sizes:['XS','S','M','L','XL','2XL','3XL','4XL'], note:''},
-    generic:        {sizes:['XS','S','M','L','XL','2XL','3XL'], note:''},
-  };
-
-  /* ── Quantity options per category ── */
-  var STICKER_QTYS = [1, 6, 12, 24, 50, 100];
-  var PARTY_QTYS   = [1, 10, 20, 50, 100];
-
-  /* ── Resolve product config from name ── */
-  function resolveProduct(name){
-    if(CAT_STICKER) return {colours:STICKER_COLOURS,  config:null};
-    if(CAT_PARTY)   return {colours:PARTY_COLOURS,    config:null};
-    var n = name;
-    if(n.indexOf('long sleeve')!==-1||n.indexOf(' ls ')!==-1){
-      if(n.indexOf('premium')!==-1) return {colours:PREM_LS_COLOURS,  config:SIZES.premium_ls};
-      if(n.indexOf('basic')!==-1)   return {colours:BASIC_LS_COLOURS, config:SIZES.basic_ls};
-      return {colours:STD_LS_COLOURS, config:SIZES.standard_ls};
-    }
-    if(n.indexOf('zip')!==-1){
-      if(n.indexOf('premium')!==-1) return {colours:STD_PLUS_COLOURS, config:SIZES.prem_zip};
-      return {colours:STD_PLUS_COLOURS, config:SIZES.std_zip};
-    }
-    if(n.indexOf('sweater')!==-1||n.indexOf('sweatshirt')!==-1){
-      return {colours:STD_PLUS_COLOURS, config:SIZES.std_sweater};
-    }
-    if(n.indexOf('hoodie')!==-1){
-      if(n.indexOf('premium')!==-1)  return {colours:PREM_HOODIE_COLOURS,  config:SIZES.premium_hoodie};
-      if(n.indexOf('standard')!==-1) return {colours:BASIC_HOODIE_COLOURS, config:SIZES.standard_hoodie};
-      return {colours:BASIC_HOODIE_COLOURS, config:SIZES.basic_hoodie};
-    }
-    if(n.indexOf('premium')!==-1)  return {colours:COMMON_COLOURS, config:SIZES.premium_tee};
-    if(n.indexOf('standard')!==-1) return {colours:COMMON_COLOURS, config:SIZES.standard_tee};
-    return {colours:COMMON_COLOURS, config:SIZES.generic};
-  }
-
-  var resolved = resolveProduct(PRODUCT_NAME);
-
-  /* ── Colour swatch hex map ── */
-  var SWATCH = {
-    'white':'#FFFFFF','black':'#1a1a1a','off white':'#F5F0E8','dark grey':'#555555',
-    'deep blue':'#1B3A6B','forest green':'#228B22','fuchsia':'#FF00FF','grey heather':'#B0B0B0',
-    'kelly green':'#4CBB17','light blue':'#ADD8E6','cream':'#FFFDD0','lime green':'#32CD32',
-    'navy blue':'#001F5B','orange':'#FF6600','yellow':'#FFD700','grey':'#888888',
-    'red':'#CC0000','turquoise':'#40E0D0','light royal blue':'#4169E1','light grey':'#D3D3D3',
-    'tropical blue':'#00827F','charcoal':'#36454F','brown':'#8B4513','standard grey':'#9E9E9E',
-    'french navy':'#002FA7','dark beige':'#C3A882','purple':'#6A0DAD','blue':'#2255CC',
-    'sky blue':'#87CEEB','deep green':'#006400','green':'#008000','khaki':'#C3B091',
-    'pink':'#FFB6C1','transparent':'rgba(255,255,255,0)',
-  };
-
-  /* ── Populate colour dropdown ── */
-  var colourSelect = document.getElementById('colourSelect');
-  var colourSwatch = document.getElementById('colourSwatch');
-  if(colourSelect){
-    resolved.colours.forEach(function(c){
-      var opt = document.createElement('option');
-      opt.value = c; opt.textContent = c;
-      colourSelect.appendChild(opt);
-    });
-    colourSelect.addEventListener('change', function(){
-      var key = (this.value||'').toLowerCase();
-      var hex = SWATCH[key] || 'transparent';
-      colourSwatch.style.background = hex;
-      colourSwatch.style.border = key==='white' ? '1px solid var(--grey-5)' :
-                                   key==='transparent' ? '1px dashed var(--grey-5)' : '1px solid transparent';
-      buildVariant();
-    });
-  }
-
-  /* ── Populate size buttons (Apparel / Other only) ── */
-  var sizeRow  = document.getElementById('sizeRow');
-  var sizeNote = document.getElementById('sizeNote');
-  var selectedSize = '';
-  if(sizeRow && resolved.config){
-    var cfg = resolved.config;
-    if(sizeNote) sizeNote.textContent = cfg.note || '';
-    cfg.sizes.forEach(function(s, idx){
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'size-btn js-size' + (idx===0?' active':'');
-      btn.dataset.size = s;
-      btn.dataset.add  = (cfg.addSizes && cfg.addSizes.indexOf(s)!==-1) ? '2' : '0';
-      btn.textContent  = s;
-      if(idx===0) selectedSize = s;
-      btn.addEventListener('click', function(){
-        document.querySelectorAll('.js-size').forEach(function(b){b.classList.remove('active');});
-        this.classList.add('active');
-        selectedSize = this.dataset.size;
-        document.getElementById('sizeField').value = selectedSize;
-        updatePrice(); buildVariant();
-      });
-      sizeRow.appendChild(btn);
-    });
-    if(cfg.sizes.length>0) document.getElementById('sizeField').value = cfg.sizes[0];
-  }
-
-  /* ── Populate quantity dropdown (Stickers / Party) ── */
-  var quantitySelect = document.getElementById('quantitySelect');
-  if(quantitySelect && (CAT_STICKER || CAT_PARTY)){
-    var qtys = CAT_STICKER ? STICKER_QTYS : PARTY_QTYS;
-    qtys.forEach(function(q){
-      var opt = document.createElement('option');
-      opt.value = q; opt.textContent = q;
-      quantitySelect.appendChild(opt);
-    });
-    quantitySelect.addEventListener('change', buildVariant);
-  }
-
-  /* ── Art size selection ── */
-  var artAdd = 0;
-  document.querySelectorAll('.js-art-size').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      document.querySelectorAll('.js-art-size').forEach(function(b){b.classList.remove('active');});
-      this.classList.add('active');
-      artAdd = parseFloat(this.dataset.add)||0;
-      updatePrice(); buildVariant();
-    });
-  });
-
-  /* ── Placement selection ── */
-  var selectedPlacement = '';
-  document.querySelectorAll('.js-placement').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      document.querySelectorAll('.js-placement').forEach(function(b){b.classList.remove('active');});
-      this.classList.add('active');
-      selectedPlacement = this.dataset.placement;
-      document.getElementById('placementField').value = selectedPlacement;
-      buildVariant();
-    });
-  });
-
-  /* ── Print side selection — also shows/hides back-artwork block ── */
-  var printAdd = 0;
-  document.querySelectorAll('.js-print-side').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      document.querySelectorAll('.js-print-side').forEach(function(b){b.classList.remove('active');});
-      this.classList.add('active');
-      printAdd = parseFloat(this.dataset.add)||0;
-      var isFrontAndBack = (this.dataset.side === 'Front & Back');
-      /* Show back-artwork upload only when Front & Back is chosen */
-      var backBlock = document.getElementById('blockArtworkBack');
-      if(backBlock) backBlock.style.display = isFrontAndBack ? '' : 'none';
-      /* Update front artwork side label */
-      var sideLabel = document.getElementById('artworkSideLabel');
-      if(sideLabel) sideLabel.textContent = isFrontAndBack ? '(front)' : '';
-      updatePrice(); buildVariant();
-    });
-  });
-
-  /* ── Price update ── */
-  function updatePrice(){
-    var activeSizeBtn = document.querySelector('.js-size.active');
-    var sizeAddon = activeSizeBtn ? (parseFloat(activeSizeBtn.dataset.add)||0) : 0;
-    var total = BASE_PRICE + artAdd + printAdd + sizeAddon;
-
-    var pbArtRow   = document.getElementById('pbArtRow');
-    var pbPrintRow = document.getElementById('pbPrintRow');
-    var pbSizeRow  = document.getElementById('pbSizeRow');
-
-    if(pbArtRow)   { pbArtRow.style.display   = artAdd>0    ? 'flex':'none'; document.getElementById('pbArt').textContent        = '£'+artAdd.toFixed(2); }
-    if(pbPrintRow) { pbPrintRow.style.display  = printAdd>0  ? 'flex':'none'; document.getElementById('pbPrint').textContent      = '£'+printAdd.toFixed(2); }
-    if(pbSizeRow)  { pbSizeRow.style.display   = sizeAddon>0 ? 'flex':'none'; document.getElementById('pbSizeAddon').textContent  = '£'+sizeAddon.toFixed(2); }
-
-    document.getElementById('pbTotal').textContent     = '£'+total.toFixed(2);
-    document.getElementById('priceOverride').value     = total.toFixed(2);
-    var priceEl = document.querySelector('.product-price');
-    if(priceEl) priceEl.textContent = '£'+total.toFixed(2);
-  }
-
-  /* ── Build variant summary string ── */
-  function buildVariant(){
-    var colour    = (colourSelect && colourSelect.value) || '';
-    var artBtn    = document.querySelector('.js-art-size.active');
-    var artSize   = artBtn ? artBtn.dataset.size+' ('+artBtn.dataset.inches+' inches)' : '';
-    var printBtn  = document.querySelector('.js-print-side.active');
-    var printSide = printBtn ? printBtn.dataset.side : '';
-    var size      = (document.getElementById('sizeField') && document.getElementById('sizeField').value) || '';
-    var placement = selectedPlacement;
-    var qty       = (quantitySelect && quantitySelect.value) ? 'Qty: '+quantitySelect.value : '';
-    var partyText = (document.getElementById('partyText') && document.getElementById('partyText').value) ? 'Text: '+document.getElementById('partyText').value : '';
-    var partyFont = (document.getElementById('partyFontSelect') && document.getElementById('partyFontSelect').value) ? 'Font: '+document.getElementById('partyFontSelect').value : '';
-
-    var parts = [];
-    if(colour)    parts.push('Colour: '+colour);
-    if(size)      parts.push('Size: '+size);
-    if(qty)       parts.push(qty);
-    if(artSize)   parts.push('Artwork: '+artSize);
-    if(placement) parts.push('Placement: '+placement);
-    if(printSide) parts.push('Printing: '+printSide);
-    if(partyText) parts.push(partyText);
-    if(partyFont) parts.push(partyFont);
-
-    document.getElementById('variantField').value = parts.join(' · ');
-  }
-
-  /* Party text live listener */
-  var partyTxtEl = document.getElementById('partyText');
-  if(partyTxtEl) partyTxtEl.addEventListener('input', buildVariant);
-
-  buildVariant(); updatePrice();
-})();
-
-/* ── Artwork file change handler ── */
-function handleArtworkChange(input, labelId, txtId){
-  /* labelId / txtId default to the front-artwork elements */
-  var label = document.getElementById(labelId || 'artworkLabel');
-  var txt   = document.getElementById(txtId   || 'artworkLabelText');
-  if(input.files && input.files[0]){
-    var f = input.files[0];
-    if(f.size > 25*1024*1024){
-      alert('File is too large. Max size is 25 MB.');
-      input.value=''; return;
-    }
-    if(label) label.classList.add('has-file');
-    if(txt)   txt.textContent = '✓ ' + f.name;
-  } else {
-    if(label) label.classList.remove('has-file');
-    if(txt)   txt.textContent = labelId === 'artworkLabelBack' ? 'Click to upload back artwork' : 'Click to upload artwork';
-  }
-}
-
-/* ── Add to Cart ──
-   If artwork is attached we do a full form POST (can't send files via AJAX without FormData streaming).
-   We still use AJAX for no-file adds so the cart badge updates without a page reload.           */
-var form=document.getElementById('addToCartForm');
-if(form){
-  form.addEventListener('submit',function(e){
-    /* Validation — category-aware */
-    var catRaw    = '{{ product_category|escapejs }}';
-    var isStickerV = catRaw.indexOf('sticker')!==-1 || catRaw.indexOf('label')!==-1;
-    var isPartyV   = catRaw.indexOf('party')!==-1   || catRaw.indexOf('decoration')!==-1;
-    var colour    = document.getElementById('colourSelect') ? document.getElementById('colourSelect').value : '';
-    var size      = document.getElementById('sizeField') ? document.getElementById('sizeField').value : '';
-    var placement = document.getElementById('placementField') ? document.getElementById('placementField').value : '';
-    if(!colour) { alert('Please choose a colour.'); e.preventDefault(); return; }
-    if(!isStickerV && !isPartyV){
-      if(!size)      { alert('Please select a size.');      e.preventDefault(); return; }
-      if(!placement) { alert('Please choose a placement.'); e.preventDefault(); return; }
-    }
-    if((isStickerV || isPartyV)){
-      var qty = document.getElementById('quantitySelect') ? document.getElementById('quantitySelect').value : '';
-      if(!qty){ alert('Please select a quantity.'); e.preventDefault(); return; }
-    }
-
-    /* Override price with calculated total */
-    var overrideInput = document.getElementById('priceOverride');
-    var priceInput    = form.querySelector('input[name="price"]');
-    if(overrideInput && priceInput) priceInput.value = overrideInput.value;
-
-    var artworkFile     = document.getElementById('artworkFile');
-    var artworkFileBack = document.getElementById('artworkFileBack');
-    var hasFile = (artworkFile     && artworkFile.files     && artworkFile.files.length > 0) ||
-                  (artworkFileBack && artworkFileBack.files && artworkFileBack.files.length > 0);
-
-    if(hasFile){
-      /* Full multipart POST — browser handles file upload, page will redirect to cart */
-      return; /* allow default submit */
-    }
-
-    /* No file — use AJAX to avoid page reload */
-    e.preventDefault();
-    var btn=document.getElementById('addToCartBtn');
-    var sp=btn?btn.querySelector('span'):null;
-    if(btn) btn.disabled=true;
-    if(sp) sp.textContent='Adding…';
-
-    fetch(CART_URL,{
-      method:'POST',
-      headers:{
-        'X-Requested-With':'XMLHttpRequest',
-        'X-CSRFToken':CSRF_TOKEN
-      },
-      body:new FormData(form),
-    })
-    .then(function(r){
-      if(!r.ok) throw new Error('HTTP '+r.status);
-      return r.json();
-    })
-    .then(function(data){
-      if(btn) btn.disabled=false;
-      if(sp){
-        sp.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>&nbsp;Added!';
-        setTimeout(function(){
-          sp.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>&nbsp;Add to Cart';
-        },2200);
-      }
-      if(typeof data.cart_count !== 'undefined'){
-        var badge=document.getElementById('cartBadge');
-        if(badge){
-          badge.textContent=data.cart_count;
-          badge.style.display=data.cart_count>0?'flex':'none';
-        }
-      }
-    })
-    .catch(function(err){
-      console.warn('Cart AJAX error, falling back:',err);
-      if(btn) btn.disabled=false;
-      form.submit();
-    });
-  });
-}
-
-/* Wishlist toggle AJAX */
+/* Wishlist toggle — works in both listing and detail mode */
 document.addEventListener('click',function(e){
   var btn=e.target.closest('.js-wish-toggle');
   if(!btn) return;
   var pid=btn.dataset.productId;
-  var heart=document.getElementById('wishHeart');
+  /* detail mode heart */
+  var heart=document.getElementById('wishHeart') || btn.querySelector('svg');
   var label=btn.querySelector('span');
   fetch(WISHLIST_URL,{
     method:'POST',
@@ -1146,13 +834,213 @@ document.addEventListener('click',function(e){
   });
 });
 
-/* Tab switcher */
+/* Tab switcher — detail mode only */
 function switchTab(btn,id){
   document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
   document.querySelectorAll('.tab-content').forEach(function(c){c.style.display='none';});
-  document.getElementById('tab-'+id).style.display='block';
+  var el=document.getElementById('tab-'+id);
+  if(el) el.style.display='block';
 }
+
+/* ── Detail-mode JS — only runs when product exists ── */
+{% if product %}
+(function(){
+  var BASE_PRICE       = parseFloat('{{ product.price }}') || 0;
+  var PRODUCT_NAME     = '{{ product.name|lower|escapejs }}';
+  var PRODUCT_CATEGORY = '{{ product_category|escapejs }}';
+
+  var CAT_APPAREL = PRODUCT_CATEGORY.indexOf('apparel') !== -1 || PRODUCT_CATEGORY.indexOf('accessori') !== -1;
+  var CAT_STICKER = PRODUCT_CATEGORY.indexOf('sticker') !== -1 || PRODUCT_CATEGORY.indexOf('label') !== -1;
+  var CAT_PARTY   = PRODUCT_CATEGORY.indexOf('party')   !== -1 || PRODUCT_CATEGORY.indexOf('decoration') !== -1;
+  if(!CAT_APPAREL && !CAT_STICKER && !CAT_PARTY) CAT_APPAREL = true;
+
+  function showBlock(id){var el=document.getElementById(id);if(el)el.style.display='';}
+  function hideBlock(id){var el=document.getElementById(id);if(el)el.style.display='none';}
+
+  if(CAT_APPAREL){
+    showBlock('blockColour');showBlock('blockSize');showBlock('blockArtSize');
+    showBlock('blockPlacement');showBlock('blockPrintSide');showBlock('blockArtwork');
+    hideBlock('blockArtworkBack');hideBlock('blockQuantity');hideBlock('blockPartyText');
+    hideBlock('blockPartyFont');hideBlock('blockAdditional');
+  } else if(CAT_STICKER){
+    showBlock('blockColour');hideBlock('blockSize');hideBlock('blockArtSize');
+    hideBlock('blockPlacement');hideBlock('blockPrintSide');showBlock('blockQuantity');
+    showBlock('blockArtwork');hideBlock('blockArtworkBack');hideBlock('blockPartyText');
+    hideBlock('blockPartyFont');hideBlock('blockAdditional');
+  } else if(CAT_PARTY){
+    showBlock('blockColour');hideBlock('blockSize');hideBlock('blockArtSize');
+    hideBlock('blockPlacement');hideBlock('blockPrintSide');showBlock('blockQuantity');
+    showBlock('blockPartyText');showBlock('blockPartyFont');showBlock('blockArtwork');
+    hideBlock('blockArtworkBack');showBlock('blockAdditional');
+  }
+
+  var COMMON_COLOURS=['White','Black','Off White','Dark Grey','Deep Blue','Forest Green','Fuchsia','Grey Heather','Kelly Green','Light Blue','Cream','Lime Green','Navy Blue','Orange','Yellow','Grey','Red','Turquoise','Light Royal Blue','Light Grey','Tropical Blue'];
+  var STICKER_COLOURS=['White','Transparent'];
+  var PARTY_COLOURS=['Red','Blue','Yellow','Green','Orange','Purple','Pink','Brown','Black','White'];
+  var BASIC_LS_COLOURS=['White','Black','Charcoal','Brown','Standard Grey'];
+  var STD_LS_COLOURS=['White','Black','Off White','French Navy','Red','Forest Green','Dark Beige','Grey'];
+  var PREM_LS_COLOURS=['White','Black'];
+  var BASIC_HOODIE_COLOURS=['White','Black','Purple','Blue','Red','Grey','Orange','Sky Blue','Deep Green','Green','Khaki','Pink'];
+  var PREM_HOODIE_COLOURS=['White','Black'];
+  var STD_PLUS_COLOURS=['White','Black','+ 35 More Colours'];
+  var SIZES={
+    basic_tee:{sizes:['XS','S','M','L','XL','2XL','3XL'],note:''},
+    standard_tee:{sizes:['XXS','XS','S','M','L','XL','2XL','3XL','4XL','5XL'],note:'XXS & 4XL+ +£2',addSizes:['XXS','4XL','5XL']},
+    premium_tee:{sizes:['XS','S','M','L','XL','2XL','3XL'],note:''},
+    basic_ls:{sizes:['XS','S','M','L','XL','2XL','3XL','4XL'],note:''},
+    standard_ls:{sizes:['XS','S','M','L','XL','2XL','3XL','4XL'],note:''},
+    premium_ls:{sizes:['S','M','L','XL','2XL'],note:''},
+    basic_hoodie:{sizes:['S','M','L','XL','2XL','3XL','4XL'],note:''},
+    standard_hoodie:{sizes:['S','M','L','XL','2XL','3XL','4XL'],note:''},
+    premium_hoodie:{sizes:['XS','S','M','L','XL','2XL','3XL','4XL','5XL'],note:''},
+    std_sweater:{sizes:['XS','S','M','L','XL','2XL','3XL','4XL'],note:''},
+    std_zip:{sizes:['XS','S','M','L','XL','2XL','3XL','4XL'],note:''},
+    prem_zip:{sizes:['XS','S','M','L','XL','2XL','3XL','4XL'],note:''},
+    generic:{sizes:['XS','S','M','L','XL','2XL','3XL'],note:''},
+  };
+  var STICKER_QTYS=[1,6,12,24,50,100];
+  var PARTY_QTYS=[1,10,20,50,100];
+
+  function resolveProduct(name){
+    if(CAT_STICKER) return {colours:STICKER_COLOURS,config:null};
+    if(CAT_PARTY)   return {colours:PARTY_COLOURS,config:null};
+    var n=name;
+    if(n.indexOf('long sleeve')!==-1||n.indexOf(' ls ')!==-1){
+      if(n.indexOf('premium')!==-1) return {colours:PREM_LS_COLOURS,config:SIZES.premium_ls};
+      if(n.indexOf('basic')!==-1)   return {colours:BASIC_LS_COLOURS,config:SIZES.basic_ls};
+      return {colours:STD_LS_COLOURS,config:SIZES.standard_ls};
+    }
+    if(n.indexOf('zip')!==-1){
+      if(n.indexOf('premium')!==-1) return {colours:STD_PLUS_COLOURS,config:SIZES.prem_zip};
+      return {colours:STD_PLUS_COLOURS,config:SIZES.std_zip};
+    }
+    if(n.indexOf('sweater')!==-1||n.indexOf('sweatshirt')!==-1) return {colours:STD_PLUS_COLOURS,config:SIZES.std_sweater};
+    if(n.indexOf('hoodie')!==-1){
+      if(n.indexOf('premium')!==-1)  return {colours:PREM_HOODIE_COLOURS,config:SIZES.premium_hoodie};
+      if(n.indexOf('standard')!==-1) return {colours:BASIC_HOODIE_COLOURS,config:SIZES.standard_hoodie};
+      return {colours:BASIC_HOODIE_COLOURS,config:SIZES.basic_hoodie};
+    }
+    if(n.indexOf('premium')!==-1)  return {colours:COMMON_COLOURS,config:SIZES.premium_tee};
+    if(n.indexOf('standard')!==-1) return {colours:COMMON_COLOURS,config:SIZES.standard_tee};
+    return {colours:COMMON_COLOURS,config:SIZES.generic};
+  }
+
+  var resolved=resolveProduct(PRODUCT_NAME);
+  var SWATCH={'white':'#FFFFFF','black':'#1a1a1a','off white':'#F5F0E8','dark grey':'#555555','deep blue':'#1B3A6B','forest green':'#228B22','fuchsia':'#FF00FF','grey heather':'#B0B0B0','kelly green':'#4CBB17','light blue':'#ADD8E6','cream':'#FFFDD0','lime green':'#32CD32','navy blue':'#001F5B','orange':'#FF6600','yellow':'#FFD700','grey':'#888888','red':'#CC0000','turquoise':'#40E0D0','light royal blue':'#4169E1','light grey':'#D3D3D3','tropical blue':'#00827F','charcoal':'#36454F','brown':'#8B4513','standard grey':'#9E9E9E','french navy':'#002FA7','dark beige':'#C3A882','purple':'#6A0DAD','blue':'#2255CC','sky blue':'#87CEEB','deep green':'#006400','green':'#008000','khaki':'#C3B091','pink':'#FFB6C1','transparent':'rgba(255,255,255,0)'};
+
+  var colourSelect=document.getElementById('colourSelect'),colourSwatch=document.getElementById('colourSwatch');
+  if(colourSelect){
+    resolved.colours.forEach(function(c){var opt=document.createElement('option');opt.value=c;opt.textContent=c;colourSelect.appendChild(opt);});
+    colourSelect.addEventListener('change',function(){var key=(this.value||'').toLowerCase();var hex=SWATCH[key]||'transparent';colourSwatch.style.background=hex;colourSwatch.style.border=key==='white'?'1px solid var(--grey-5)':key==='transparent'?'1px dashed var(--grey-5)':'1px solid transparent';buildVariant();});
+  }
+
+  var sizeRow=document.getElementById('sizeRow'),sizeNote=document.getElementById('sizeNote'),selectedSize='';
+  if(sizeRow&&resolved.config){
+    var cfg=resolved.config;
+    if(sizeNote) sizeNote.textContent=cfg.note||'';
+    cfg.sizes.forEach(function(s,idx){
+      var btn=document.createElement('button');btn.type='button';
+      btn.className='size-btn js-size'+(idx===0?' active':'');
+      btn.dataset.size=s;btn.dataset.add=(cfg.addSizes&&cfg.addSizes.indexOf(s)!==-1)?'2':'0';
+      btn.textContent=s;if(idx===0)selectedSize=s;
+      btn.addEventListener('click',function(){document.querySelectorAll('.js-size').forEach(function(b){b.classList.remove('active');});this.classList.add('active');selectedSize=this.dataset.size;document.getElementById('sizeField').value=selectedSize;updatePrice();buildVariant();});
+      sizeRow.appendChild(btn);
+    });
+    if(cfg.sizes.length>0) document.getElementById('sizeField').value=cfg.sizes[0];
+  }
+
+  var quantitySelect=document.getElementById('quantitySelect');
+  if(quantitySelect&&(CAT_STICKER||CAT_PARTY)){
+    var qtys=CAT_STICKER?STICKER_QTYS:PARTY_QTYS;
+    qtys.forEach(function(q){var opt=document.createElement('option');opt.value=q;opt.textContent=q;quantitySelect.appendChild(opt);});
+    quantitySelect.addEventListener('change',buildVariant);
+  }
+
+  var artAdd=0;
+  document.querySelectorAll('.js-art-size').forEach(function(btn){btn.addEventListener('click',function(){document.querySelectorAll('.js-art-size').forEach(function(b){b.classList.remove('active');});this.classList.add('active');artAdd=parseFloat(this.dataset.add)||0;updatePrice();buildVariant();});});
+
+  var selectedPlacement='';
+  document.querySelectorAll('.js-placement').forEach(function(btn){btn.addEventListener('click',function(){document.querySelectorAll('.js-placement').forEach(function(b){b.classList.remove('active');});this.classList.add('active');selectedPlacement=this.dataset.placement;document.getElementById('placementField').value=selectedPlacement;buildVariant();});});
+
+  var printAdd=0;
+  document.querySelectorAll('.js-print-side').forEach(function(btn){btn.addEventListener('click',function(){document.querySelectorAll('.js-print-side').forEach(function(b){b.classList.remove('active');});this.classList.add('active');printAdd=parseFloat(this.dataset.add)||0;var isFB=(this.dataset.side==='Front & Back');var bb=document.getElementById('blockArtworkBack');if(bb)bb.style.display=isFB?'':'none';var sl=document.getElementById('artworkSideLabel');if(sl)sl.textContent=isFB?'(front)':'';updatePrice();buildVariant();});});
+
+  function updatePrice(){
+    var activeSizeBtn=document.querySelector('.js-size.active');var sizeAddon=activeSizeBtn?(parseFloat(activeSizeBtn.dataset.add)||0):0;
+    var total=BASE_PRICE+artAdd+printAdd+sizeAddon;
+    var pbArtRow=document.getElementById('pbArtRow'),pbPrintRow=document.getElementById('pbPrintRow'),pbSizeRow=document.getElementById('pbSizeRow');
+    if(pbArtRow){pbArtRow.style.display=artAdd>0?'flex':'none';document.getElementById('pbArt').textContent='£'+artAdd.toFixed(2);}
+    if(pbPrintRow){pbPrintRow.style.display=printAdd>0?'flex':'none';document.getElementById('pbPrint').textContent='£'+printAdd.toFixed(2);}
+    if(pbSizeRow){pbSizeRow.style.display=sizeAddon>0?'flex':'none';document.getElementById('pbSizeAddon').textContent='£'+sizeAddon.toFixed(2);}
+    document.getElementById('pbTotal').textContent='£'+total.toFixed(2);
+    document.getElementById('priceOverride').value=total.toFixed(2);
+    var priceEl=document.querySelector('.product-price');if(priceEl)priceEl.textContent='£'+total.toFixed(2);
+  }
+
+  function buildVariant(){
+    var colour=(colourSelect&&colourSelect.value)||'';
+    var artBtn=document.querySelector('.js-art-size.active');var artSize=artBtn?artBtn.dataset.size+' ('+artBtn.dataset.inches+' inches)':'';
+    var printBtn=document.querySelector('.js-print-side.active');var printSide=printBtn?printBtn.dataset.side:'';
+    var size=(document.getElementById('sizeField')&&document.getElementById('sizeField').value)||'';
+    var placement=selectedPlacement;
+    var qty=(quantitySelect&&quantitySelect.value)?'Qty: '+quantitySelect.value:'';
+    var partyText=(document.getElementById('partyText')&&document.getElementById('partyText').value)?'Text: '+document.getElementById('partyText').value:'';
+    var partyFont=(document.getElementById('partyFontSelect')&&document.getElementById('partyFontSelect').value)?'Font: '+document.getElementById('partyFontSelect').value:'';
+    var parts=[];
+    if(colour)    parts.push('Colour: '+colour);
+    if(size)      parts.push('Size: '+size);
+    if(qty)       parts.push(qty);
+    if(artSize)   parts.push('Artwork: '+artSize);
+    if(placement) parts.push('Placement: '+placement);
+    if(printSide) parts.push('Printing: '+printSide);
+    if(partyText) parts.push(partyText);
+    if(partyFont) parts.push(partyFont);
+    document.getElementById('variantField').value=parts.join(' · ');
+  }
+
+  var partyTxtEl=document.getElementById('partyText');
+  if(partyTxtEl) partyTxtEl.addEventListener('input',buildVariant);
+  buildVariant(); updatePrice();
+})();
+
+function handleArtworkChange(input,labelId,txtId){
+  var label=document.getElementById(labelId||'artworkLabel');var txt=document.getElementById(txtId||'artworkLabelText');
+  if(input.files&&input.files[0]){var f=input.files[0];if(f.size>25*1024*1024){alert('File is too large. Max size is 25 MB.');input.value='';return;}if(label)label.classList.add('has-file');if(txt)txt.textContent='✓ '+f.name;}
+  else{if(label)label.classList.remove('has-file');if(txt)txt.textContent=labelId==='artworkLabelBack'?'Click to upload back artwork':'Click to upload artwork';}
+}
+
+var form=document.getElementById('addToCartForm');
+if(form){
+  form.addEventListener('submit',function(e){
+    var catRaw='{{ product_category|escapejs }}';
+    var isStickerV=catRaw.indexOf('sticker')!==-1||catRaw.indexOf('label')!==-1;
+    var isPartyV=catRaw.indexOf('party')!==-1||catRaw.indexOf('decoration')!==-1;
+    var colour=document.getElementById('colourSelect')?document.getElementById('colourSelect').value:'';
+    var size=document.getElementById('sizeField')?document.getElementById('sizeField').value:'';
+    var placement=document.getElementById('placementField')?document.getElementById('placementField').value:'';
+    if(!colour){alert('Please choose a colour.');e.preventDefault();return;}
+    if(!isStickerV&&!isPartyV){if(!size){alert('Please select a size.');e.preventDefault();return;}if(!placement){alert('Please choose a placement.');e.preventDefault();return;}}
+    if(isStickerV||isPartyV){var qty=document.getElementById('quantitySelect')?document.getElementById('quantitySelect').value:'';if(!qty){alert('Please select a quantity.');e.preventDefault();return;}}
+    var overrideInput=document.getElementById('priceOverride');var priceInput=form.querySelector('input[name="price"]');
+    if(overrideInput&&priceInput)priceInput.value=overrideInput.value;
+    var artworkFile=document.getElementById('artworkFile');var artworkFileBack=document.getElementById('artworkFileBack');
+    var hasFile=(artworkFile&&artworkFile.files&&artworkFile.files.length>0)||(artworkFileBack&&artworkFileBack.files&&artworkFileBack.files.length>0);
+    if(hasFile) return;
+    e.preventDefault();
+    var btn=document.getElementById('addToCartBtn');var sp=btn?btn.querySelector('span'):null;
+    if(btn)btn.disabled=true;if(sp)sp.textContent='Adding…';
+    fetch(CART_URL,{method:'POST',headers:{'X-Requested-With':'XMLHttpRequest','X-CSRFToken':CSRF_TOKEN},body:new FormData(form)})
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(function(data){
+      if(btn)btn.disabled=false;
+      if(sp){sp.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>&nbsp;Added!';setTimeout(function(){sp.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>&nbsp;Add to Cart';},2200);}
+      if(typeof data.cart_count!=='undefined'){var badge=document.getElementById('cartBadge');if(badge){badge.textContent=data.cart_count;badge.style.display=data.cart_count>0?'flex':'none';}}
+    })
+    .catch(function(err){console.warn('Cart AJAX error:',err);if(btn)btn.disabled=false;form.submit();});
+  });
+}
+{% endif %}{# end {% if product %} JS block #}
 </script>
 </body>
 </html>

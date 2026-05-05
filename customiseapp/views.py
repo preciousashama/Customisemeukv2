@@ -169,32 +169,54 @@ def shoppage(request):
 
 
 def productpage(request, slug=None):
-    if slug:
-        product = get_object_or_404(Product, slug=slug, is_active=True)
-    else:
-        product = Product.objects.filter(is_active=True).first()
- 
+    category_filter = request.GET.get("category", "").strip()
+
+    if not slug:
+        products_qs = Product.objects.filter(is_active=True).order_by("name")
+        if category_filter:
+            products_qs = products_qs.filter(category__iexact=category_filter)
+
+        cart       = request.session.get("cart", [])
+        cart_count = sum(int(item.get("quantity", 1)) for item in cart)
+
+        wished_ids = set()
+        wish_count = 0
+        if request.user.is_authenticated:
+            pks = Wishlist.objects.filter(user=request.user).values_list("product_id", flat=True)
+            wished_ids = {str(pk) for pk in pks}
+            wish_count = len(wished_ids)
+
+        return render(request, "product.html", {
+            "products":         products_qs,
+            "category_filter":  category_filter,
+            "cart_count":       cart_count,
+            "wish_count":       wish_count,
+            "wished_ids":       wished_ids,
+            "product_category": "",   
+        })
+
+    product = get_object_or_404(Product, slug=slug, is_active=True)
+
     related = (
         Product.objects.filter(is_active=True, category=product.category)
         .exclude(pk=product.pk)[:4]
-        if product else []
     )
- 
-    is_wished   = False
-    wish_count  = 0
+
+    is_wished  = False
+    wish_count = 0
     placements = [
         "Front Left", "Front Centre", "Front Right", "Front Full",
-        "Back Left", "Back Centre", "Back Right", "Back Full"
+        "Back Left",  "Back Centre",  "Back Right",  "Back Full",
     ]
-    if request.user.is_authenticated and product:
+    if request.user.is_authenticated:
         is_wished  = Wishlist.objects.filter(user=request.user, product=product).exists()
         wish_count = Wishlist.objects.filter(user=request.user).count()
- 
+
     cart       = request.session.get("cart", [])
     cart_count = sum(int(item.get("quantity", 1)) for item in cart)
- 
-    product_category = (product.category or "").strip().lower() if product else ""
- 
+
+    product_category = (product.category or "").strip().lower()
+
     return render(request, "product.html", {
         "product":          product,
         "related":          related,
@@ -203,6 +225,9 @@ def productpage(request, slug=None):
         "cart_count":       cart_count,
         "placements":       placements,
         "product_category": product_category,
+        "products":         [],
+        "category_filter":  "",
+        "wished_ids":       set(),
     })
 
 
