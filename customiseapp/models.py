@@ -116,6 +116,38 @@ class Product(models.Model):
         return "in_stock"
 
 
+class ProductImage(models.Model):
+    product  = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="variation_images",
+    )
+    image    = models.ImageField(
+        upload_to="products/variations/",
+        storage=_firebase_storage,
+    )
+    label    = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text="Short label shown to customers, e.g. 'Black', 'Navy Blue'.",
+    )
+    position = models.PositiveSmallIntegerField(
+        default=0,
+        help_text="Slot number (1–5). Determines scroll order.",
+    )
+ 
+    class Meta:
+        ordering            = ["position", "id"]
+        verbose_name        = "Product Variation Image"
+        verbose_name_plural = "Product Variation Images"
+ 
+    def __str__(self):
+        return (
+            f"{self.product.name} — "
+            f"{self.label or f'variation {self.position}'}"
+        )
+    
+
 class Wishlist(models.Model):
     id      = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user    = models.ForeignKey(

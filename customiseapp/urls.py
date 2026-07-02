@@ -20,6 +20,9 @@ urlpatterns = [
 
     path("shop/",              views.shoppage,            name="shop-page"),
     path("shop/<slug:slug>/",  views.productpage,         name="product-page"),
+
+    path("products/",            views.productpage,  name="product-page"),        
+    path("products/<slug:slug>/",views.productpage,  name="product-page-detail"),
  
     path("cart/",              views.cartpage,            name="cart-page"),
     path("cart/checkout/",     views.create_checkout_session, name="checkout"),

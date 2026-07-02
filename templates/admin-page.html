@@ -275,6 +275,32 @@ tr:hover .product-thumb{filter:grayscale(0%);}
 .cust-note-panel{display:none;margin-top:8px;}
 .cust-note-panel.open{display:block;}
 
+/* ── PRODUCT VARIATION IMAGES ─────────────────────────────────────────────── */
+.variation-section{margin-top:20px;padding-top:20px;border-top:1px solid var(--grey-6);}
+.variation-section-label{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--grey-3);margin-bottom:4px;display:block;}
+.variation-section-hint{font-size:11px;color:var(--grey-5);margin-bottom:14px;}
+.variation-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+.variation-slot{border:1px solid var(--grey-6);padding:12px;background:var(--white);display:flex;flex-direction:column;gap:8px;}
+.variation-slot-num{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--grey-5);}
+.variation-current{position:relative;}
+.variation-current img{width:100%;aspect-ratio:1;object-fit:cover;border:1px solid var(--grey-6);display:block;}
+.variation-current-meta{font-size:10px;color:var(--grey-4);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.variation-delete-label{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--danger);cursor:none;margin-top:2px;}
+.variation-delete-label input{cursor:none;accent-color:var(--danger);}
+.variation-thumb{width:100%;aspect-ratio:1;object-fit:cover;border:1px solid var(--grey-6);display:none;}
+.variation-thumb.show{display:block;}
+.variation-file-label{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:14px 8px;background:var(--grey-8);border:1px dashed var(--grey-5);cursor:none;text-align:center;font-size:10px;color:var(--grey-4);letter-spacing:.06em;text-transform:uppercase;transition:border-color .2s,color .2s;position:relative;}
+.variation-file-label:hover{border-color:var(--grey-3);color:var(--black);}
+.variation-file-label input[type=file]{position:absolute;inset:0;opacity:0;width:100%;cursor:none;}
+.variation-label-input{background:var(--white);border:1px solid var(--grey-6);padding:6px 9px;font-family:var(--sans);font-size:12px;color:var(--black);outline:none;width:100%;cursor:none;transition:border-color .2s;}
+.variation-label-input:focus{border-color:var(--black);}
+.variation-label-input::placeholder{color:var(--grey-5);}
+/* Variation count badge in product table */
+.var-count-badge{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:2px 7px;background:var(--grey-8);border:1px solid var(--grey-6);color:var(--grey-4);white-space:nowrap;margin-top:3px;display:inline-block;}
+/* Responsive: stack variation grid on smaller screens */
+@media(max-width:900px){.variation-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:600px){.variation-grid{grid-template-columns:repeat(2,1fr);}}
+
 footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-top:auto;}
 .footer-top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:60px;padding-bottom:64px;border-bottom:1px solid var(--grey-2);}
 .footer-brand p{font-size:13px;color:var(--grey-4);line-height:1.7;max-width:260px;}
@@ -574,6 +600,104 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
           </div>
           <div class="field"><label for="product_description">Description</label><textarea id="product_description" name="product_description" placeholder="Brief description…">{{ edit_product.description|default:'' }}</textarea></div>
         </div>
+
+        <!-- ── VARIATION IMAGES ──────────────────────────────────────────── -->
+        <div class="variation-section">
+          <span class="variation-section-label">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:5px;"><rect x="3" y="3" width="18" height="18" rx="1"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Product Variation Images
+          </span>
+          <p class="variation-section-hint">Upload up to 5 images showing different colours or angles of this product. Customers scroll through them on the product page.</p>
+
+          {% if edit_product %}
+          <!-- Show existing variation images with per-slot delete option -->
+          {% with existing_vars=edit_product.variation_images.all %}
+          {% if existing_vars %}
+          <div style="margin-bottom:16px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--grey-5);margin-bottom:10px;">Current Variations</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              {% for vi in existing_vars %}
+              <div style="width:100px;flex-shrink:0;">
+                <img src="{{ vi.image.url }}" alt="{{ vi.label|default:'Variation' }}" style="width:100%;aspect-ratio:1;object-fit:cover;border:1px solid var(--grey-6);display:block;"/>
+                {% if vi.label %}<div style="font-size:10px;color:var(--grey-4);margin-top:3px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ vi.label }}</div>{% endif %}
+                <label class="variation-delete-label" style="justify-content:center;margin-top:4px;">
+                  <input type="checkbox" name="delete_variation" value="{{ vi.id }}"/>
+                  Delete
+                </label>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+          {% endwith %}
+          {% endif %}
+
+          <!-- 5 upload slots -->
+          <div class="variation-grid">
+
+            <!-- Slot 1 -->
+            <div class="variation-slot">
+              <div class="variation-slot-num">Slot 1</div>
+              <label class="variation-file-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+                Choose image
+                <input type="file" name="variation_image_1" accept="image/jpeg,image/png,image/webp" id="varImg1"/>
+              </label>
+              <img class="variation-thumb" id="varThumb1" src="" alt=""/>
+              <input class="variation-label-input" type="text" name="variation_label_1" placeholder="Label e.g. Black"/>
+            </div>
+
+            <!-- Slot 2 -->
+            <div class="variation-slot">
+              <div class="variation-slot-num">Slot 2</div>
+              <label class="variation-file-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+                Choose image
+                <input type="file" name="variation_image_2" accept="image/jpeg,image/png,image/webp" id="varImg2"/>
+              </label>
+              <img class="variation-thumb" id="varThumb2" src="" alt=""/>
+              <input class="variation-label-input" type="text" name="variation_label_2" placeholder="Label e.g. Navy"/>
+            </div>
+
+            <!-- Slot 3 -->
+            <div class="variation-slot">
+              <div class="variation-slot-num">Slot 3</div>
+              <label class="variation-file-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+                Choose image
+                <input type="file" name="variation_image_3" accept="image/jpeg,image/png,image/webp" id="varImg3"/>
+              </label>
+              <img class="variation-thumb" id="varThumb3" src="" alt=""/>
+              <input class="variation-label-input" type="text" name="variation_label_3" placeholder="Label e.g. White"/>
+            </div>
+
+            <!-- Slot 4 -->
+            <div class="variation-slot">
+              <div class="variation-slot-num">Slot 4</div>
+              <label class="variation-file-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+                Choose image
+                <input type="file" name="variation_image_4" accept="image/jpeg,image/png,image/webp" id="varImg4"/>
+              </label>
+              <img class="variation-thumb" id="varThumb4" src="" alt=""/>
+              <input class="variation-label-input" type="text" name="variation_label_4" placeholder="Label e.g. Red"/>
+            </div>
+
+            <!-- Slot 5 -->
+            <div class="variation-slot">
+              <div class="variation-slot-num">Slot 5</div>
+              <label class="variation-file-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+                Choose image
+                <input type="file" name="variation_image_5" accept="image/jpeg,image/png,image/webp" id="varImg5"/>
+              </label>
+              <img class="variation-thumb" id="varThumb5" src="" alt=""/>
+              <input class="variation-label-input" type="text" name="variation_label_5" placeholder="Label e.g. Green"/>
+            </div>
+
+          </div><!-- /variation-grid -->
+        </div><!-- /variation-section -->
+
         <div class="form-actions"><button type="submit" class="btn-primary"><div class="btn-inner"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>{% if edit_product %}Save Changes{% else %}Add Product{% endif %}</div></button><a class="btn-ghost" href="?tab=products">Cancel</a></div>
       </form>
     </div>
@@ -581,7 +705,38 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
     <table class="product-table">
       <thead><tr><th style="width:50%">Product Details</th><th>Stock</th><th>Price</th><th class="r">Actions</th></tr></thead>
       <tbody>
-        {% for product in products %}<tr><td><div class="product-cell">{% if product.image %}<img class="product-thumb" src="{{ product.image.url }}" alt="{{ product.name }}"/>{% else %}<div class="product-thumb-placeholder"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>{% endif %}<div><div class="product-name">{{ product.name }}</div><div class="product-sku">SKU: {{ product.sku }} {% if product.category %}<span style="color:var(--grey-5);">· {{ product.category }}</span>{% endif %}</div></div></div></td><td><span class="{% if product.stock <= 5 %}stock-low{% else %}stock-ok{% endif %}">{{ product.stock }} unit{{ product.stock|pluralize }}{% if product.stock <= 5 and product.stock > 0 %} — low{% endif %}</span></td><td><span class="product-price">£{{ product.price|floatformat:2 }}</span></td><td class="r"><div class="product-actions"><a class="btn-icon" href="?tab=products&edit_product={{ product.id }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></a><form method="POST" action="{% url 'admin-page' %}" class="delete-form" onsubmit="return confirm('Delete {{ product.name }}?')">{% csrf_token %}<input type="hidden" name="action" value="delete_product"/><input type="hidden" name="product_id" value="{{ product.id }}"/><button type="submit" class="btn-icon danger"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button></form></div></td></tr>
+        {% for product in products %}
+        {% with var_count=product.variation_images.count %}
+        <tr>
+          <td>
+            <div class="product-cell">
+              {% if product.image %}
+                <img class="product-thumb" src="{{ product.image.url }}" alt="{{ product.name }}"/>
+              {% else %}
+                <div class="product-thumb-placeholder"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+              {% endif %}
+              <div>
+                <div class="product-name">{{ product.name }}</div>
+                <div class="product-sku">SKU: {{ product.sku }} {% if product.category %}<span style="color:var(--grey-5);">· {{ product.category }}</span>{% endif %}</div>
+                {% if var_count > 0 %}<span class="var-count-badge">{{ var_count }} variation{{ var_count|pluralize }}</span>{% endif %}
+              </div>
+            </div>
+          </td>
+          <td><span class="{% if product.stock <= 5 %}stock-low{% else %}stock-ok{% endif %}">{{ product.stock }} unit{{ product.stock|pluralize }}{% if product.stock <= 5 and product.stock > 0 %} — low{% endif %}</span></td>
+          <td><span class="product-price">£{{ product.price|floatformat:2 }}</span></td>
+          <td class="r">
+            <div class="product-actions">
+              <a class="btn-icon" href="?tab=products&edit_product={{ product.id }}" title="Edit product"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></a>
+              <form method="POST" action="{% url 'admin-page' %}" class="delete-form" onsubmit="return confirm('Delete {{ product.name }}?')">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete_product"/>
+                <input type="hidden" name="product_id" value="{{ product.id }}"/>
+                <button type="submit" class="btn-icon danger" title="Delete product"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endwith %}
         {% empty %}<tr class="empty-row"><td colspan="4">{% if search_query %}No products match "{{ search_query }}".{% else %}No products yet.{% endif %}</td></tr>{% endfor %}
       </tbody>
     </table>
@@ -808,13 +963,35 @@ function wirePreview(inputId,thumbId,labelId){
   if(!input)return;
   input.addEventListener('change',()=>{
     const f=input.files[0];if(!f)return;
-    document.getElementById(labelId).textContent=f.name;
+    if(labelId){const el=document.getElementById(labelId);if(el)el.textContent=f.name;}
     const thumb=document.getElementById(thumbId);
-    thumb.src=URL.createObjectURL(f);thumb.classList.add('show');
+    if(thumb){thumb.src=URL.createObjectURL(f);thumb.classList.add('show');}
   });
 }
 wirePreview('slideImageInput','slideThumb','slideFileLabel');
 wirePreview('productImageInput','productThumb','productFileLabel');
+
+/* Variation image live previews */
+function wireVariationPreview(inputId,thumbId){
+  const input=document.getElementById(inputId);
+  if(!input)return;
+  input.addEventListener('change',()=>{
+    const f=input.files[0];if(!f)return;
+    const thumb=document.getElementById(thumbId);
+    if(thumb){
+      /* Replace the dashed upload label with the thumb */
+      const label=input.closest('label.variation-file-label');
+      if(label)label.style.display='none';
+      thumb.src=URL.createObjectURL(f);
+      thumb.classList.add('show');
+    }
+  });
+}
+wireVariationPreview('varImg1','varThumb1');
+wireVariationPreview('varImg2','varThumb2');
+wireVariationPreview('varImg3','varThumb3');
+wireVariationPreview('varImg4','varThumb4');
+wireVariationPreview('varImg5','varThumb5');
 
 document.addEventListener('click',function(e){
   /* Request detail brief panel */
