@@ -420,6 +420,84 @@ def _handle_update_send_request(request):
     return redirect(f"{request.path}?tab=send_requests")
 
 
+def _parse_customisation_config(POST):
+    def lines(name):
+        return [l.strip() for l in POST.get(name, "").splitlines() if l.strip()]
+
+    qty_vals = []
+    for tok in POST.get("opt_quantity_values", "").replace("\n", ",").split(","):
+        tok = tok.strip()
+        if tok.isdigit():
+            qty_vals.append(int(tok))
+
+    art_vals = []
+    for line in lines("opt_artwork_values"):
+        parts = [p.strip() for p in line.split("|")]
+        label = parts[0] if parts else ""
+        inches = parts[1] if len(parts) > 1 else ""
+        try:
+            add = float(parts[2]) if len(parts) > 2 and parts[2] else 0
+        except ValueError:
+            add = 0
+        if label:
+            art_vals.append({"label": label, "inches": inches, "add": add})
+
+    side_vals = []
+    for line in lines("opt_printside_values"):
+        parts = [p.strip() for p in line.split("|")]
+        label = parts[0] if parts else ""
+        try:
+            add = float(parts[1]) if len(parts) > 1 and parts[1] else 0
+        except ValueError:
+            add = 0
+        if label:
+            side_vals.append({"label": label, "add": add})
+
+    return {
+        "colour":          {"enabled": POST.get("opt_colour_enabled") == "on", "values": lines("opt_colour_values")},
+        "size":            {"enabled": POST.get("opt_size_enabled") == "on", "values": lines("opt_size_values"),
+                             "note": POST.get("opt_size_note", "").strip()},
+        "artwork_size":    {"enabled": POST.get("opt_artwork_enabled") == "on", "values": art_vals},
+        "printing_side":   {"enabled": POST.get("opt_printside_enabled") == "on", "values": side_vals},
+        "placement":       {"enabled": POST.get("opt_placement_enabled") == "on", "values": lines("opt_placement_values")},
+        "quantity":        {"enabled": POST.get("opt_quantity_enabled") == "on", "values": qty_vals},
+        "text_box":        {"enabled": POST.get("opt_textbox_enabled") == "on",
+                             "label": POST.get("opt_textbox_label", "Custom Text").strip() or "Custom Text",
+                             "max_length": int(POST.get("opt_textbox_maxlen") or 50)},
+        "font_select":     {"enabled": POST.get("opt_font_enabled") == "on", "values": lines("opt_font_values")},
+        "additional_info": {"enabled": POST.get("opt_additional_enabled") == "on"},
+        "artwork_upload":  {"enabled": POST.get("opt_artwork_upload_enabled") == "on"},
+    }
+
+
+def _format_config_for_admin(cfg):
+    cfg = cfg or {}
+    join = lambda vals: "\n".join(str(v) for v in (vals or []))
+    art = cfg.get("artwork_size", {})
+    side = cfg.get("printing_side", {})
+    return {
+        "colour_enabled": cfg.get("colour", {}).get("enabled", False),
+        "colour_values": join(cfg.get("colour", {}).get("values")),
+        "size_enabled": cfg.get("size", {}).get("enabled", False),
+        "size_values": join(cfg.get("size", {}).get("values")),
+        "size_note": cfg.get("size", {}).get("note", ""),
+        "placement_enabled": cfg.get("placement", {}).get("enabled", False),
+        "placement_values": join(cfg.get("placement", {}).get("values")),
+        "font_enabled": cfg.get("font_select", {}).get("enabled", False),
+        "font_values": join(cfg.get("font_select", {}).get("values")),
+        "quantity_enabled": cfg.get("quantity", {}).get("enabled", False),
+        "quantity_values": ", ".join(str(v) for v in cfg.get("quantity", {}).get("values", [])),
+        "artwork_enabled": art.get("enabled", False),
+        "artwork_values": "\n".join(f"{v.get('label','')}|{v.get('inches','')}|{v.get('add',0)}" for v in art.get("values", [])),
+        "printside_enabled": side.get("enabled", False),
+        "printside_values": "\n".join(f"{v.get('label','')}|{v.get('add',0)}" for v in side.get("values", [])),
+        "textbox_enabled": cfg.get("text_box", {}).get("enabled", False),
+        "textbox_label": cfg.get("text_box", {}).get("label", "Custom Text"),
+        "textbox_maxlen": cfg.get("text_box", {}).get("max_length", 50),
+        "additional_enabled": cfg.get("additional_info", {}).get("enabled", False),
+        "artwork_upload_enabled": cfg.get("artwork_upload", {}).get("enabled", False),
+    }
+
 
 
 @admin_required
@@ -454,11 +532,13 @@ def admin_dashboard_data(request):
                 or Order.objects.filter(pk=order_query).first()
             )
 
-        return render(request, "admin-page.html",
-                      _build_context(request, active_tab, search_query,
-                                     edit_slide=edit_slide,
-                                     edit_product=edit_product,
-                                     viewed_order=viewed_order))
+        ctx = _build_context(request, active_tab, search_query,
+                              edit_slide=edit_slide,
+                              edit_product=edit_product,
+                              viewed_order=viewed_order)
+        if edit_product:
+            ctx["opt_display"] = _format_config_for_admin(edit_product.customisation_config)
+        return render(request, "admin-page.html", ctx)
 
     # ══ POST ═════════════════════════════════════════════════════════════════
     action = request.POST.get("action", "")
@@ -570,11 +650,10 @@ def admin_dashboard_data(request):
 
         if errors:
             edit_product = get_object_or_404(Product, pk=product_id) if product_id else None
-            return render(request, "admin-page.html",
-                          _build_context(request, "products",
-                                         form_errors=errors, edit_product=edit_product))
+            ctx = _build_context(request, "products", form_errors=errors, edit_product=edit_product)
+            ctx["opt_display"] = _format_config_for_admin(_parse_customisation_config(request.POST))
+            return render(request, "admin-page.html", ctx)
 
-        # ── EDIT existing product ─────────────────────────────────────────
         if action == "edit_product" and product_id:
             p             = get_object_or_404(Product, pk=product_id)
             p.name        = name
@@ -583,6 +662,7 @@ def admin_dashboard_data(request):
             p.stock       = stock_val
             p.category    = category
             p.description = description
+            p.customisation_config = _parse_customisation_config(request.POST)
             if image:
                 if p.image:
                     p.image.delete(save=False)
@@ -635,6 +715,7 @@ def admin_dashboard_data(request):
                     name=name, slug=slug, sku=sku,
                     price=price_val, stock=stock_val,
                     category=category, description=description,
+                    customisation_config=_parse_customisation_config(request.POST),
                 )
                 if image:
                     p.image = image

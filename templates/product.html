@@ -949,6 +949,9 @@ function switchTab(btn,id){
   var BASE_PRICE       = parseFloat('{{ product.price }}') || 0;
   var PRODUCT_NAME     = '{{ product.name|lower|escapejs }}';
   var PRODUCT_CATEGORY = '{{ product_category|escapejs }}';
+  var PRODUCT_CATEGORY = '{{ product_category|escapejs }}';
+  var PRODUCT_OPTIONS = {{ product_options_json|safe }} || {};
+  var HAS_CONFIG = Object.keys(PRODUCT_OPTIONS).some(function(k){ return PRODUCT_OPTIONS[k] && PRODUCT_OPTIONS[k].enabled; });
 
   var CAT_APPAREL = PRODUCT_CATEGORY.indexOf('apparel') !== -1 || PRODUCT_CATEGORY.indexOf('accessori') !== -1;
   var CAT_STICKER = PRODUCT_CATEGORY.indexOf('sticker') !== -1 || PRODUCT_CATEGORY.indexOf('label') !== -1;
@@ -957,7 +960,8 @@ function switchTab(btn,id){
 
   function showBlock(id){var el=document.getElementById(id);if(el)el.style.display='';}
   function hideBlock(id){var el=document.getElementById(id);if(el)el.style.display='none';}
-
+  
+  if (!HAS_CONFIG) {
   if(CAT_APPAREL){
     showBlock('blockColour');showBlock('blockSize');showBlock('blockArtSize');
     showBlock('blockPlacement');showBlock('blockPrintSide');showBlock('blockArtwork');
@@ -973,6 +977,178 @@ function switchTab(btn,id){
     hideBlock('blockPlacement');hideBlock('blockPrintSide');showBlock('blockQuantity');
     showBlock('blockPartyText');showBlock('blockPartyFont');showBlock('blockArtwork');
     hideBlock('blockArtworkBack');showBlock('blockAdditional');
+  }
+  } else {
+    ['blockColour','blockSize','blockArtSize','blockPrintSide','blockPlacement',
+     'blockQuantity','blockPartyText','blockPartyFont','blockArtwork','blockArtworkBack',
+     'blockAdditional','blockDisclaimer'].forEach(hideBlock);
+  }
+
+  if (HAS_CONFIG) {
+    var artAddCfg = 0, printAddCfg = 0, selectedPlacementCfg = '';
+    var stepCounter = 1;
+    function stepNumCfg(id){ var s=document.getElementById(id); if(s){ s.textContent = stepCounter++; } }
+
+    var cCfg = PRODUCT_OPTIONS.colour;
+    if (cCfg && cCfg.enabled && cCfg.values && cCfg.values.length) {
+      showBlock('blockColour'); stepNumCfg('stepColour');
+      var csEl = document.getElementById('colourSelect');
+      cCfg.values.forEach(function(v){ var o=document.createElement('option'); o.value=v; o.textContent=v; csEl.appendChild(o); });
+      csEl.addEventListener('change', function(){ buildVariantCfg(); });
+    }
+
+    var szCfg = PRODUCT_OPTIONS.size;
+    if (szCfg && szCfg.enabled && szCfg.values && szCfg.values.length) {
+      showBlock('blockSize'); stepNumCfg('stepSize');
+      var srEl = document.getElementById('sizeRow');
+      var snEl = document.getElementById('sizeNote'); if (snEl) snEl.textContent = szCfg.note || '';
+      szCfg.values.forEach(function(s, i){
+        var btn=document.createElement('button'); btn.type='button';
+        btn.className='size-btn js-size'+(i===0?' active':''); btn.dataset.size=s; btn.textContent=s;
+        if(i===0) document.getElementById('sizeField').value=s;
+        btn.addEventListener('click', function(){
+          document.querySelectorAll('.js-print-side').forEach(function(b){b.classList.remove('active');});
+          this.classList.add('active'); printAddCfg=parseFloat(this.dataset.add)||0;
+          var isFB = /front\s*&\s*back/i.test(this.dataset.side);
+          var artworkOn = PRODUCT_OPTIONS.artwork_upload && PRODUCT_OPTIONS.artwork_upload.enabled;
+          var bb=document.getElementById('blockArtworkBack'); if(bb) bb.style.display=(isFB&&artworkOn)?'':'none';
+          var sl=document.getElementById('artworkSideLabel'); if(sl) sl.textContent=isFB?'(front)':'';
+          updatePriceCfg(); buildVariantCfg();
+        });
+        srEl.appendChild(btn);
+      });
+    }
+
+    var artCfg = PRODUCT_OPTIONS.artwork_size;
+    if (artCfg && artCfg.enabled && artCfg.values && artCfg.values.length) {
+      showBlock('blockArtSize'); stepNumCfg('stepArtSize');
+      var agEl = document.querySelector('#blockArtSize .font-grid'); agEl.innerHTML='';
+      artCfg.values.forEach(function(v, i){
+        var btn=document.createElement('button'); btn.type='button';
+        btn.className='font-btn js-art-size'+(i===0?' active':'');
+        btn.dataset.size=v.label; btn.dataset.inches=v.inches||''; btn.dataset.add=v.add||0;
+        var extra = (v.inches ? v.inches+' inches' : '') + (v.add>0 ? (v.inches?' · ':'')+'+£'+Number(v.add).toFixed(2) : '');
+        btn.innerHTML = v.label + (extra ? ' <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">'+extra+'</span>' : '');
+        if(i===0) artAddCfg = parseFloat(v.add)||0;
+        btn.addEventListener('click', function(){
+          document.querySelectorAll('.js-art-size').forEach(function(b){b.classList.remove('active');});
+          this.classList.add('active'); artAddCfg=parseFloat(this.dataset.add)||0;
+          updatePriceCfg(); buildVariantCfg();
+        });
+        agEl.appendChild(btn);
+      });
+    }
+
+    var sideCfg = PRODUCT_OPTIONS.printing_side;
+    if (sideCfg && sideCfg.enabled && sideCfg.values && sideCfg.values.length) {
+      showBlock('blockPrintSide'); stepNumCfg('stepPrintSide');
+      var pgEl = document.querySelector('#blockPrintSide .font-grid'); pgEl.innerHTML='';
+      sideCfg.values.forEach(function(v, i){
+        var btn=document.createElement('button'); btn.type='button';
+        btn.className='font-btn js-print-side'+(i===0?' active':'');
+        btn.dataset.side=v.label; btn.dataset.add=v.add||0;
+        btn.innerHTML = v.label + (v.add>0 ? ' <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">+£'+Number(v.add).toFixed(2)+'</span>' : '');
+        if(i===0) printAddCfg = parseFloat(v.add)||0;
+        btn.addEventListener('click', function(){
+          document.querySelectorAll('.js-print-side').forEach(function(b){b.classList.remove('active');});
+          this.classList.add('active'); printAddCfg=parseFloat(this.dataset.add)||0;
+          var isFB = /front\s*&\s*back/i.test(this.dataset.side);
+          var bb=document.getElementById('blockArtworkBack'); if(bb) bb.style.display=isFB?'':'none';
+          var sl=document.getElementById('artworkSideLabel'); if(sl) sl.textContent=isFB?'(front)':'';
+          updatePriceCfg(); buildVariantCfg();
+        });
+        pgEl.appendChild(btn);
+      });
+    }
+
+    var plCfg = PRODUCT_OPTIONS.placement;
+    if (plCfg && plCfg.enabled && plCfg.values && plCfg.values.length) {
+      showBlock('blockPlacement'); stepNumCfg('stepPlacement');
+      var pgdEl = document.getElementById('placementGrid'); pgdEl.innerHTML='';
+      plCfg.values.forEach(function(v){
+        var btn=document.createElement('button'); btn.type='button';
+        btn.className='placement-btn js-placement'; btn.dataset.placement=v; btn.textContent=v;
+        btn.addEventListener('click', function(){
+          document.querySelectorAll('.js-placement').forEach(function(b){b.classList.remove('active');});
+          this.classList.add('active'); selectedPlacementCfg=this.dataset.placement;
+          document.getElementById('placementField').value=selectedPlacementCfg; buildVariantCfg();
+        });
+        pgdEl.appendChild(btn);
+      });
+    }
+
+    var qtyCfg = PRODUCT_OPTIONS.quantity;
+    if (qtyCfg && qtyCfg.enabled && qtyCfg.values && qtyCfg.values.length) {
+      showBlock('blockQuantity'); stepNumCfg('stepQuantity');
+      var qsEl = document.getElementById('quantitySelect');
+      qtyCfg.values.forEach(function(v){ var o=document.createElement('option'); o.value=v; o.textContent=v; qsEl.appendChild(o); });
+      qsEl.addEventListener('change', buildVariantCfg);
+    }
+
+    var tbCfg = PRODUCT_OPTIONS.text_box;
+    if (tbCfg && tbCfg.enabled) {
+      showBlock('blockPartyText'); stepNumCfg('stepPartyText');
+      var lblEl = document.querySelector('#blockPartyText .field-label');
+      if (lblEl) lblEl.innerHTML = '<span class="step-num" id="stepPartyText">'+(stepCounter-1)+'</span> '+(tbCfg.label||'Custom Text');
+      var tiEl = document.getElementById('partyText');
+      if (tiEl) { if (tbCfg.max_length) tiEl.maxLength = tbCfg.max_length; tiEl.addEventListener('input', buildVariantCfg); }
+    }
+
+    var fsCfg = PRODUCT_OPTIONS.font_select;
+    if (fsCfg && fsCfg.enabled && fsCfg.values && fsCfg.values.length) {
+      showBlock('blockPartyFont'); stepNumCfg('stepPartyFont');
+      var fselEl = document.getElementById('partyFontSelect');
+      fselEl.innerHTML = '<option value="">— Select a font —</option>';
+      fsCfg.values.forEach(function(v){ var o=document.createElement('option'); o.value=v; o.textContent=v; fselEl.appendChild(o); });
+    }
+
+    var aiCfg = PRODUCT_OPTIONS.additional_info;
+    if (aiCfg && aiCfg.enabled) { showBlock('blockAdditional'); stepNumCfg('stepAdditional'); }
+
+    var awCfg = PRODUCT_OPTIONS.artwork_upload;
+    if (awCfg && awCfg.enabled) {
+      showBlock('blockArtwork'); stepNumCfg('stepArtwork');
+      showBlock('blockDisclaimer');
+    } else {
+      hideBlock('blockArtwork');
+      hideBlock('blockArtworkBack');
+      hideBlock('blockDisclaimer');
+    }
+
+    function updatePriceCfg(){
+      var total = BASE_PRICE + artAddCfg + printAddCfg;
+      var arEl=document.getElementById('pbArtRow'), prEl=document.getElementById('pbPrintRow'), srEl2=document.getElementById('pbSizeRow');
+      if(arEl){ arEl.style.display=artAddCfg>0?'flex':'none'; document.getElementById('pbArt').textContent='£'+artAddCfg.toFixed(2); }
+      if(prEl){ prEl.style.display=printAddCfg>0?'flex':'none'; document.getElementById('pbPrint').textContent='£'+printAddCfg.toFixed(2); }
+      if(srEl2) srEl2.style.display='none';
+      document.getElementById('pbTotal').textContent='£'+total.toFixed(2);
+      document.getElementById('priceOverride').value=total.toFixed(2);
+      var peEl=document.querySelector('.product-price'); if(peEl) peEl.textContent='£'+total.toFixed(2);
+    }
+
+    function buildVariantCfg(){
+      var colour=(document.getElementById('colourSelect')&&document.getElementById('colourSelect').value)||'';
+      var size=(document.getElementById('sizeField')&&document.getElementById('sizeField').value)||'';
+      var qtyV=(document.getElementById('quantitySelect')&&document.getElementById('quantitySelect').value)?'Qty: '+document.getElementById('quantitySelect').value:'';
+      var abEl=document.querySelector('.js-art-size.active');
+      var artSize=abEl?(abEl.dataset.size+(abEl.dataset.inches?' ('+abEl.dataset.inches+' inches)':'')):'';
+      var pbEl=document.querySelector('.js-print-side.active');
+      var printSide=pbEl?pbEl.dataset.side:'';
+      var txt=(document.getElementById('partyText')&&document.getElementById('partyText').value)?((PRODUCT_OPTIONS.text_box&&PRODUCT_OPTIONS.text_box.label)||'Text')+': '+document.getElementById('partyText').value:'';
+      var font=(document.getElementById('partyFontSelect')&&document.getElementById('partyFontSelect').value)?'Font: '+document.getElementById('partyFontSelect').value:'';
+      var parts=[];
+      if(colour) parts.push('Colour: '+colour);
+      if(size) parts.push('Size: '+size);
+      if(qtyV) parts.push(qtyV);
+      if(artSize) parts.push('Artwork: '+artSize);
+      if(selectedPlacementCfg) parts.push('Placement: '+selectedPlacementCfg);
+      if(printSide) parts.push('Printing: '+printSide);
+      if(txt) parts.push(txt);
+      if(font) parts.push(font);
+      document.getElementById('variantField').value=parts.join(' · ');
+    }
+
+    buildVariantCfg(); updatePriceCfg();
   }
 
   var COMMON_COLOURS=['White','Black','Off White','Dark Grey','Deep Blue','Forest Green','Fuchsia','Grey Heather','Kelly Green','Light Blue','Cream','Lime Green','Navy Blue','Orange','Yellow','Grey','Red','Turquoise','Light Royal Blue','Light Grey','Tropical Blue'];
@@ -1119,9 +1295,21 @@ if(form){
     var colour=document.getElementById('colourSelect')?document.getElementById('colourSelect').value:'';
     var size=document.getElementById('sizeField')?document.getElementById('sizeField').value:'';
     var placement=document.getElementById('placementField')?document.getElementById('placementField').value:'';
-    if(!colour){alert('Please choose a colour.');e.preventDefault();return;}
-    if(!isStickerV&&!isPartyV){if(!size){alert('Please select a size.');e.preventDefault();return;}if(!placement){alert('Please choose a placement.');e.preventDefault();return;}}
-    if(isStickerV||isPartyV){var qty=document.getElementById('quantitySelect')?document.getElementById('quantitySelect').value:'';if(!qty){alert('Please select a quantity.');e.preventDefault();return;}}
+
+    if (typeof HAS_CONFIG !== 'undefined' && HAS_CONFIG) {
+      if (PRODUCT_OPTIONS.colour && PRODUCT_OPTIONS.colour.enabled && !colour){alert('Please choose a colour.');e.preventDefault();return;}
+      if (PRODUCT_OPTIONS.size && PRODUCT_OPTIONS.size.enabled && !size){alert('Please select a size.');e.preventDefault();return;}
+      if (PRODUCT_OPTIONS.placement && PRODUCT_OPTIONS.placement.enabled && !placement){alert('Please choose a placement.');e.preventDefault();return;}
+      if (PRODUCT_OPTIONS.quantity && PRODUCT_OPTIONS.quantity.enabled){
+        var qtyChk=document.getElementById('quantitySelect')?document.getElementById('quantitySelect').value:'';
+        if(!qtyChk){alert('Please select a quantity.');e.preventDefault();return;}
+      }
+    } else {
+      if(!colour){alert('Please choose a colour.');e.preventDefault();return;}
+      if(!isStickerV&&!isPartyV){if(!size){alert('Please select a size.');e.preventDefault();return;}if(!placement){alert('Please choose a placement.');e.preventDefault();return;}}
+      if(isStickerV||isPartyV){var qty=document.getElementById('quantitySelect')?document.getElementById('quantitySelect').value:'';if(!qty){alert('Please select a quantity.');e.preventDefault();return;}}
+    }
+
     var overrideInput=document.getElementById('priceOverride');var priceInput=form.querySelector('input[name="price"]');
     if(overrideInput&&priceInput)priceInput.value=overrideInput.value;
     var artworkFile=document.getElementById('artworkFile');var artworkFileBack=document.getElementById('artworkFileBack');

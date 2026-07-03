@@ -192,7 +192,7 @@ def productpage(request, slug=None):
             "cart_count":       cart_count,
             "wish_count":       wish_count,
             "wished_ids":       wished_ids,
-            "product_category": "",   
+            "product_category": "",
         })
 
     product = get_object_or_404(Product, slug=slug, is_active=True)
@@ -216,18 +216,20 @@ def productpage(request, slug=None):
     cart_count = sum(int(item.get("quantity", 1)) for item in cart)
 
     product_category = (product.category or "").strip().lower()
+    product_options_json = json.dumps(product.customisation_config or {})
 
     return render(request, "product.html", {
-        "product":          product,
-        "related":          related,
-        "is_wished":        is_wished,
-        "wish_count":       wish_count,
-        "cart_count":       cart_count,
-        "placements":       placements,
-        "product_category": product_category,
-        "products":         [],
-        "category_filter":  "",
-        "wished_ids":       set(),
+        "product":              product,
+        "related":              related,
+        "is_wished":            is_wished,
+        "wish_count":           wish_count,
+        "cart_count":           cart_count,
+        "placements":           placements,
+        "product_category":     product_category,
+        "products":             [],
+        "category_filter":      "",
+        "wished_ids":           set(),
+        "product_options_json": product_options_json,
     })
 
 

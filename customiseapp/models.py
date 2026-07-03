@@ -85,7 +85,7 @@ class Product(models.Model):
         max_length=100, blank=True, editable=False,
         help_text="Stripe Price ID (price_...) — auto-synced on save",
     )
-
+    customisation_config = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

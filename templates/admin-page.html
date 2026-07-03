@@ -697,6 +697,103 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
 
           </div><!-- /variation-grid -->
         </div><!-- /variation-section -->
+        </div><!-- /variation-section -->
+
+        <div class="variation-section">
+          <span class="variation-section-label">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:5px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Customisation Options
+          </span>
+          <p class="variation-section-hint">Choose which options appear on this product's page, and set the exact values shown in each dropdown. Unchecked options are hidden from customers.</p>
+
+          <div class="field" style="margin-bottom:16px;">
+            <label style="display:flex;align-items:center;gap:8px;font-weight:700;">
+              <input type="checkbox" name="opt_colour_enabled" {% if opt_display.colour_enabled %}checked{% endif %} style="width:auto;cursor:none;"/>
+              Enable Colour Dropdown
+            </label>
+            <textarea name="opt_colour_values" placeholder="One colour per line, e.g.&#10;White&#10;Black&#10;Navy Blue" style="margin-top:6px;min-height:70px;">{{ opt_display.colour_values }}</textarea>
+            <span class="field-hint">One value per line — populates the "Choose Colour" dropdown.</span>
+          </div>
+
+          <div class="field" style="margin-bottom:16px;">
+            <label style="display:flex;align-items:center;gap:8px;font-weight:700;">
+              <input type="checkbox" name="opt_size_enabled" {% if opt_display.size_enabled %}checked{% endif %} style="width:auto;cursor:none;"/>
+              Enable Size Selector
+            </label>
+            <textarea name="opt_size_values" placeholder="One size per line, e.g.&#10;S&#10;M&#10;L" style="margin-top:6px;min-height:70px;">{{ opt_display.size_values }}</textarea>
+            <input type="text" name="opt_size_note" placeholder="Optional note, e.g. XXS & 4XL+ +£2" value="{{ opt_display.size_note }}" style="margin-top:8px;"/>
+          </div>
+
+          <div class="field" style="margin-bottom:16px;">
+            <label style="display:flex;align-items:center;gap:8px;font-weight:700;">
+              <input type="checkbox" name="opt_artwork_enabled" {% if opt_display.artwork_enabled %}checked{% endif %} style="width:auto;cursor:none;"/>
+              Enable Artwork Size Selector
+            </label>
+            <textarea name="opt_artwork_values" placeholder="Label|Inches|Add-on price, one per line, e.g.&#10;Small|4|0&#10;Medium|6|3&#10;Large|8|5" style="margin-top:6px;min-height:70px;">{{ opt_display.artwork_values }}</textarea>
+            <span class="field-hint">Format: Label|Inches|Add-on price</span>
+          </div>
+
+          <div class="field" style="margin-bottom:16px;">
+            <label style="display:flex;align-items:center;gap:8px;font-weight:700;">
+              <input type="checkbox" name="opt_printside_enabled" {% if opt_display.printside_enabled %}checked{% endif %} style="width:auto;cursor:none;"/>
+              Enable Printing Side Selector
+            </label>
+            <textarea name="opt_printside_values" placeholder="Label|Add-on price, one per line, e.g.&#10;Front Only|0&#10;Front & Back|3" style="margin-top:6px;min-height:70px;">{{ opt_display.printside_values }}</textarea>
+            <span class="field-hint">Format: Label|Add-on price</span>
+          </div>
+
+          <div class="field" style="margin-bottom:16px;">
+            <label style="display:flex;align-items:center;gap:8px;font-weight:700;">
+              <input type="checkbox" name="opt_placement_enabled" {% if opt_display.placement_enabled %}checked{% endif %} style="width:auto;cursor:none;"/>
+              Enable Placement Selector
+            </label>
+            <textarea name="opt_placement_values" placeholder="One placement per line" style="margin-top:6px;min-height:70px;">{{ opt_display.placement_values }}</textarea>
+          </div>
+
+          <div class="field" style="margin-bottom:16px;">
+            <label style="display:flex;align-items:center;gap:8px;font-weight:700;">
+              <input type="checkbox" name="opt_quantity_enabled" {% if opt_display.quantity_enabled %}checked{% endif %} style="width:auto;cursor:none;"/>
+              Enable Quantity Dropdown
+            </label>
+            <input type="text" name="opt_quantity_values" placeholder="Comma-separated, e.g. 1, 6, 12, 24, 50, 100" value="{{ opt_display.quantity_values }}" style="margin-top:6px;"/>
+          </div>
+
+          <div class="field" style="margin-bottom:16px;">
+            <label style="display:flex;align-items:center;gap:8px;font-weight:700;">
+              <input type="checkbox" name="opt_textbox_enabled" {% if opt_display.textbox_enabled %}checked{% endif %} style="width:auto;cursor:none;"/>
+              Enable Custom Text Box
+            </label>
+            <div class="form-row-grid" style="margin-top:6px;">
+              <div class="field"><label>Field Label</label><input type="text" name="opt_textbox_label" value="{{ opt_display.textbox_label|default:'Custom Text' }}"/></div>
+              <div class="field"><label>Max Characters</label><input type="number" name="opt_textbox_maxlen" min="1" value="{{ opt_display.textbox_maxlen|default:50 }}"/></div>
+            </div>
+          </div>
+
+          <div class="field" style="margin-bottom:16px;">
+            <label style="display:flex;align-items:center;gap:8px;font-weight:700;">
+              <input type="checkbox" name="opt_font_enabled" {% if opt_display.font_enabled %}checked{% endif %} style="width:auto;cursor:none;"/>
+              Enable Font Selector
+            </label>
+            <textarea name="opt_font_values" placeholder="One font name per line, e.g.&#10;Classic Serif&#10;Modern Sans" style="margin-top:6px;min-height:70px;">{{ opt_display.font_values }}</textarea>
+          </div>
+
+          <div class="field" style="margin-bottom:16px;">
+            <label style="display:flex;align-items:center;gap:8px;font-weight:700;">
+              <input type="checkbox" name="opt_artwork_upload_enabled" {% if opt_display.artwork_upload_enabled %}checked{% endif %} style="width:auto;cursor:none;"/>
+              Enable Artwork File Upload
+            </label>
+            <span class="field-hint">Lets customers upload their own artwork file(s). If "Front & Back" printing is also selectable, a second upload slot for back artwork appears automatically. The artwork disclaimer note only shows when this is on.</span>
+          </div>
+
+          <div class="field">
+            <label style="display:flex;align-items:center;gap:8px;font-weight:700;">
+              <input type="checkbox" name="opt_additional_enabled" {% if opt_display.additional_enabled %}checked{% endif %} style="width:auto;cursor:none;"/>
+              Enable "Additional Information" free-text box
+            </label>
+          </div>
+        </div><!-- /customisation-options -->
+
+        <div class="form-actions"><button type="submit" class="btn-primary">
 
         <div class="form-actions"><button type="submit" class="btn-primary"><div class="btn-inner"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>{% if edit_product %}Save Changes{% else %}Add Product{% endif %}</div></button><a class="btn-ghost" href="?tab=products">Cancel</a></div>
       </form>
