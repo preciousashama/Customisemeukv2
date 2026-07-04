@@ -14,11 +14,12 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from .file_validators import validate_multiple_design_assets
+from django.db.models import Prefetch
 from .models import (
     CarouselSlide, Product, Wishlist,
-   DesignSubmission,DesignSubmissionFile,
-   SendItemFile,SendItemRequest,
-   ProductCustomisation,
+    DesignSubmission, DesignSubmissionFile,
+    SendItemFile, SendItemRequest,
+    ProductCustomisation, ProductImage,
     SERVICE_TYPES, BUDGET_RANGES,
 )
 from orderapp.models import OrderItem,Order
@@ -170,9 +171,14 @@ def shoppage(request):
 
 def productpage(request, slug=None):
     category_filter = request.GET.get("category", "").strip()
+    variation_qs = ProductImage.objects.order_by("position")
 
     if not slug:
-        products_qs = Product.objects.filter(is_active=True).order_by("name")
+        products_qs = (
+            Product.objects.filter(is_active=True)
+            .order_by("name")
+            .prefetch_related(Prefetch("variation_images", queryset=variation_qs))
+        )
         if category_filter:
             products_qs = products_qs.filter(category__iexact=category_filter)
 
@@ -195,7 +201,10 @@ def productpage(request, slug=None):
             "product_category": "",
         })
 
-    product = get_object_or_404(Product, slug=slug, is_active=True)
+    product = get_object_or_404(
+        Product.objects.prefetch_related(Prefetch("variation_images", queryset=variation_qs)),
+        slug=slug, is_active=True
+    )
 
     related = (
         Product.objects.filter(is_active=True, category=product.category)
