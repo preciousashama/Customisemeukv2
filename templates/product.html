@@ -823,11 +823,9 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
 
   <div class="tabs-section">
     <div class="tabs-row">
-      <button class="tab-btn active" onclick="switchTab(this,'desc')">Product Description</button>
       <button class="tab-btn" onclick="switchTab(this,'care')">Material &amp; Care</button>
       <button class="tab-btn" onclick="switchTab(this,'shipping')">Shipping &amp; Returns</button>
     </div>
-    <div id="tab-desc" class="tab-content"><p>{{ product.description|default:"No description available." }}</p></div>
     <div id="tab-care" class="tab-content" style="display:none;"><ul>
       <li>Machine wash cold, inside out, on gentle cycle</li>
       <li>Tumble dry low or lay flat to dry</li>
