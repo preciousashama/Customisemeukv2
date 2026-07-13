@@ -269,6 +269,12 @@ nav>.nav-item>a .chevron{display:inline-block;width:7px;height:7px;border-right:
 .placement-btn{padding:10px 6px;border:1px solid var(--grey-6);background:var(--grey-8);font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--grey-3);cursor:none;transition:border-color .2s,background .2s,color .2s;text-align:center;line-height:1.3;}
 .placement-btn:hover{border-color:var(--grey-3);color:var(--black);}
 .placement-btn.active{border-color:var(--black);background:var(--black);color:var(--white);}
+.qty-stepper{display:inline-flex;align-items:center;border:1px solid var(--grey-6);border-radius:10px;overflow:hidden;width:fit-content;background:var(--white);}
+.qty-stepper-btn{width:46px;height:46px;background:var(--white);border:none;font-size:20px;line-height:1;font-weight:400;color:#2563eb;cursor:none;display:flex;align-items:center;justify-content:center;transition:background .15s;}
+.qty-stepper-btn:hover{background:var(--grey-8);}
+.qty-stepper-btn:disabled{color:var(--grey-6);cursor:not-allowed;}
+.qty-stepper-input{width:60px;height:46px;border:none;border-left:1px solid var(--grey-6);border-right:1px solid var(--grey-6);text-align:center;font-size:15px;font-family:var(--sans);color:var(--black);outline:none;-moz-appearance:textfield;background:var(--white);}
+.qty-stepper-input::-webkit-outer-spin-button,.qty-stepper-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .artwork-upload-label{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1.5px dashed var(--grey-5);padding:28px 16px;background:var(--grey-8);cursor:none;transition:border-color .2s,background .2s;text-align:center;}
 .artwork-upload-label:hover{border-color:var(--black);background:var(--white);}
 .artwork-upload-label svg{color:var(--grey-4);}
@@ -713,6 +719,11 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             <select class="field-input" id="quantitySelect" name="quantity">
               <option value="">— Select quantity —</option>
             </select>
+            <div class="qty-stepper" id="qtyStepper" style="display:none;">
+              <button type="button" class="qty-stepper-btn" id="qtyDecBtn" aria-label="Decrease quantity">&minus;</button>
+              <input type="number" class="qty-stepper-input" id="qtyStepperInput" value="1" min="1" readonly/>
+              <button type="button" class="qty-stepper-btn" id="qtyIncBtn" aria-label="Increase quantity">+</button>
+            </div>
           </div>
           <div class="field-block" id="blockPartyText" style="display:none;">
             <div class="field-label"><span class="step-num" id="stepPartyText">3</span> Custom Text</div>
@@ -1043,8 +1054,9 @@ function switchTab(btn,id){
           document.querySelectorAll('.js-print-side').forEach(function(b){b.classList.remove('active');});
           this.classList.add('active'); printAddCfg=parseFloat(this.dataset.add)||0;
           var isFB = /front\s*&\s*back/i.test(this.dataset.side);
-          var bb=document.getElementById('blockArtworkBack'); if(bb) bb.style.display=isFB?'':'none';
-          var sl=document.getElementById('artworkSideLabel'); if(sl) sl.textContent=isFB?'(front)':'';
+          var forceSides = !!(PRODUCT_OPTIONS.artwork_upload && PRODUCT_OPTIONS.artwork_upload.separate_sides);
+          var bb=document.getElementById('blockArtworkBack'); if(bb && !forceSides) bb.style.display=isFB?'':'none';
+          var sl=document.getElementById('artworkSideLabel'); if(sl) sl.textContent=(isFB||forceSides)?'(front)':'';
           updatePriceCfg(); buildVariantCfg();
         });
         pgEl.appendChild(btn);
@@ -1055,24 +1067,61 @@ function switchTab(btn,id){
     if (plCfg && plCfg.enabled && plCfg.values && plCfg.values.length) {
       showBlock('blockPlacement'); stepNumCfg('stepPlacement');
       var pgdEl = document.getElementById('placementGrid'); pgdEl.innerHTML='';
+      var placementMultiCfg = !!plCfg.multi;
+      var selectedPlacementsArrCfg = [];
       plCfg.values.forEach(function(v){
         var btn=document.createElement('button'); btn.type='button';
         btn.className='placement-btn js-placement'; btn.dataset.placement=v; btn.textContent=v;
         btn.addEventListener('click', function(){
-          document.querySelectorAll('.js-placement').forEach(function(b){b.classList.remove('active');});
-          this.classList.add('active'); selectedPlacementCfg=this.dataset.placement;
-          document.getElementById('placementField').value=selectedPlacementCfg; buildVariantCfg();
+          if (placementMultiCfg) {
+            this.classList.toggle('active');
+            var idx = selectedPlacementsArrCfg.indexOf(v);
+            if (this.classList.contains('active')) { if (idx===-1) selectedPlacementsArrCfg.push(v); }
+            else if (idx!==-1) { selectedPlacementsArrCfg.splice(idx,1); }
+          } else {
+            document.querySelectorAll('.js-placement').forEach(function(b){b.classList.remove('active');});
+            this.classList.add('active');
+            selectedPlacementsArrCfg = [v];
+          }
+          selectedPlacementCfg = selectedPlacementsArrCfg.join(', ');
+          document.getElementById('placementField').value = selectedPlacementCfg;
+          buildVariantCfg();
         });
         pgdEl.appendChild(btn);
       });
     }
 
     var qtyCfg = PRODUCT_OPTIONS.quantity;
-    if (qtyCfg && qtyCfg.enabled && qtyCfg.values && qtyCfg.values.length) {
-      showBlock('blockQuantity'); stepNumCfg('stepQuantity');
-      var qsEl = document.getElementById('quantitySelect');
-      qtyCfg.values.forEach(function(v){ var o=document.createElement('option'); o.value=v; o.textContent=v; qsEl.appendChild(o); });
-      qsEl.addEventListener('change', buildVariantCfg);
+    var qtyStepperModeCfg = false;
+    if (qtyCfg && qtyCfg.enabled) {
+      if (qtyCfg.mode === 'stepper') {
+        qtyStepperModeCfg = true;
+        showBlock('blockQuantity'); stepNumCfg('stepQuantity');
+        var qsElHide = document.getElementById('quantitySelect');
+        if (qsElHide) { qsElHide.style.display = 'none'; qsElHide.removeAttribute('name'); }
+        var qStepperEl = document.getElementById('qtyStepper'); if (qStepperEl) qStepperEl.style.display = 'inline-flex';
+        var qMinCfg = parseInt(qtyCfg.min, 10) || 1;
+        var qStepCfg = parseInt(qtyCfg.step, 10) || 1;
+        var qDefaultCfg = parseInt(qtyCfg.default, 10) || qMinCfg;
+        var qInputEl = document.getElementById('qtyStepperInput');
+        if (qInputEl) {
+          qInputEl.name = 'quantity';
+          qInputEl.min = qMinCfg; qInputEl.step = qStepCfg; qInputEl.value = qDefaultCfg;
+          document.getElementById('qtyDecBtn').addEventListener('click', function(){
+            var v = (parseInt(qInputEl.value, 10) || qMinCfg) - qStepCfg;
+            qInputEl.value = Math.max(qMinCfg, v); buildVariantCfg();
+          });
+          document.getElementById('qtyIncBtn').addEventListener('click', function(){
+            var v = (parseInt(qInputEl.value, 10) || qMinCfg) + qStepCfg;
+            qInputEl.value = v; buildVariantCfg();
+          });
+        }
+      } else if (qtyCfg.values && qtyCfg.values.length) {
+        showBlock('blockQuantity'); stepNumCfg('stepQuantity');
+        var qsEl = document.getElementById('quantitySelect');
+        qtyCfg.values.forEach(function(v){ var o=document.createElement('option'); o.value=v; o.textContent=v; qsEl.appendChild(o); });
+        qsEl.addEventListener('change', buildVariantCfg);
+      }
     }
 
     var tbCfg = PRODUCT_OPTIONS.text_box;
@@ -1099,6 +1148,10 @@ function switchTab(btn,id){
     if (awCfg && awCfg.enabled) {
       showBlock('blockArtwork'); stepNumCfg('stepArtwork');
       showBlock('blockDisclaimer');
+      if (awCfg.separate_sides) {
+        showBlock('blockArtworkBack');
+        var sideLblCfg = document.getElementById('artworkSideLabel'); if (sideLblCfg) sideLblCfg.textContent = '(front)';
+      }
     } else {
       hideBlock('blockArtwork');
       hideBlock('blockArtworkBack');
@@ -1119,7 +1172,10 @@ function switchTab(btn,id){
     function buildVariantCfg(){
       var colour=(document.getElementById('colourSelect')&&document.getElementById('colourSelect').value)||'';
       var size=(document.getElementById('sizeField')&&document.getElementById('sizeField').value)||'';
-      var qtyV=(document.getElementById('quantitySelect')&&document.getElementById('quantitySelect').value)?'Qty: '+document.getElementById('quantitySelect').value:'';
+      var qtySelEl=document.getElementById('quantitySelect');
+      var qtyStepEl=document.getElementById('qtyStepperInput');
+      var qtyRaw=(qtyStepEl&&qtyStepEl.name==='quantity')?qtyStepEl.value:((qtySelEl&&qtySelEl.value)?qtySelEl.value:'');
+      var qtyV=qtyRaw?'Qty: '+qtyRaw:'';
       var abEl=document.querySelector('.js-art-size.active');
       var artSize=abEl?(abEl.dataset.size+(abEl.dataset.inches?' ('+abEl.dataset.inches+' inches)':'')):'';
       var pbEl=document.querySelector('.js-print-side.active');
@@ -1293,7 +1349,9 @@ if(form){
       if (PRODUCT_OPTIONS.size && PRODUCT_OPTIONS.size.enabled && !size){alert('Please select a size.');e.preventDefault();return;}
       if (PRODUCT_OPTIONS.placement && PRODUCT_OPTIONS.placement.enabled && !placement){alert('Please choose a placement.');e.preventDefault();return;}
       if (PRODUCT_OPTIONS.quantity && PRODUCT_OPTIONS.quantity.enabled){
-        var qtyChk=document.getElementById('quantitySelect')?document.getElementById('quantitySelect').value:'';
+        var qtySelChk=document.getElementById('quantitySelect');
+        var qtyStepChk=document.getElementById('qtyStepperInput');
+        var qtyChk=(qtyStepChk&&qtyStepChk.name==='quantity')?qtyStepChk.value:(qtySelChk?qtySelChk.value:'');
         if(!qtyChk){alert('Please select a quantity.');e.preventDefault();return;}
       }
     } else {

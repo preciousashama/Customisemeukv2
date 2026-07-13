@@ -747,15 +747,36 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
               <input type="checkbox" name="opt_placement_enabled" {% if opt_display.placement_enabled %}checked{% endif %} style="width:auto;cursor:none;"/>
               Enable Placement Selector
             </label>
+            <label style="display:flex;align-items:center;gap:8px;font-weight:500;font-size:12px;margin-top:8px;">
+              <input type="checkbox" name="opt_placement_multi" {% if opt_display.placement_multi %}checked{% endif %} style="width:auto;cursor:none;"/>
+              Allow customers to select multiple placements
+            </label>
             <textarea name="opt_placement_values" placeholder="One placement per line" style="margin-top:6px;min-height:70px;">{{ opt_display.placement_values }}</textarea>
           </div>
 
           <div class="field" style="margin-bottom:16px;">
             <label style="display:flex;align-items:center;gap:8px;font-weight:700;">
               <input type="checkbox" name="opt_quantity_enabled" {% if opt_display.quantity_enabled %}checked{% endif %} style="width:auto;cursor:none;"/>
-              Enable Quantity Dropdown
+              Enable Quantity Selector
             </label>
-            <input type="text" name="opt_quantity_values" placeholder="Comma-separated, e.g. 1, 6, 12, 24, 50, 100" value="{{ opt_display.quantity_values }}" style="margin-top:6px;"/>
+            <div style="display:flex;gap:20px;margin-top:10px;">
+              <label style="display:flex;align-items:center;gap:6px;font-weight:500;font-size:12px;">
+                <input type="radio" name="opt_quantity_mode" value="dropdown" {% if opt_display.quantity_mode != 'stepper' %}checked{% endif %} style="width:auto;cursor:none;"/>
+                Preset Dropdown
+              </label>
+              <label style="display:flex;align-items:center;gap:6px;font-weight:500;font-size:12px;">
+                <input type="radio" name="opt_quantity_mode" value="stepper" {% if opt_display.quantity_mode == 'stepper' %}checked{% endif %} style="width:auto;cursor:none;"/>
+                Manual Stepper (&minus; / +)
+              </label>
+            </div>
+            <input type="text" name="opt_quantity_values" placeholder="Comma-separated, e.g. 1, 6, 12, 24, 50, 100" value="{{ opt_display.quantity_values }}" style="margin-top:10px;"/>
+            <span class="field-hint">Used only when "Preset Dropdown" is selected above.</span>
+            <div class="form-row-grid" style="margin-top:10px;">
+              <div class="field"><label>Minimum Qty</label><input type="number" name="opt_quantity_min" min="1" value="{{ opt_display.quantity_min|default:1 }}"/></div>
+              <div class="field"><label>Step</label><input type="number" name="opt_quantity_step" min="1" value="{{ opt_display.quantity_step|default:1 }}"/></div>
+              <div class="field"><label>Default Qty</label><input type="number" name="opt_quantity_default" min="1" value="{{ opt_display.quantity_default|default:1 }}"/></div>
+            </div>
+            <span class="field-hint">Used only when "Manual Stepper" is selected above. Customers tap &minus; / + to adjust.</span>
           </div>
 
           <div class="field" style="margin-bottom:16px;">
@@ -782,7 +803,11 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
               <input type="checkbox" name="opt_artwork_upload_enabled" {% if opt_display.artwork_upload_enabled %}checked{% endif %} style="width:auto;cursor:none;"/>
               Enable Artwork File Upload
             </label>
-            <span class="field-hint">Lets customers upload their own artwork file(s). If "Front & Back" printing is also selectable, a second upload slot for back artwork appears automatically. The artwork disclaimer note only shows when this is on.</span>
+            <label style="display:flex;align-items:center;gap:8px;font-weight:500;font-size:12px;margin-top:8px;">
+              <input type="checkbox" name="opt_artwork_sides_enabled" {% if opt_display.artwork_sides_enabled %}checked{% endif %} style="width:auto;cursor:none;"/>
+              Always show separate Front &amp; Back upload slots
+            </label>
+            <span class="field-hint">Lets customers upload their own artwork file(s). By default, a second upload slot for back artwork only appears when "Front &amp; Back" printing is chosen. Tick the box above to always show both upload slots, regardless of the Printing Side selection. The artwork disclaimer note only shows when upload is on.</span>
           </div>
 
           <div class="field">

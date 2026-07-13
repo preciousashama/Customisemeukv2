@@ -430,6 +430,18 @@ def _parse_customisation_config(POST):
         if tok.isdigit():
             qty_vals.append(int(tok))
 
+    qty_mode = POST.get("opt_quantity_mode", "dropdown").strip()
+    if qty_mode not in ("dropdown", "stepper"):
+        qty_mode = "dropdown"
+
+    def _pos_int(name, default):
+        raw = POST.get(name, "").strip()
+        try:
+            val = int(raw)
+            return val if val > 0 else default
+        except (ValueError, TypeError):
+            return default
+
     art_vals = []
     for line in lines("opt_artwork_values"):
         parts = [p.strip() for p in line.split("|")]
@@ -459,15 +471,24 @@ def _parse_customisation_config(POST):
                              "note": POST.get("opt_size_note", "").strip()},
         "artwork_size":    {"enabled": POST.get("opt_artwork_enabled") == "on", "values": art_vals},
         "printing_side":   {"enabled": POST.get("opt_printside_enabled") == "on", "values": side_vals},
-        "placement":       {"enabled": POST.get("opt_placement_enabled") == "on", "values": lines("opt_placement_values")},
-        "quantity":        {"enabled": POST.get("opt_quantity_enabled") == "on", "values": qty_vals},
+        "placement":       {"enabled": POST.get("opt_placement_enabled") == "on",
+                             "multi": POST.get("opt_placement_multi") == "on",
+                             "values": lines("opt_placement_values")},
+        "quantity":        {"enabled": POST.get("opt_quantity_enabled") == "on",
+                             "mode": qty_mode,
+                             "values": qty_vals,
+                             "min": _pos_int("opt_quantity_min", 1),
+                             "step": _pos_int("opt_quantity_step", 1),
+                             "default": _pos_int("opt_quantity_default", 1)},
         "text_box":        {"enabled": POST.get("opt_textbox_enabled") == "on",
                              "label": POST.get("opt_textbox_label", "Custom Text").strip() or "Custom Text",
                              "max_length": int(POST.get("opt_textbox_maxlen") or 50)},
         "font_select":     {"enabled": POST.get("opt_font_enabled") == "on", "values": lines("opt_font_values")},
         "additional_info": {"enabled": POST.get("opt_additional_enabled") == "on"},
-        "artwork_upload":  {"enabled": POST.get("opt_artwork_upload_enabled") == "on"},
+        "artwork_upload":  {"enabled": POST.get("opt_artwork_upload_enabled") == "on",
+                             "separate_sides": POST.get("opt_artwork_sides_enabled") == "on"},
     }
+
 
 
 def _format_config_for_admin(cfg):
@@ -475,18 +496,26 @@ def _format_config_for_admin(cfg):
     join = lambda vals: "\n".join(str(v) for v in (vals or []))
     art = cfg.get("artwork_size", {})
     side = cfg.get("printing_side", {})
+    placement = cfg.get("placement", {})
+    quantity = cfg.get("quantity", {})
+    artwork_upload = cfg.get("artwork_upload", {})
     return {
         "colour_enabled": cfg.get("colour", {}).get("enabled", False),
         "colour_values": join(cfg.get("colour", {}).get("values")),
         "size_enabled": cfg.get("size", {}).get("enabled", False),
         "size_values": join(cfg.get("size", {}).get("values")),
         "size_note": cfg.get("size", {}).get("note", ""),
-        "placement_enabled": cfg.get("placement", {}).get("enabled", False),
-        "placement_values": join(cfg.get("placement", {}).get("values")),
+        "placement_enabled": placement.get("enabled", False),
+        "placement_multi": placement.get("multi", False),
+        "placement_values": join(placement.get("values")),
         "font_enabled": cfg.get("font_select", {}).get("enabled", False),
         "font_values": join(cfg.get("font_select", {}).get("values")),
-        "quantity_enabled": cfg.get("quantity", {}).get("enabled", False),
-        "quantity_values": ", ".join(str(v) for v in cfg.get("quantity", {}).get("values", [])),
+        "quantity_enabled": quantity.get("enabled", False),
+        "quantity_mode": quantity.get("mode", "dropdown"),
+        "quantity_min": quantity.get("min", 1),
+        "quantity_step": quantity.get("step", 1),
+        "quantity_default": quantity.get("default", 1),
+        "quantity_values": ", ".join(str(v) for v in quantity.get("values", [])),
         "artwork_enabled": art.get("enabled", False),
         "artwork_values": "\n".join(f"{v.get('label','')}|{v.get('inches','')}|{v.get('add',0)}" for v in art.get("values", [])),
         "printside_enabled": side.get("enabled", False),
@@ -495,7 +524,8 @@ def _format_config_for_admin(cfg):
         "textbox_label": cfg.get("text_box", {}).get("label", "Custom Text"),
         "textbox_maxlen": cfg.get("text_box", {}).get("max_length", 50),
         "additional_enabled": cfg.get("additional_info", {}).get("enabled", False),
-        "artwork_upload_enabled": cfg.get("artwork_upload", {}).get("enabled", False),
+        "artwork_upload_enabled": artwork_upload.get("enabled", False),
+        "artwork_sides_enabled": artwork_upload.get("separate_sides", False),
     }
 
 
