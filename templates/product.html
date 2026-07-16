@@ -269,7 +269,7 @@ nav>.nav-item>a .chevron{display:inline-block;width:7px;height:7px;border-right:
 .placement-btn{padding:10px 6px;border:1px solid var(--grey-6);background:var(--grey-8);font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--grey-3);cursor:none;transition:border-color .2s,background .2s,color .2s;text-align:center;line-height:1.3;}
 .placement-btn:hover{border-color:var(--grey-3);color:var(--black);}
 .placement-btn.active{border-color:var(--black);background:var(--black);color:var(--white);}
-.product-desc-under-image{grid-area:desc;align-self:start;margin-top:0;font-size:13px;line-height:1.85;color:var(--grey-3);}
+.tabs-section{grid-area:desc;align-self:start;padding-top:22px;border-top:1px solid var(--grey-7);}
 .qty-stepper{display:inline-flex;align-items:center;border:1px solid var(--grey-6);border-radius:10px;overflow:hidden;width:fit-content;background:var(--white);}
 .qty-stepper-btn{width:46px;height:46px;background:var(--white);border:none;font-size:20px;line-height:1;font-weight:400;color:#2563eb;cursor:none;display:flex;align-items:center;justify-content:center;transition:background .15s;}
 .qty-stepper-btn:hover{background:var(--grey-8);}
@@ -299,8 +299,7 @@ nav>.nav-item>a .chevron{display:inline-block;width:7px;height:7px;border-right:
 .info-card-icon{color:var(--grey-4);flex-shrink:0;}
 .info-card-label{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--grey-5);font-weight:600;display:block;margin-bottom:2px;}
 .info-card-value{font-size:13px;font-weight:600;color:var(--black);}
-.tabs-section{padding:72px 80px;border-top:1px solid var(--grey-7);max-width:1400px;margin:0 auto;}
-.tabs-row{display:flex;gap:0;border-bottom:1px solid var(--grey-6);margin-bottom:48px;overflow-x:auto;}
+.tabs-row{display:flex;gap:0;border-bottom:1px solid var(--grey-6);margin-bottom:28px;overflow-x:auto;}
 .tab-btn{padding:16px 28px;background:none;border:none;font-family:var(--sans);font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey-4);cursor:none;border-bottom:1px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color .2s,border-color .2s;}
 .tab-btn:hover{color:var(--black);}
 .tab-btn.active{color:var(--black);border-bottom-color:var(--black);font-weight:600;}
@@ -330,7 +329,6 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
 @media(max-width:1100px){
   .product-section{column-gap:40px;row-gap:14px;padding:32px 40px 64px;}
   .breadcrumb{padding:24px 40px 0;}
-  .tabs-section{padding:64px 40px;}
   .footer-top{grid-template-columns:1fr 1fr;gap:40px;}
   .listing-hero{padding:32px 40px 24px;}
   .listing-body{padding:36px 40px 80px;}
@@ -343,7 +341,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
   .hamburger{display:flex !important;}.mobile-nav{display:block;top:calc(28px + 56px);}
   .page-wrap{padding-top:84px !important;}.breadcrumb{padding:20px 24px 0;}
   .product-section{grid-template-columns:1fr;grid-template-areas:"head" "desc" "image" "details";padding:24px 24px 64px;row-gap:20px;}
-  .tabs-section{padding:48px 24px;}.action-row{flex-direction:column;}
+  .action-row{flex-direction:column;}
   footer{padding:60px 24px 32px;}.footer-top{grid-template-columns:1fr;gap:36px;padding-bottom:40px;}
   .listing-hero{padding:24px 24px 20px;}
   .listing-body{padding:24px 24px 64px;}
@@ -659,9 +657,24 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
       {% endwith %}
     </div>
 
-    {% if product.description %}
-    <p class="product-desc-under-image">{{ product.description }}</p>
-    {% endif %}
+    <div class="tabs-section">
+      <div class="tabs-row">
+        <button class="tab-btn active" onclick="switchTab(this,'desc')">Product Description</button>
+        <button class="tab-btn" onclick="switchTab(this,'care')">Material &amp; Care</button>
+        <button class="tab-btn" onclick="switchTab(this,'shipping')">Shipping &amp; Returns</button>
+      </div>
+      <div id="tab-desc" class="tab-content"><p>{{ product.description|default:"No description available." }}</p></div>
+      <div id="tab-care" class="tab-content" style="display:none;"><ul>
+        <li>Machine wash cold, inside out, on gentle cycle</li>
+        <li>Tumble dry low or lay flat to dry</li>
+        <li>Do not iron directly over embroidery</li>
+      </ul></div>
+      <div id="tab-shipping" class="tab-content" style="display:none;"><ul>
+        <li>Standard: ships within 3–5 business days</li>
+        <li>Free returns within 30 days on non-personalised items</li>
+        <li>Personalised items are final sale unless defective</li>
+      </ul></div>
+    </div>
 
     <!-- DETAILS PANEL -->
     <div class="details-panel">
@@ -819,25 +832,6 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
         </div>
       </div>
     </div>
-  </div>
-
-  <div class="tabs-section">
-    <div class="tabs-row">
-      <button class="tab-btn active" onclick="switchTab(this,'desc')">Product Description</button>
-      <button class="tab-btn" onclick="switchTab(this,'care')">Material &amp; Care</button>
-      <button class="tab-btn" onclick="switchTab(this,'shipping')">Shipping &amp; Returns</button>
-    </div>
-    <div id="tab-desc" class="tab-content"><p>{{ product.description|default:"No description available." }}</p></div>
-    <div id="tab-care" class="tab-content" style="display:none;"><ul>
-      <li>Machine wash cold, inside out, on gentle cycle</li>
-      <li>Tumble dry low or lay flat to dry</li>
-      <li>Do not iron directly over embroidery</li>
-    </ul></div>
-    <div id="tab-shipping" class="tab-content" style="display:none;"><ul>
-      <li>Standard: ships within 3–5 business days</li>
-      <li>Free returns within 30 days on non-personalised items</li>
-      <li>Personalised items are final sale unless defective</li>
-    </ul></div>
   </div>
 
   {% endif %}{# end detail mode #}
