@@ -47,11 +47,148 @@ def _get_cart(request):
     return enriched
 
 
-def _cart_totals(cart):
+def _minor_to_decimal(value):
+    try:
+        return Decimal(str(value or 0)) / Decimal("100")
+    except (InvalidOperation, TypeError):
+        return Decimal("0.00")
+
+
+def _normalise_shipping_option(option):
+    amount = _minor_to_decimal(option.get("fixed_amount", {}).get("amount", 0))
+    delivery = option.get("delivery_estimate") or {}
+    minimum = (delivery.get("minimum") or {}).get("value")
+    maximum = (delivery.get("maximum") or {}).get("value")
+    unit = (delivery.get("minimum") or {}).get("unit") or (delivery.get("maximum") or {}).get("unit") or ""
+    if minimum and maximum:
+        eta = f"{minimum}-{maximum} {unit}".strip()
+    elif minimum:
+        eta = f"{minimum}+ {unit}".strip()
+    else:
+        eta = ""
+    return {
+        "id": option.get("id", ""),
+        "label": option.get("display_name", "Shipping"),
+        "amount": amount,
+        "amount_display": f"{amount:.2f}",
+        "eta": eta,
+    }
+
+
+def _get_shipping_options():
+    fallback = [{
+        "id": "fallback_standard",
+        "label": "Standard Shipping",
+        "amount": Decimal("6.99"),
+        "amount_display": "6.99",
+        "eta": "",
+    }]
+    if not settings.STRIPE_SECRET_KEY:
+        return fallback
+
+    try:
+        rates = stripe.ShippingRate.list(active=True, limit=10)
+    except stripe.StripeError as exc:
+        logger.warning("Could not load Stripe shipping rates: %s", exc)
+        return fallback
+
+    options = []
+    for rate in rates.auto_paging_iter():
+        fixed = rate.get("fixed_amount") or {}
+        if (fixed.get("currency") or "").lower() not in ("", "gbp"):
+            continue
+        options.append(_normalise_shipping_option(rate))
+
+    return sorted(options, key=lambda item: item["amount"]) or fallback
+
+
+def _get_selected_shipping_option(request, shipping_options):
+    selected_id = request.session.get("cart_shipping_rate_id", "")
+    selected = next((opt for opt in shipping_options if opt["id"] == selected_id), None)
+    if selected:
+        return selected
+
+    selected = shipping_options[0] if shipping_options else None
+    if selected:
+        request.session["cart_shipping_rate_id"] = selected["id"]
+        request.session.modified = True
+    return selected
+
+
+def _get_saved_promo(request):
+    promo = request.session.get("cart_promo")
+    return promo if isinstance(promo, dict) else None
+
+
+def _promo_discount_for_subtotal(subtotal, promo):
+    if not promo or subtotal <= 0:
+        return Decimal("0.00")
+
+    percent_off = promo.get("percent_off")
+    if percent_off not in (None, ""):
+        return (subtotal * Decimal(str(percent_off)) / Decimal("100")).quantize(Decimal("0.01"))
+
+    amount_off = promo.get("amount_off")
+    currency = (promo.get("currency") or "").lower()
+    if amount_off not in (None, "") and currency in ("", "gbp"):
+        return min(subtotal, _minor_to_decimal(amount_off))
+
+    return Decimal("0.00")
+
+
+def _cart_totals(cart, shipping_amount=Decimal("0.00"), promo=None):
     subtotal = sum(i["line_total"] for i in cart)
-    shipping  = Decimal("0.00") if subtotal >= 100 else Decimal("6.99")
-    total     = subtotal + shipping
-    return {"subtotal": subtotal, "shipping": shipping, "total": total}
+    shipping = shipping_amount or Decimal("0.00")
+    discount = _promo_discount_for_subtotal(subtotal, promo)
+    total = max(Decimal("0.00"), subtotal + shipping - discount)
+    return {
+        "subtotal": subtotal,
+        "shipping": shipping,
+        "discount": discount,
+        "promo_code": (promo or {}).get("code", ""),
+        "total": total,
+    }
+
+
+def _validate_promo_code(code, subtotal):
+    if not settings.STRIPE_SECRET_KEY:
+        return None, "Stripe is not configured for promo codes yet."
+
+    try:
+        results = stripe.PromotionCode.list(
+            code=code,
+            active=True,
+            limit=10,
+            expand=["data.coupon"],
+        )
+    except stripe.StripeError as exc:
+        logger.error("Stripe promo lookup failed for %s: %s", code, exc)
+        return None, "Could not validate that promo code right now."
+
+    for promo in results.auto_paging_iter():
+        restrictions = promo.get("restrictions") or {}
+        minimum_minor = restrictions.get("minimum_amount")
+        minimum_currency = (restrictions.get("minimum_amount_currency") or "").lower()
+        if minimum_minor and minimum_currency in ("", "gbp"):
+            if subtotal < _minor_to_decimal(minimum_minor):
+                minimum = _minor_to_decimal(minimum_minor)
+                return None, f"This promo code requires a minimum subtotal of GBP {minimum:.2f}."
+
+        coupon = promo.get("coupon") or {}
+        if not coupon:
+            continue
+
+        return {
+            "id": promo.get("id", ""),
+            "code": promo.get("code", code).upper(),
+            "coupon_id": coupon.get("id", ""),
+            "name": coupon.get("name", ""),
+            "percent_off": coupon.get("percent_off"),
+            "amount_off": coupon.get("amount_off"),
+            "currency": coupon.get("currency", "gbp"),
+        }, None
+
+    return None, "That promo code is invalid or no longer active."
 
 
 def header_counts(request):
@@ -438,27 +575,74 @@ def cartpage(request):
  
         elif action == "clear_cart":
             cart = []
+
+        elif action == "select_shipping":
+            shipping_options = _get_shipping_options()
+            selected = next(
+                (opt for opt in shipping_options if opt["id"] == request.POST.get("shipping_rate_id", "")),
+                None,
+            )
+            if not selected:
+                err = "That shipping option is no longer available."
+                return JsonResponse({"error": err}, status=400) if is_ajax else (messages.error(request, err) or redirect("cart-page"))
+            request.session["cart_shipping_rate_id"] = selected["id"]
+            request.session.modified = True
+
+        elif action == "apply_promo":
+            promo_code = request.POST.get("promo_code", "").strip()
+            subtotal = sum(i["line_total"] for i in cart)
+            promo, err = _validate_promo_code(promo_code, subtotal)
+            if err:
+                return JsonResponse({"error": err}, status=400) if is_ajax else (messages.error(request, err) or redirect("cart-page"))
+            request.session["cart_promo"] = promo
+            request.session.modified = True
+
+        elif action == "remove_promo":
+            request.session.pop("cart_promo", None)
+            request.session.modified = True
  
         _save_cart(request, cart)
+        if not cart:
+            request.session.pop("cart_promo", None)
+            request.session.pop("cart_shipping_rate_id", None)
+            request.session.modified = True
         if is_ajax:
             enriched = _get_cart(request)
-            totals   = _cart_totals(enriched)
+            shipping_options = _get_shipping_options()
+            selected_shipping = _get_selected_shipping_option(request, shipping_options)
+            totals = _cart_totals(
+                enriched,
+                shipping_amount=(selected_shipping or {}).get("amount", Decimal("0.00")),
+                promo=_get_saved_promo(request),
+            )
             return JsonResponse({
                 "cart_count": sum(i["quantity"] for i in enriched),
                 "subtotal":   str(totals["subtotal"]),
                 "shipping":   str(totals["shipping"]),
+                "discount":   str(totals["discount"]),
+                "promo_code": totals["promo_code"],
+                "shipping_label": (selected_shipping or {}).get("label", ""),
                 "total":      str(totals["total"]),
             })
         return redirect("cart-page")
  
     # GET
-    enriched    = _get_cart(request)
-    totals      = _cart_totals(enriched)
+    enriched = _get_cart(request)
+    shipping_options = _get_shipping_options()
+    selected_shipping = _get_selected_shipping_option(request, shipping_options)
+    totals = _cart_totals(
+        enriched,
+        shipping_amount=(selected_shipping or {}).get("amount", Decimal("0.00")),
+        promo=_get_saved_promo(request),
+    )
     recommended = Product.objects.filter(is_active=True).order_by("?")[:4]
     return render(request, "cart.html", {
         "cart":           enriched,
         "totals":         totals,
+        "promo":          _get_saved_promo(request),
         "recommended":    recommended,
+        "shipping_options": shipping_options,
+        "selected_shipping": selected_shipping,
         "stripe_pub_key": settings.STRIPE_PUBLISHABLE_KEY,
     })
 
@@ -470,8 +654,15 @@ def create_checkout_session(request):
  
     from customiseapp.views import _get_cart, _cart_totals
  
-    cart    = _get_cart(request)
-    totals  = _cart_totals(cart)
+    cart = _get_cart(request)
+    shipping_options = _get_shipping_options()
+    selected_shipping = _get_selected_shipping_option(request, shipping_options)
+    promo = _get_saved_promo(request)
+    totals = _cart_totals(
+        cart,
+        shipping_amount=(selected_shipping or {}).get("amount", Decimal("0.00")),
+        promo=promo,
+    )
     is_ajax = request.headers.get("x-requested-with") == "XMLHttpRequest"
  
     if not cart:
@@ -523,21 +714,15 @@ def create_checkout_session(request):
                 "quantity": item["quantity"],
             })
  
-  
-    if totals["shipping"] > 0:
-        line_items.append({
-            "price_data": {
-                "currency":     "gbp",
-                "unit_amount":  int(totals["shipping"] * 100),
-                "product_data": {"name": "Standard Shipping"},
-            },
-            "quantity": 1,
-        })
- 
     metadata = {}
     if request.user.is_authenticated:
         metadata["user_id"]    = str(request.user.id)
         metadata["user_email"] = request.user.email
+    if promo:
+        metadata["promo_code"] = promo.get("code", "")
+    if selected_shipping:
+        metadata["shipping_rate_id"] = selected_shipping.get("id", "")
+        metadata["shipping_label"] = selected_shipping.get("label", "")
 
     request.session["pending_cart"] = request.session.get("cart", [])
     request.session.modified = True
@@ -560,7 +745,28 @@ def create_checkout_session(request):
                 "allowed_countries": ["GB", "IE", "FR", "DE", "ES", "IT", "NL", "US"],
             },
             phone_number_collection={"enabled": True},
-            allow_promotion_codes=True,
+            allow_promotion_codes=False,
+            shipping_options=(
+                [{
+                    "shipping_rate_data": {
+                        "type": "fixed_amount",
+                        "fixed_amount": {
+                            "amount": int((selected_shipping or {}).get("amount", Decimal("0.00")) * 100),
+                            "currency": "gbp",
+                        },
+                        "display_name": (selected_shipping or {}).get("label", "Shipping"),
+                    }
+                }]
+                if selected_shipping and selected_shipping["id"] == "fallback_standard"
+                else [{"shipping_rate": selected_shipping["id"]}]
+                if selected_shipping
+                else []
+            ),
+            discounts=(
+                [{"promotion_code": promo["id"]}]
+                if promo and promo.get("id")
+                else []
+            ),
         )
     except stripe.StripeError as e:
         logger.error("Stripe session creation failed: %s", e)
@@ -691,6 +897,8 @@ def _create_order_from_session(sess):
             shipping_county       = addr.get("state", "") or "",
             shipping_postcode     = addr.get("postal_code", "") or "",
             shipping_country      = addr.get("country", "") or "GB",
+            promo_code            = (full_sess.get("metadata") or {}).get("promo_code", "") or "",
+            shipping_method       = (full_sess.get("metadata") or {}).get("shipping_label", "") or "",
         )
  
         # Build items from Stripe line_items
@@ -718,9 +926,17 @@ def _create_order_from_session(sess):
             )
             subtotal += price_dec * qty
  
+        total_details = full_sess.get("total_details") or {}
+        discount_amount = _minor_to_decimal(total_details.get("amount_discount", 0))
+        amount_shipping = _minor_to_decimal(total_details.get("amount_shipping", 0))
         order.subtotal = subtotal
-        order.total    = subtotal + order.shipping_cost
-        order.save(update_fields=["subtotal", "shipping_cost", "total"])
+        order.discount_amount = discount_amount
+        order.shipping_cost = amount_shipping if amount_shipping else order.shipping_cost
+        order.total = _minor_to_decimal(full_sess.get("amount_total", 0))
+        order.save(update_fields=[
+            "subtotal", "discount_amount", "shipping_cost", "total",
+            "promo_code", "shipping_method",
+        ])
  
         # Send confirmation email
         try:

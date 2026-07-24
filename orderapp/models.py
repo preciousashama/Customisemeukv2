@@ -30,6 +30,9 @@ class Order(models.Model):
     status         = models.CharField(max_length=20, choices=ORDER_STATUSES, default="processing")
     subtotal       = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
     shipping_cost  = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
+    shipping_method = models.CharField(max_length=120, blank=True)
+    promo_code     = models.CharField(max_length=80, blank=True)
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
     tax            = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
     total          = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
  

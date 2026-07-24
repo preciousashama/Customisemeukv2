@@ -60,6 +60,13 @@ def _get_attr(obj, key, default=""):
     return getattr(obj, key, default)
 
 
+def _minor_to_decimal(value):
+    try:
+        return Decimal(str(value or 0)) / Decimal("100")
+    except Exception:
+        return Decimal("0.00")
+
+
 def _resolve_stripe_product(price_obj):
     stripe_product_obj = _get_attr(price_obj, "product")
 
@@ -237,6 +244,13 @@ def _build_items_from_stripe(session_id, order):
     return subtotal, shipping_total
 
 
+def _session_money_breakdown(session):
+    total_details = _get_attr(session, "total_details", {}) or {}
+    amount_discount = _minor_to_decimal(_get_attr(total_details, "amount_discount", 0))
+    amount_shipping = _minor_to_decimal(_get_attr(total_details, "amount_shipping", 0))
+    return amount_discount, amount_shipping
+
+
 
 def orderconfirmpage(request):
     session_id = request.GET.get("session_id")
@@ -298,9 +312,13 @@ def orderconfirmpage(request):
             subtotal      = Decimal("0.00")
             shipping_total = Decimal("0.00")
 
-        order.subtotal      = subtotal
-        order.total         = Decimal(str(session.amount_total or 0)) / 100
-        order.shipping_cost = shipping_total if shipping_total else (order.total - subtotal)
+        discount_amount, amount_shipping = _session_money_breakdown(session)
+        order.subtotal = subtotal
+        order.total = Decimal(str(session.amount_total or 0)) / 100
+        order.shipping_cost = amount_shipping if amount_shipping else (shipping_total if shipping_total else max(Decimal("0.00"), order.total + discount_amount - subtotal))
+        order.discount_amount = discount_amount
+        order.promo_code = _get_attr(_get_attr(session, "metadata", {}), "promo_code", "")
+        order.shipping_method = _get_attr(_get_attr(session, "metadata", {}), "shipping_label", "")
         order.email_confirmation_sent = False
         order.save()
         if items_built:
@@ -334,9 +352,13 @@ def orderconfirmpage(request):
                 subtotal      = Decimal("0.00")
                 shipping_total = Decimal("0.00")
 
-            order.subtotal      = subtotal
-            order.total         = Decimal(str(session.amount_total or 0)) / 100
-            order.shipping_cost = shipping_total if shipping_total else (order.total - subtotal)
+            discount_amount, amount_shipping = _session_money_breakdown(session)
+            order.subtotal = subtotal
+            order.total = Decimal(str(session.amount_total or 0)) / 100
+            order.shipping_cost = amount_shipping if amount_shipping else (shipping_total if shipping_total else max(Decimal("0.00"), order.total + discount_amount - subtotal))
+            order.discount_amount = discount_amount
+            order.promo_code = _get_attr(_get_attr(session, "metadata", {}), "promo_code", "") or order.promo_code
+            order.shipping_method = _get_attr(_get_attr(session, "metadata", {}), "shipping_label", "") or order.shipping_method
             order.save()
 
         if not getattr(order, "email_confirmation_sent", True):

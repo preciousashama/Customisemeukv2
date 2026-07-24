@@ -64,7 +64,7 @@ class OrderAdmin(admin.ModelAdmin):
     readonly_fields = (
         "id", "order_number", "customer",
         "guest_name", "guest_email",
-        "subtotal", "shipping_cost", "tax", "total",
+        "subtotal", "shipping_cost", "shipping_method", "promo_code", "discount_amount", "tax", "total",
         "stripe_session_id", "stripe_payment_intent",
         "created_at", "updated_at","email_confirmation_sent",
         "shipping_address_block",
@@ -78,7 +78,7 @@ class OrderAdmin(admin.ModelAdmin):
             ),
         }),
         ("Financials", {
-            "fields": ("subtotal", "shipping_cost", "tax", "total"),
+            "fields": ("subtotal", "shipping_cost", "shipping_method", "promo_code", "discount_amount", "tax", "total"),
         }),
         ("Shipping Address", {
             "fields": ("shipping_address_block",),

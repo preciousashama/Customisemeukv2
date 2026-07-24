@@ -742,6 +742,10 @@
                 <li><a href="{% url 'shop-page' %}?cat=sticker-packs">Sticker Packs</a></li>
               </ul>
             </div>
+            <div class="summary-row" id="summaryDiscountRow"{% if totals.discount == 0 %} style="display:none;"{% endif %}>
+              <span class="summary-row-label" id="summaryDiscountLabel">Discount{% if totals.promo_code %} ({{ totals.promo_code }}){% endif %}</span>
+              <span class="summary-row-value" id="summaryDiscount">-Â£{{ totals.discount|floatformat:2 }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -935,6 +939,29 @@
           <h3 class="summary-title">Order Summary</h3>
 
           <div class="summary-rows" id="summaryRows">
+            <div style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--grey-7);">
+              <label for="shippingRateSelect" style="display:block;font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--grey-4);margin-bottom:10px;">Shipping Option</label>
+              <select id="shippingRateSelect" style="width:100%;padding:14px 16px;border:1px solid var(--grey-6);background:var(--white);font-size:13px;color:var(--black);">
+                {% for option in shipping_options %}
+                <option value="{{ option.id }}"{% if selected_shipping and selected_shipping.id == option.id %} selected{% endif %}>
+                  {{ option.label }} — £{{ option.amount_display }}{% if option.eta %} · {{ option.eta }}{% endif %}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+            <div style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--grey-7);">
+              <label for="promoCodeInput" style="display:block;font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--grey-4);margin-bottom:10px;">Promo Code</label>
+              <div style="display:flex;gap:10px;">
+                <input id="promoCodeInput" type="text" value="{{ promo.code|default:'' }}" placeholder="Enter code" style="flex:1;padding:14px 16px;border:1px solid var(--grey-6);background:var(--white);font-size:13px;color:var(--black);text-transform:uppercase;">
+                <button type="button" id="applyPromoBtn" style="padding:0 18px;border:1px solid var(--black);background:var(--black);color:var(--white);font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;">Apply</button>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
+                <span id="promoStatus" style="font-size:12px;color:{% if promo %}#1f7a4c{% else %}var(--grey-5){% endif %};">
+                  {% if promo %}Applied: {{ promo.code }}{% else %}Add your Stripe coupon before checkout.{% endif %}
+                </span>
+                <button type="button" id="removePromoBtn" style="border:none;background:none;color:var(--grey-4);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;{% if not promo %}display:none;{% endif %}">Remove</button>
+              </div>
+            </div>
             <div class="summary-row">
               <span class="summary-row-label">Subtotal</span>
               <span class="summary-row-value" id="summarySubtotal">£{{ totals.subtotal|floatformat:2 }}</span>
@@ -947,6 +974,11 @@
               <span class="summary-row-value" id="summaryShipping">£{{ totals.shipping|floatformat:2 }}</span>
               {% endif %}
             </div>
+          </div>
+
+          <div class="summary-row" id="summaryDiscountRow"{% if totals.discount == 0 %} style="display:none;"{% endif %}>
+            <span class="summary-row-label" id="summaryDiscountLabel">Discount{% if totals.promo_code %} ({{ totals.promo_code }}){% endif %}</span>
+            <span class="summary-row-value" id="summaryDiscount">-Â£{{ totals.discount|floatformat:2 }}</span>
           </div>
 
           <div class="summary-total">
@@ -1130,7 +1162,14 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
         'X-CSRFToken': CSRF_TOKEN,
       },
       body: new URLSearchParams(data),
-    }).then(r => r.json());
+    }).then(function(r){
+      return r.json().then(function(data){
+        if(!r.ok){
+          throw new Error(data.error || 'Request failed.');
+        }
+        return data;
+      });
+    });
   }
 
   function removeCartRow(productId){
@@ -1155,12 +1194,85 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
   }
 
   /* ── Remove item ── */
+  function refreshCartSummary(data){
+    var sub = document.getElementById('summarySubtotal');
+    var ship = document.getElementById('summaryShipping');
+    var total = document.getElementById('summaryTotal');
+    var discountRow = document.getElementById('summaryDiscountRow');
+    var discountLabel = document.getElementById('summaryDiscountLabel');
+    var discountValue = document.getElementById('summaryDiscount');
+    var promoStatus = document.getElementById('promoStatus');
+    var removePromoBtn = document.getElementById('removePromoBtn');
+    var discount = parseFloat(data.discount || 0);
+
+    if(sub) sub.textContent = 'Â£' + parseFloat(data.subtotal || 0).toFixed(2);
+    if(ship) ship.textContent = 'Â£' + parseFloat(data.shipping || 0).toFixed(2);
+    if(total) total.textContent = 'Â£' + parseFloat(data.total || 0).toFixed(2);
+
+    if(sub) sub.textContent = String.fromCharCode(163) + parseFloat(data.subtotal || 0).toFixed(2);
+    if(ship) ship.textContent = String.fromCharCode(163) + parseFloat(data.shipping || 0).toFixed(2);
+    if(total) total.textContent = String.fromCharCode(163) + parseFloat(data.total || 0).toFixed(2);
+
+    if(discountRow && discountLabel && discountValue){
+      if(discount > 0){
+        discountRow.style.display = '';
+        discountLabel.textContent = data.promo_code ? ('Discount (' + data.promo_code + ')') : 'Discount';
+        discountValue.textContent = '-Â£' + discount.toFixed(2);
+        discountValue.textContent = '-' + String.fromCharCode(163) + discount.toFixed(2);
+      } else {
+        discountRow.style.display = 'none';
+      }
+    }
+
+    if(promoStatus){
+      promoStatus.textContent = data.promo_code ? ('Applied: ' + data.promo_code) : 'Add your Stripe coupon before checkout.';
+      promoStatus.style.color = data.promo_code ? '#1f7a4c' : 'var(--grey-5)';
+    }
+    if(removePromoBtn){
+      removePromoBtn.style.display = data.promo_code ? '' : 'none';
+    }
+  }
+
+  var shippingRateSelect = document.getElementById('shippingRateSelect');
+  if(shippingRateSelect){
+    shippingRateSelect.addEventListener('change', function(){
+      postCartAction({ action:'select_shipping', shipping_rate_id: shippingRateSelect.value })
+      .then(refreshCartSummary)
+      .catch(function(err){ alert(err.message || 'Could not update shipping.'); });
+    });
+  }
+
+  var applyPromoBtn = document.getElementById('applyPromoBtn');
+  var promoCodeInput = document.getElementById('promoCodeInput');
+  if(applyPromoBtn && promoCodeInput){
+    applyPromoBtn.addEventListener('click', function(){
+      var code = (promoCodeInput.value || '').trim();
+      if(!code){
+        alert('Enter a promo code first.');
+        return;
+      }
+      postCartAction({ action:'apply_promo', promo_code: code })
+      .then(refreshCartSummary)
+      .catch(function(err){ alert(err.message || 'Could not apply promo code.'); });
+    });
+  }
+
+  var removePromoBtn = document.getElementById('removePromoBtn');
+  if(removePromoBtn){
+    removePromoBtn.addEventListener('click', function(){
+      if(promoCodeInput) promoCodeInput.value = '';
+      postCartAction({ action:'remove_promo' })
+      .then(refreshCartSummary)
+      .catch(function(err){ alert(err.message || 'Could not remove promo code.'); });
+    });
+  }
+
   document.addEventListener('click', function(e){
     var btn = e.target.closest('.js-remove-item');
     if(!btn) return;
     var pid = btn.dataset.productId;
     removeCartRow(pid);
-    postCartAction({ action:'remove_item', product_id: pid }).then(updateTotals);
+    postCartAction({ action:'remove_item', product_id: pid }).then(refreshCartSummary);
   });
 
   /* ── Quantity steppers ── */
@@ -1173,7 +1285,7 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
     if(!qtyEl) return;
     var qty   = Math.max(1, parseInt(qtyEl.textContent, 10) + delta);
     qtyEl.textContent = qty;
-    postCartAction({ action:'update_qty', product_id: pid, quantity: qty }).then(updateTotals);
+    postCartAction({ action:'update_qty', product_id: pid, quantity: qty }).then(refreshCartSummary);
   });
 
   /* ── Quick-add recommendations ── */
@@ -1186,7 +1298,8 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
       name:       btn.dataset.name,
       price:      btn.dataset.price,
       image_url:  btn.dataset.image || '',
-    }).then(function(){
+    }).then(function(data){
+      refreshCartSummary(data);
       btn.textContent = '✓ Added';
       btn.style.background = '#27ae60';
       setTimeout(function(){ btn.textContent = '+ Add to Bag'; btn.style.background = ''; }, 2000);

@@ -316,8 +316,8 @@
     .brands-track { grid-template-columns: repeat(3, 1fr); }
   }
   @media (max-width: 768px) {
-#mainHeader { top: 28px; }    .hero { background: #121212; }
-    .hero-content { width: 100%; max-width: 700px; padding: 120px 32px 60px; }
+#mainHeader { top: 28px; }    .hero { background: #121212; min-height: auto; }
+    .hero-content { width: 100%; max-width: 700px; padding: 120px 32px 88px; }
     .hero-right-tag { display: none; }
     .brands-banner { padding: 32px 24px; }
     .brands-track { grid-template-columns: repeat(2, 1fr); gap: 16px; }
@@ -352,12 +352,19 @@
     position: relative;
     overflow: hidden;
     background: #d8d4ce;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .hero-slide img {
-    width: 100%; height: 100%; object-fit: cover;
-    object-position: right center;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center center;
     display: block;
     filter: grayscale(20%);
+    padding: clamp(12px, 2vw, 28px);
+    box-sizing: border-box;
   }
   /* Gradient overlay per slide */
   .hero-slide::after {
@@ -384,11 +391,17 @@
       width: 100%;
       inset: 0;
     }
+    .hero-slide {
+      min-height: 100%;
+    }
+    .hero-slide img {
+      padding: 16px 12px 24px;
+    }
     .hero-slide::after {
       background: linear-gradient(105deg,
-        rgba(10,10,10,0.72) 0%,
-        rgba(10,10,10,0.48) 55%,
-        rgba(10,10,10,0.18) 100%);
+        rgba(10,10,10,0.56) 0%,
+        rgba(10,10,10,0.34) 50%,
+        rgba(10,10,10,0.12) 100%);
     }
     .slider-dots { left: 24px; bottom: 20px; }
   }
