@@ -102,7 +102,14 @@
   /* =============================================
      HERO
      ============================================= */
-  .hero { position: relative; min-height: 100vh; display: flex; align-items: center; overflow: hidden; }
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background: linear-gradient(90deg, #5b5856 0%, #5b5856 38%, #121212 38%, #121212 100%);
+  }
   .hero-bg { position: absolute; inset: 0; z-index: 0; }
   .hero-bg img {
     width: 100%; height: 100%; object-fit: cover;
@@ -112,7 +119,13 @@
     content: ''; position: absolute; inset: 0;
     background: linear-gradient(105deg, rgba(10,10,10,0.72) 0%, rgba(10,10,10,0.48) 55%, rgba(10,10,10,0.18) 100%);
   }
-  .hero-content { position: relative; z-index: 2; padding: 170px 80px 80px; max-width: 700px; }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    width: min(38vw, 560px);
+    max-width: 560px;
+    padding: 170px 48px 80px 64px;
+  }
   .hero-overline {
     font-family: var(--sans); font-size: 11px; font-weight: 500;
     letter-spacing: 0.2em; text-transform: uppercase;
@@ -303,7 +316,8 @@
     .brands-track { grid-template-columns: repeat(3, 1fr); }
   }
   @media (max-width: 768px) {
-#mainHeader { top: 28px; }    .hero-content { padding: 120px 32px 60px; }
+#mainHeader { top: 28px; }    .hero { background: #121212; }
+    .hero-content { width: 100%; max-width: 700px; padding: 120px 32px 60px; }
     .hero-right-tag { display: none; }
     .brands-banner { padding: 32px 24px; }
     .brands-track { grid-template-columns: repeat(2, 1fr); gap: 16px; }
@@ -325,8 +339,8 @@
   /* Slide track — all slides sit side-by-side horizontally */
   .hero-track {
     display: flex;
-    width: 100%; height: 100%;
-    position: absolute; inset: 0;
+    width: 62%; height: 100%;
+    position: absolute; top: 0; right: 0; bottom: 0;
     transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
     z-index: 0;
   }
@@ -342,15 +356,16 @@
   .hero-slide img {
     width: 100%; height: 100%; object-fit: contain;
     object-position: center center;
+    display: block;
     filter: grayscale(20%);
   }
   /* Gradient overlay per slide */
   .hero-slide::after {
     content: ''; position: absolute; inset: 0;
-    background: linear-gradient(105deg,
-      rgba(10,10,10,0.72) 0%,
-      rgba(10,10,10,0.48) 55%,
-      rgba(10,10,10,0.18) 100%);
+    background: linear-gradient(90deg,
+      rgba(18,18,18,0.18) 0%,
+      rgba(18,18,18,0.08) 35%,
+      rgba(18,18,18,0) 100%);
   }
 
   /* Dot indicators */
@@ -365,6 +380,16 @@
   }
   .slider-dot.active { background: var(--white); width: 40px; }
   @media (max-width: 768px) {
+    .hero-track {
+      width: 100%;
+      inset: 0;
+    }
+    .hero-slide::after {
+      background: linear-gradient(105deg,
+        rgba(10,10,10,0.72) 0%,
+        rgba(10,10,10,0.48) 55%,
+        rgba(10,10,10,0.18) 100%);
+    }
     .slider-dots { left: 24px; bottom: 20px; }
   }
 
