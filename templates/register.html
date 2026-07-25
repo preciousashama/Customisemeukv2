@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,7 +28,7 @@
   #cursor      { position:fixed; top:0; left:0; width:10px; height:10px; background:var(--black); border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:width .2s,height .2s; }
   #cursor-ring { position:fixed; top:0; left:0; width:36px; height:36px; border:1px solid var(--black); border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); transition:width .3s,height .3s; }
 
-  /* ── PROMO TICKER ── */
+  /* â”€â”€ PROMO TICKER â”€â”€ */
   .promo-ticker { position:fixed; top:0; left:0; right:0; z-index:200; background:var(--black); height:34px; overflow:hidden; display:flex; align-items:center; }
   .promo-ticker-track { display:flex; align-items:center; white-space:nowrap; animation:ticker 40s linear infinite; will-change:transform; }
   .promo-ticker-track:hover { animation-play-state:paused; }
@@ -36,7 +36,7 @@
   .promo-ticker-item { display:inline-flex; align-items:center; gap:32px; font-family:var(--sans); font-size:10.5px; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:rgba(255,255,255,0.85); padding:0 40px; }
   .promo-ticker-item .dot { display:inline-block; width:3px; height:3px; border-radius:50%; background:rgba(255,255,255,0.35); flex-shrink:0; }
 
-  /* ── HEADER ── */
+  /* â”€â”€ HEADER â”€â”€ */
   header, #mainHeader { position:fixed; top:34px; left:0; right:0; z-index:100; background:rgba(248,248,246,0.96); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border-bottom:1px solid var(--grey-6); display:flex; flex-direction:column; }
   .header-top-row { display:flex; align-items:center; justify-content:center; padding:8px 48px; border-bottom:1px solid var(--grey-7); }
   .search-wrap { display:flex; align-items:center; gap:10px; border:1px solid var(--grey-6); padding:6px 16px; background:var(--grey-8); width:460px; transition:border-color .3s,background .3s,width .3s; }
@@ -90,10 +90,10 @@
   .mobile-nav.open a { opacity:1; transform:translateY(0); }
   .mobile-nav.open a:nth-child(1){transition-delay:.05s;} .mobile-nav.open a:nth-child(2){transition-delay:.10s;} .mobile-nav.open a:nth-child(3){transition-delay:.15s;} .mobile-nav.open a:nth-child(4){transition-delay:.20s;} .mobile-nav.open a:nth-child(5){transition-delay:.25s;}
 
-  /* ── MAIN LAYOUT ── */
+  /* â”€â”€ MAIN LAYOUT â”€â”€ */
   main { padding-top:136px !important; min-height:calc(100vh - 136px) !important; display:grid; grid-template-columns:1fr 1fr; }
 
-  /* ── LEFT PANEL ── */
+  /* â”€â”€ LEFT PANEL â”€â”€ */
   .register-left { position:relative; overflow:hidden; background:var(--grey-8); }
   .register-left img { width:100%; height:100%; object-fit:cover; filter:grayscale(30%); transition:filter .8s; }
   .register-left:hover img { filter:grayscale(0%); }
@@ -112,9 +112,9 @@
   .perk-text strong { display:block; font-family:var(--sans); font-size:12px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--white); line-height:1.3; }
   .perk-text span { font-family:var(--sans); font-size:12px; color:rgba(248,248,246,0.55); line-height:1.5; }
 
-  /* ── RIGHT PANEL ── */
+  /* â”€â”€ RIGHT PANEL â”€â”€ */
   .register-right { background:var(--white); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 64px; position:relative; overflow-y:auto; }
-  .register-right::before { content:'✦'; position:absolute; top:80px; right:52px; font-size:11px; color:var(--grey-6); animation:spin 14s linear infinite; }
+  .register-right::before { content:'âœ¦'; position:absolute; top:80px; right:52px; font-size:11px; color:var(--grey-6); animation:spin 14s linear infinite; }
   @keyframes spin { to { transform:rotate(360deg); } }
   .form-container { width:100%; max-width:420px; }
   .form-overline { font-family:var(--sans); font-size:11px; font-weight:500; letter-spacing:0.22em; text-transform:uppercase; color:var(--grey-4); margin-bottom:14px; display:flex; align-items:center; gap:12px; }
@@ -123,13 +123,13 @@
   .form-title em { font-style:italic; color:var(--grey-3); }
   .form-subtitle { font-size:13.5px; color:var(--grey-4); margin-bottom:28px; line-height:1.6; }
 
-  /* ── ALERTS ── */
+  /* â”€â”€ ALERTS â”€â”€ */
   .alert { padding:14px 18px; margin-bottom:20px; font-size:13px; line-height:1.6; border-left:3px solid; }
   .alert-success { background:var(--accent-light); border-color:var(--accent); color:var(--accent-dark); }
   .alert-error   { background:#fef2f2; border-color:#e53e3e; color:#c53030; }
   .alert a { color:inherit; font-weight:600; }
 
-  /* ── FIELDS ── */
+  /* â”€â”€ FIELDS â”€â”€ */
   .field-group { margin-bottom:18px; }
   .field-label { font-family:var(--sans); font-size:11px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--grey-3); display:block; margin-bottom:8px; }
   .field-hint  { font-size:11px; color:var(--grey-5); font-weight:400; text-transform:none; letter-spacing:0; margin-left:6px; }
@@ -180,7 +180,7 @@
   .form-container > *:nth-child(7){animation-delay:.47s;} .form-container > *:nth-child(8){animation-delay:.54s;}
   .form-container > *:nth-child(9){animation-delay:.61s;}
 
-  /* ── FOOTER ── */
+  /* â”€â”€ FOOTER â”€â”€ */
   footer { background:var(--black); color:var(--white); padding:80px 80px 40px; }
   .footer-top { display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:60px; padding-bottom:64px; border-bottom:1px solid var(--grey-2); }
   .footer-brand p { font-size:13px; color:var(--grey-4); line-height:1.7; margin-top:20px; max-width:260px; }
@@ -197,7 +197,7 @@
   .footer-bottom-links a { font-size:12px; color:var(--grey-4); text-decoration:none; transition:color .2s; }
   .footer-bottom-links a:hover { color:var(--accent); }
 
-  /* ── RESPONSIVE ── */
+  /* â”€â”€ RESPONSIVE â”€â”€ */
   @media (max-width:1100px) { .footer-top { grid-template-columns:1fr 1fr; gap:40px; } }
   @media (max-width:900px)  { main { grid-template-columns:1fr; } .register-left { display:none; } .register-right { padding:60px 32px; } }
   @media (max-width:768px) {
@@ -243,7 +243,7 @@
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
   <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-  <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
+  <input type="text" name="q" placeholder="Search products, designs, categoriesâ€¦" aria-label="Search"
          value="{{ request.GET.q|default:'' }}"/>
 </form>
   </div>
@@ -310,7 +310,7 @@
       </div>
     </nav>
     <div class="header-icons">
-      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">🇬🇧</span><span class="currency-code">GBP £</span></button>
+      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">ðŸ‡¬ðŸ‡§</span><span class="currency-code">GBP £</span></button>
       <div class="icon-divider"></div>
       {% if user.is_authenticated %}
       <a href="{% url 'wishlist-page' %}" class="hdr-icon-btn" aria-label="Saved items">
@@ -416,7 +416,7 @@
     </div>
   </div>
 
-  <!-- RIGHT: registration form — pure Django, no JS required to submit -->
+  <!-- RIGHT: registration form â€” pure Django, no JS required to submit -->
   <div class="register-right">
     <div class="form-container">
 
@@ -424,30 +424,30 @@
       <h1 class="form-title">Create your<br/><em>account</em></h1>
       <p class="form-subtitle">Join thousands of customers creating something personal.</p>
 
-      {# ── PENDING: email sent, waiting for click — form hidden ── #}
+      {# â”€â”€ PENDING: email sent, waiting for click â€” form hidden â”€â”€ #}
       {% if register_pending %}
         <div class="alert alert-success" role="alert" style="border-color:#c8a96e;background:#f0e4c8;color:#7a5c1e;padding:24px 20px;">
           <strong style="display:block;font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;">
-            ✦ Check your inbox
+            âœ¦ Check your inbox
           </strong>
           We've sent an activation link to
           <strong>{{ pending_email }}</strong>.
           Click it to complete your registration.
           <br/><br/>
           <span style="font-size:12px;color:#a8893e;">
-            Link expires in 24 hours · Didn't get it?
+            Link expires in 24 hours Â· Didn't get it?
             <a href="{% url 'register-page' %}" style="color:#7a5c1e;font-weight:600;">Resend</a>
           </span>
         </div>
 
-      {# ── Non-field errors ── #}
+      {# â”€â”€ Non-field errors â”€â”€ #}
       {% elif form.non_field_errors %}
         <div class="alert alert-error" role="alert">
           {% for error in form.non_field_errors %}{{ error }}{% if not forloop.last %}<br/>{% endif %}{% endfor %}
         </div>
       {% endif %}
 
-      {# ── THE FORM — hidden once email has been sent ── #}
+      {# â”€â”€ THE FORM â€” hidden once email has been sent â”€â”€ #}
       {% if not register_pending %}
       <form method="post" action="{% url 'register-page' %}" novalidate>
         {% csrf_token %}
@@ -512,7 +512,7 @@
               {% for err in form.password.errors %}{{ err }}{% if not forloop.last %} &nbsp;{% endif %}{% endfor %}
             </span>
           {% endif %}
-          {# Live strength meter — cosmetic only, form still submits without JS #}
+          {# Live strength meter â€” cosmetic only, form still submits without JS #}
           <div class="pw-strength" id="pwStrength" style="display:none;">
             <div class="pw-strength-bar"><div class="pw-strength-fill" id="pwStrengthFill"></div></div>
             <span class="pw-strength-label" id="pwStrengthLabel"></span>
@@ -541,7 +541,7 @@
           {% endif %}
         </div>
 
-        {# TERMS CHECKBOX — required client-side via required attr; also enforced server-side if you add it to the form #}
+        {# TERMS CHECKBOX â€” required client-side via required attr; also enforced server-side if you add it to the form #}
         <div class="terms-row">
           <input type="checkbox" id="id_terms" name="terms" required/>
           <label for="id_terms">
@@ -595,13 +595,13 @@
     <div class="footer-col"><h4>Legal</h4><ul><li><a href="{% url 'privacy-page' %}">Privacy Policy</a></li><li><a href="{% url 'conditions-page' %}">Terms</a></li><li><a href="{% url 'contact-page' %}">Contact</a></li></ul></div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 CustomiseMe UK. All rights reserved.</p>
+    <p>Â© 2026 CustomiseMe UK. All rights reserved.</p>
     <div class="footer-bottom-links"><a href="{% url 'privacy-page' %}">Privacy</a><a href="{% url 'conditions-page' %}">Terms</a></div>
   </div>
 </footer>
 
 <script>
-  /* ── Custom cursor ── */
+  /* â”€â”€ Custom cursor â”€â”€ */
   const cursor = document.getElementById('cursor');
   const ring   = document.getElementById('cursor-ring');
   let mx=0,my=0,rx=0,ry=0;
@@ -612,7 +612,7 @@
     el.addEventListener('mouseleave',()=>{ cursor.style.width='10px'; cursor.style.height='10px'; ring.style.width='36px'; ring.style.height='36px'; });
   });
 
-  /* ── Hamburger ── */
+  /* â”€â”€ Hamburger â”€â”€ */
   const hamburger = document.getElementById('hamburger');
   const mobileNav = document.getElementById('mobileNav');
   if (hamburger && mobileNav) {
@@ -639,7 +639,7 @@
     });
   }
 
-  /* ── Password show/hide — cosmetic only, form works without this ── */
+  /* â”€â”€ Password show/hide â€” cosmetic only, form works without this â”€â”€ */
   function makeToggle(btnId, inputId) {
     const btn   = document.getElementById(btnId);
     const input = document.getElementById(inputId);
@@ -655,7 +655,7 @@
   makeToggle('pwToggle1', 'id_password');
   makeToggle('pwToggle2', 'id_password2');
 
-  /* ── Live password strength meter — cosmetic, no effect on submission ── */
+  /* â”€â”€ Live password strength meter â€” cosmetic, no effect on submission â”€â”€ */
   const pwInput   = document.getElementById('id_password');
   const pwStrength = document.getElementById('pwStrength');
   const pwFill    = document.getElementById('pwStrengthFill');
@@ -686,3 +686,4 @@
 </script>
 </body>
 </html>
+

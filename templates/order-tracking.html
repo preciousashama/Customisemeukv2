@@ -628,13 +628,13 @@
      ============================================================ -->
 <div class="promo-ticker" id="promoTicker">
   <div class="promo-ticker-track">
-    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
     <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
-    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
     <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
@@ -769,7 +769,7 @@
     <div class="header-icons">
       <button class="currency-btn" aria-label="Currency: GBP">
         <span class="currency-flag">ðŸ‡¬ðŸ‡§</span>
-        <span class="currency-code">GBP Â£</span>
+        <span class="currency-code">GBP £</span>
       </button>
       <div class="icon-divider"></div>
       {% if user.is_authenticated %}
@@ -885,7 +885,7 @@
                 Qty {{ item.quantity }}{% if item.variant %} &middot; {{ item.variant }}{% endif %}
               </div>
             </div>
-            <div class="item-price">Â£{{ item.price|floatformat:2 }}</div>
+            <div class="item-price">£{{ item.price|floatformat:2 }}</div>
           </div>
           {% empty %}
           <p style="font-size:13px;color:var(--grey-5);font-style:italic;">No items found.</p>
@@ -895,7 +895,7 @@
         <div class="totals">
           <div class="total-row">
             <span>Subtotal</span>
-            <span>Â£{{ order.subtotal|floatformat:2 }}</span>
+            <span>£{{ order.subtotal|floatformat:2 }}</span>
           </div>
           {% if order.shipping_cost == 0 %}
           <div class="total-row free">
@@ -905,12 +905,12 @@
           {% else %}
           <div class="total-row">
             <span>Shipping</span>
-            <span>Â£{{ order.shipping_cost|floatformat:2 }}</span>
+            <span>£{{ order.shipping_cost|floatformat:2 }}</span>
           </div>
           {% endif %}
           <div class="total-final">
             <span class="total-final-label">Total</span>
-            <span class="total-final-amount">Â£{{ order.total|floatformat:2 }}</span>
+            <span class="total-final-amount">£{{ order.total|floatformat:2 }}</span>
           </div>
         </div>
         {% else %}
@@ -1184,3 +1184,4 @@
 </script>
 </body>
 </html>
+

@@ -256,13 +256,13 @@
 <div id="cursor-ring"></div>
 <div class="promo-ticker" id="promoTicker">
   <div class="promo-ticker-track">
-    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
     <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
-    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
     <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
@@ -341,7 +341,7 @@
       </div>
     </nav>
     <div class="header-icons">
-      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">ðŸ‡¬ðŸ‡§</span><span class="currency-code">GBP Â£</span></button>
+      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">ðŸ‡¬ðŸ‡§</span><span class="currency-code">GBP £</span></button>
       <div class="icon-divider"></div>
       {% if user.is_authenticated %}
       <a href="{% url 'wishlist-page' %}" class="hdr-icon-btn" aria-label="Saved items">
@@ -549,11 +549,11 @@
             {% for val, label in budget_ranges %}
               <option value="{{ val }}" {% if post_data.budget_range == val %}selected{% endif %}>{{ label }}</option>
             {% empty %}
-              <option value="under50">Under Â£50</option>
-              <option value="50to150">Â£50 â€“ Â£150</option>
-              <option value="150to500">Â£150 â€“ Â£500</option>
-              <option value="500to1000">Â£500 â€“ Â£1,000</option>
-              <option value="over1000">Over Â£1,000</option>
+              <option value="under50">Under £50</option>
+              <option value="50to150">£50 â€“ £150</option>
+              <option value="150to500">£150 â€“ £500</option>
+              <option value="500to1000">£500 â€“ £1,000</option>
+              <option value="over1000">Over £1,000</option>
             {% endfor %}
           </select>
           {% if errors.budget_range %}<p class="ds-error">{{ errors.budget_range }}</p>{% endif %}
@@ -730,3 +730,4 @@
 </script>
 </body>
 </html>
+

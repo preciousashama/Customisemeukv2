@@ -123,13 +123,12 @@ def _get_saved_promo(request):
 def _promo_summary(promo):
     percent_off = promo.get("percent_off")
     amount_off = promo.get("amount_off")
-    currency = (promo.get("currency") or "gbp").upper()
 
     if percent_off not in (None, ""):
         return f"{percent_off:g}% off"
     if amount_off not in (None, ""):
         amount = _minor_to_decimal(amount_off)
-        return f"{currency} {amount:.2f} off"
+        return f"£{amount:.2f} off"
     return "Discount available"
 
 
@@ -156,8 +155,6 @@ def _get_active_promo_codes():
 
         restrictions = promo.get("restrictions") or {}
         minimum_minor = restrictions.get("minimum_amount")
-        minimum_currency = (restrictions.get("minimum_amount_currency") or "gbp").upper()
-
         promo_data = {
             "id": promo.get("id", ""),
             "code": code,
@@ -171,7 +168,7 @@ def _get_active_promo_codes():
         promo_data["summary"] = _promo_summary(promo_data)
         if minimum_minor:
             minimum = _minor_to_decimal(minimum_minor)
-            promo_data["minimum_amount_display"] = f"{minimum_currency} {minimum:.2f} minimum"
+            promo_data["minimum_amount_display"] = f"£{minimum:.2f} minimum"
 
         promo_codes.append(promo_data)
 

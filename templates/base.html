@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,10 +11,10 @@
 
 <style>
 /* ============================================================
-   BASE STYLES — shared by every page
+   BASE STYLES â€” shared by every page
    ============================================================ */
 
-/* ─── DESIGN TOKENS ─── */
+/* â”€â”€â”€ DESIGN TOKENS â”€â”€â”€ */
 :root {
   --black:       #0a0a0a;
   --white:       #f8f8f6;
@@ -33,7 +33,7 @@
   --sans:  'DM Sans', system-ui, sans-serif;
 }
 
-/* ─── RESET & BASE ─── */
+/* â”€â”€â”€ RESET & BASE â”€â”€â”€ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
@@ -48,7 +48,7 @@ body {
   flex-direction: column;
 }
 
-/* ─── CUSTOM CURSOR ─── */
+/* â”€â”€â”€ CUSTOM CURSOR â”€â”€â”€ */
 * { cursor: none; }
 #cursor {
   position: fixed; top: 0; left: 0;
@@ -67,7 +67,7 @@ body {
   transition: width .3s, height .3s;
 }
 
-/* ─── PROMO TICKER ─── */
+/* â”€â”€â”€ PROMO TICKER â”€â”€â”€ */
 .promo-ticker {
   position: fixed; top: 0; left: 0; right: 0; z-index: 200;
   background: var(--black);
@@ -98,7 +98,7 @@ body {
   background: rgba(255,255,255,0.35); flex-shrink: 0;
 }
 
-/* ─── HEADER — two-row: search | logo/nav/icons ─── */
+/* â”€â”€â”€ HEADER â€” two-row: search | logo/nav/icons â”€â”€â”€ */
 header, #mainHeader {
   position: fixed;
   top: 34px;
@@ -356,14 +356,14 @@ nav > .nav-item > a .chevron {
 .mobile-nav.open a:nth-child(5) { transition-delay: .25s; }
 .mobile-nav.open a:nth-child(6) { transition-delay: .30s; }
 
-/* ─── PAGE CONTENT OFFSET ─── */
+/* â”€â”€â”€ PAGE CONTENT OFFSET â”€â”€â”€ */
 /* Compensates for the fixed header: 34px ticker + 34px search row + 68px nav = 136px */
 /* Use .page-wrap on the outermost content div.
    For full-bleed heroes that need to slide under the header, omit .page-wrap
    and handle the offset inside the hero's own padding (e.g. padding-top: 120px+). */
 .page-wrap { padding-top: 136px; }
 
-/* ─── SHARED PAGE HERO (interior pages) ─── */
+/* â”€â”€â”€ SHARED PAGE HERO (interior pages) â”€â”€â”€ */
 .page-hero {
   background: #f5f5f5;
   position: relative;
@@ -406,7 +406,7 @@ nav > .nav-item > a .chevron {
   line-height: 1.7; margin-top: 20px;
 }
 
-/* ─── SHARED NEWSLETTER SECTION ─── */
+/* â”€â”€â”€ SHARED NEWSLETTER SECTION â”€â”€â”€ */
 .newsletter { background: #f5f5f5; padding: 80px; }
 .newsletter-inner {
   max-width: 1280px; margin: 0 auto;
@@ -442,7 +442,7 @@ nav > .nav-item > a .chevron {
 }
 .nl-row button:hover { background: var(--accent-dark); color: var(--white); }
 
-/* ─── FOOTER ─── */
+/* â”€â”€â”€ FOOTER â”€â”€â”€ */
 footer {
   background: var(--black); color: var(--white);
   border-top: 1px solid var(--grey-2);
@@ -487,7 +487,7 @@ footer {
 }
 .footer-bottom-links a:hover { color: var(--accent); }
 
-/* ─── SHARED ANIMATIONS ─── */
+/* â”€â”€â”€ SHARED ANIMATIONS â”€â”€â”€ */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -498,7 +498,7 @@ footer {
 .delay-3 { animation-delay: .3s; }
 .delay-4 { animation-delay: .4s; }
 
-/* ─── RESPONSIVE ─── */
+/* â”€â”€â”€ RESPONSIVE â”€â”€â”€ */
 @media (max-width: 1100px) {
   .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
   .newsletter-inner { grid-template-columns: 1fr; gap: 48px; }
@@ -537,7 +537,7 @@ footer {
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
 
-<!-- ═══ PROMO TICKER ═══ -->
+<!-- â•â•â• PROMO TICKER â•â•â• -->
 <div class="promo-ticker" id="promoTicker">
   <div class="promo-ticker-track">
     <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
@@ -556,14 +556,14 @@ footer {
   </div>
 </div>
 
-<!-- ═══ HEADER ═══ -->
+<!-- â•â•â• HEADER â•â•â• -->
 <header id="mainHeader">
 
   <!-- Row 1: Search -->
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
     <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
+    <input type="text" name="q" placeholder="Search products, designs, categoriesâ€¦" aria-label="Search"
           value="{{ request.GET.q|default:'' }}"/>
   </form>
   </div>
@@ -690,7 +690,7 @@ footer {
     <!-- Header icons (hidden on mobile) -->
     <div class="header-icons">
       <button class="currency-btn" aria-label="Currency: GBP">
-        <span class="currency-flag">🇬🇧</span>
+        <span class="currency-flag">ðŸ‡¬ðŸ‡§</span>
         <span class="currency-code">GBP £</span>
       </button>
       <div class="icon-divider"></div>
@@ -736,7 +736,7 @@ footer {
   </div>
 </header>
 
-<!-- ═══ MOBILE NAV ═══ -->
+<!-- â•â•â• MOBILE NAV â•â•â• -->
 <div class="mobile-nav" id="mobileNav" aria-hidden="true">
   <a href="{% url 'home-page' %}">Home</a>
   <a href="{% url 'shop-page' %}">Shop</a>
@@ -750,10 +750,10 @@ footer {
   {% endif %}
 </div>
 
-<!-- ═══ PAGE CONTENT ═══ -->
+<!-- â•â•â• PAGE CONTENT â•â•â• -->
 {% block content %}{% endblock %}
 
-<!-- ═══ FOOTER ═══ -->
+<!-- â•â•â• FOOTER â•â•â• -->
 {% block footer %}
 <footer>
   <div class="footer-top">
@@ -804,7 +804,7 @@ footer {
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 CustomiseMe UK. All rights reserved.</p>
+    <p>Â© 2026 CustomiseMe UK. All rights reserved.</p>
     <div class="footer-bottom-links">
       <a href="{% url 'privacy-page' %}">Privacy</a>
       <a href="{% url 'conditions-page' %}">Terms</a>
@@ -813,9 +813,9 @@ footer {
 </footer>
 {% endblock footer %}
 
-<!-- ═══ SHARED JS ═══ -->
+<!-- â•â•â• SHARED JS â•â•â• -->
 <script>
-  // ── Custom cursor ──
+  // â”€â”€ Custom cursor â”€â”€
   const cursor = document.getElementById('cursor');
   const ring   = document.getElementById('cursor-ring');
   let mx = 0, my = 0, rx = 0, ry = 0;
@@ -839,7 +839,7 @@ footer {
     });
   });
 
-  // ── Hamburger / mobile nav ──
+  // â”€â”€ Hamburger / mobile nav â”€â”€
   const hamburger = document.getElementById('hamburger');
   const mobileNav = document.getElementById('mobileNav');
   if (hamburger && mobileNav) {
@@ -870,7 +870,7 @@ footer {
     });
   }
 
-  // ── Account dropdown ──
+  // â”€â”€ Account dropdown â”€â”€
   const accountBtn  = document.getElementById('accountBtn');
   const accountMenu = document.getElementById('accountMenu');
   const accountWrap = document.getElementById('accountWrap');
@@ -898,7 +898,7 @@ footer {
     });
   }
 
-  // ── Scroll-triggered fade-in (for .fade-up elements) ──
+  // â”€â”€ Scroll-triggered fade-in (for .fade-up elements) â”€â”€
   const fadeObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {

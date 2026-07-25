@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% load static %}
 
 {% block title %}CustomiseMe UK | Home{% endblock %}
@@ -201,7 +201,7 @@
 .categories-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 64px; }
 .view-all { font-family: var(--sans); font-size: 12px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--grey-3); text-decoration: none; display: flex; align-items: center; gap: 8px; transition: color .2s; }
 .view-all:hover { color: var(--black); }
-.view-all::after { content: '→'; }
+.view-all::after { content: 'â†’'; }
 .cats-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 24px; }
 .cat-item { display: flex; flex-direction: column; align-items: center; gap: 16px; text-decoration: none; color: inherit; }
 .cat-img-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; border-radius: 0; border: 1px solid var(--grey-7); position: relative; background: var(--grey-8); transition: border-color .3s; }
@@ -332,11 +332,11 @@
   /* Animations */
    to { opacity: 1; transform: translateY(0); } 
 
-  /* ── HERO SLIDER ── */
+  /* â”€â”€ HERO SLIDER â”€â”€ */
   /* The hero itself must be the positioning root */
   .hero { position: relative; overflow: hidden; }
 
-  /* Slide track — all slides sit side-by-side horizontally */
+  /* Slide track â€” all slides sit side-by-side horizontally */
   .hero-track {
     display: flex;
     width: 100%;
@@ -401,10 +401,10 @@
 {% endblock %}
 
 {% block content %}
-{# ── HERO ── #}
+{# â”€â”€ HERO â”€â”€ #}
 <section class="hero">
 
-  <!-- ══ Background slides ══ -->
+  <!-- â•â• Background slides â•â• -->
   <div class="hero-track" id="heroTrack">
     {% if slides %}
       {% for slide in slides %}
@@ -417,7 +417,7 @@
     {# Fallback: shown when no slides are uploaded in the admin #}
     <div class="hero-slide">
       <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAIx0YbsrqXpIKFp54IQ1Lts4PdiJV9FnD44bKTrNEoELUG_Xn8AhkVb8lXH6rPGnrgPF88L0Ov4fzWiGjQ5gT6GI2mMR3lHD_GEkn_mea605dVbp5PqQ_4iNuQIAbNBpMV6fVAtV0X_N3f4_mfMyeJUZLhkgOwqJz7SnHrtvmIJ53MdqkNRgvJtzGzwSnoHxGLbWhTlPLzNCrOEyIdYLubo7UNCU8f2Dtk_MM5sFc_EsK7wRBkR-6gZcqgnjII5YsLnnECDb92qeC"
-           alt="Custom embroidered hoodie — hero background"/>
+           alt="Custom embroidered hoodie â€” hero background"/>
     </div>
     {% endif %}
   </div>
@@ -433,7 +433,7 @@
   </div>
   {% endif %}
 
-  <!-- ══ Hero content ══ -->
+  <!-- â•â• Hero content â•â• -->
   <div class="hero-content">
     <div class="hero-overline fade-up">Customise Me UK Since 2023</div>
     <h1 class="fade-up delay-1">
@@ -458,7 +458,7 @@
 
 </section>
 
-{# ── BEST SELLERS ── #}
+{# â”€â”€ BEST SELLERS â”€â”€ #}
 <section class="bestsellers">
   <div class="bestsellers-header">
     <div>
@@ -504,7 +504,7 @@
 </section>
 
 
-{# ── CATEGORIES ── #}
+{# â”€â”€ CATEGORIES â”€â”€ #}
 <section class="categories">
   <div class="categories-header">
     <div>
@@ -537,7 +537,7 @@
 
 
 
-{# ── TESTIMONIALS ── #}
+{# â”€â”€ TESTIMONIALS â”€â”€ #}
 <section class="testimonials">
   <div class="testimonials-header">
     <div>
@@ -547,7 +547,7 @@
   </div>
   <div class="testimonials-grid">
     <div class="testimonial-card">
-      <div class="t-stars">★★★★★</div>
+      <div class="t-stars">â˜…â˜…â˜…â˜…â˜…</div>
       <p class="t-quote">"The embroidery quality is absolutely stunning. It made the perfect anniversary gift for my husband. He wears it everywhere!"</p>
       <div class="t-author">
         <div class="t-avatar"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBice4JWl0ebvD5ETvyX6jIYaweicIgcVQQYQa6YhYiZQ_bU9_RAjKbQxqy-yUyag9X7Vfwr0ui6AO4WalRJB-Peco8Fz61-zYJpk6vOZ23lvJNQvP84Vi01LPSF8Poa0HjHPa5VQQerJz5XavEFLjeL9lWbdgbNP3V79vnsbgZDvJ9m7lsuCCFoOjmhFf4VUPe6RBosslYMPrGBFxZZU2tcYW6GdK5D1opmDK4hqj-xBIWzcGOdwxQENUct1zWIBAA2heoo1F34ZyA" alt="Sarah"/></div>
@@ -555,7 +555,7 @@
       </div>
     </div>
     <div class="testimonial-card">
-      <div class="t-stars">★★★★★</div>
+      <div class="t-stars">â˜…â˜…â˜…â˜…â˜…</div>
       <p class="t-quote">"I ordered a pet portrait sweatshirt and it looks exactly like my dog! The turnaround time was faster than expected too."</p>
       <div class="t-author">
         <div class="t-avatar"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsdn7W1DnU94pevmH4H2PliM9P4RSa2vK8N3VbhW48IlTBugOpqbDPKHTmPmDUZb9Ai2z3WMx95S3SjS4YJ1RtZoLv9UU7wgHJuMMBM6UT_kaVb7WGK89T14xFtsTENcSOabdNquuxNbfUqf7ntyJKBXl-XtmJXqYm2j0mTsAevPaIy_zgcw-7Y2Y8RK8hJJzkBIiKRRict5Xicf_1Dt63cMyE9_9OgZMNlxYJk5XZegqmmZ3IlNfCQQiZbgOFp6uJSHXdK7WzlDG4" alt="James"/></div>
@@ -563,7 +563,7 @@
       </div>
     </div>
     <div class="testimonial-card">
-      <div class="t-stars">★★★★★</div>
+      <div class="t-stars">â˜…â˜…â˜…â˜…â˜…</div>
       <p class="t-quote">"Gifted a baby blanket to my sister and she cried. Such a meaningful piece. Beautifully packaged as well."</p>
       <div class="t-author">
         <div class="t-avatar"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCt7qRvf-5VTM3OixSyZG7OHe__BVRD2RhL-6iMh0wYtBVv_1hVgeAxyP_L397kmP36ZvOXxKmhhekRw9FeANvio-12Yv_Cep4S2wnSCsgOUvQMg7XRgmqY98vGT3L355ZlVg74nW2Jqoe2ZBSeXlx7wDVAn9tYgJFDcmZbHoIq12-MF-EEE2I4NwE8YHhjb4wXyM0-O5Pjbf3aoz-VFgdBibtPo_R0aDDnZrWq_ckGxHdWh_YwqRieWz72qAKpf_mDTfjhkbrRe9Bi" alt="Elena"/></div>
@@ -573,7 +573,7 @@
   </div>
 </section>
 
-{# ── INSTAGRAM ── #}
+{# â”€â”€ INSTAGRAM â”€â”€ #}
 <section class="instagram">
   <div class="instagram-header">
     <div class="section-label">Social</div>
@@ -581,21 +581,21 @@
     <p style="font-size:14px;color:var(--grey-4);margin-top:12px;">Tag us to be featured in our gallery</p>
   </div>
   <div class="instagram-grid">
-    <div class="insta-cell"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCybteGwphqswL-UR2FHF66guevFrDqhctPdyTrLjRKXL7xamAjQa84U4DhaPEhlGTBKsUJjbvsp8C6Oxvo0HbvIuURD0zY0VMEr6A1YA3Z_OrhS5-ST8OUZkEu9um71im35a070fhoz8gXITbvjqCa4-0J9uTx3pswXzSaldUeIVxumCEXkAos5kxGUsgJ7m6wPo3BNN_Um8QNWO65tXB-5Qb80dLrTZBqdqYpGLwQ1etyANylc-55WM8SUzC4I4vxO5p-RO3TS_BY" alt=""/><div class="insta-overlay"><span class="insta-icon">♡</span></div></div>
-    <div class="insta-cell"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNzrsGfX9Rc6R7Ovyt6O3q5AOdEUOpah5kUglXUgCT5rWegiuB86fAhydqkDkQ_csPzQ9mfRQeHvGEY6_Y3aW39HsMNgIa0036OgGHwxhqI1Z2Rt0nFrOuFjr2W0rHOTvrhGDUVrl0YTCebSt94JTugYoPxIgEClk7vgw04uvBP1TYnedh_sJf3jjAegcp57TkemXJC6I8ELsW0qSE_USCB9FaIE1GACr35oyJhTGgRK0efvE7ctELu8dcFNRaw9q5arn_cRXBE5oC" alt=""/><div class="insta-overlay"><span class="insta-icon">♡</span></div></div>
-    <div class="insta-cell"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPvR-ZERgKCplhXfQIp6iy_H0pQf7MbW9fq5avJNwjc8ykEfHZ6Web3xHN41VtYsF0c9kukbggkt0oZ9zt5dhvYkVrQzGAOqPA_5-NKrtbBgduyUykQH4qhWh_vxjtugeqNxcxEE840RMFJAAl-_c7dXCJtdvgdRvoVosfQpaB33DnT00d982ZQURNfcZelf9zc-aVn84KFdjfSQg-NoNRbC0xys4mgGVJ3dxIWQvqV3hhSbxQ3e0umw7SZaEgW6rtn4qHPHmOutg" alt=""/><div class="insta-overlay"><span class="insta-icon">♡</span></div></div>
-    <div class="insta-cell"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBea3HpZr1GORCRR_RApbAWjqZIjlLDOx0CwBMv0oUR1bLPEVb9Vh30feYT-6P7W8IudLCs-azNkBfq8nnWG7rJW0i1fJpd53Pro9Byj8MCilWb1v3eGJwEqWGFeE-udS354D7bCJAYcVEvpu_VtvSf7Bu6Zn2Wj0kYMA8yCJEVb-8MzmnKyqqdjLK7KLNfBansaWpCpNoEjHdH3joQr9MpL4Q001tlRZgldjvwsQj-f02cbb4JGuPupih0NHHlvuHkeP4ogdLJdbuR" alt=""/><div class="insta-overlay"><span class="insta-icon">♡</span></div></div>
-    <div class="insta-cell"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsvOJwoIzvAx1uJ-lMpq2qzpD42Cde4f7X6iLXef7OYMHdgwD28boghVwcpkonDlIoJHhPg2NMr5NZJACoXWHj0JL9-2q8boMvVP50NsxFPIND8oQxYoQVQqlraq71iBaT718KaUb_L7pfSFsG4S1blyO_FrPmUBVlkET5cPR3Z0MwlQ5kbyrLxQ2RZSr9lo6puvvYbWkmGgmIue58ib7UyYLNaS_gG8-gNEmoIUAJIMLu_-d9MGHDot3vSkvEyf4BfSTk6NG74obG" alt=""/><div class="insta-overlay"><span class="insta-icon">♡</span></div></div>
-    <div class="insta-cell"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyQrJx-J1HUQrDlri7GE9OO1pF_T4xZNNfGtqj-YUfJXWuDGwAbhGS3Kyr9PirrvgcEVs-Mazla1_jIwwE8Lef3XKceGsnNRuwxHyQ5Klfl9Ds_SQkiNOIzKnZCyFnkumW66HzCM5SCgjSXAX7DjXalPr5pFYk9YOddMFpe6FU9Qe9XRTgvYzWREeJZjxKeeKScf8rWJV43hNYjX-0Iw9jDtLYyblZLyJaoSrZU6iGvt-6Xhd-MATglpuTuQjERRSrDBs5p3R76cPq" alt=""/><div class="insta-overlay"><span class="insta-icon">♡</span></div></div>
+    <div class="insta-cell"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCybteGwphqswL-UR2FHF66guevFrDqhctPdyTrLjRKXL7xamAjQa84U4DhaPEhlGTBKsUJjbvsp8C6Oxvo0HbvIuURD0zY0VMEr6A1YA3Z_OrhS5-ST8OUZkEu9um71im35a070fhoz8gXITbvjqCa4-0J9uTx3pswXzSaldUeIVxumCEXkAos5kxGUsgJ7m6wPo3BNN_Um8QNWO65tXB-5Qb80dLrTZBqdqYpGLwQ1etyANylc-55WM8SUzC4I4vxO5p-RO3TS_BY" alt=""/><div class="insta-overlay"><span class="insta-icon">â™¡</span></div></div>
+    <div class="insta-cell"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNzrsGfX9Rc6R7Ovyt6O3q5AOdEUOpah5kUglXUgCT5rWegiuB86fAhydqkDkQ_csPzQ9mfRQeHvGEY6_Y3aW39HsMNgIa0036OgGHwxhqI1Z2Rt0nFrOuFjr2W0rHOTvrhGDUVrl0YTCebSt94JTugYoPxIgEClk7vgw04uvBP1TYnedh_sJf3jjAegcp57TkemXJC6I8ELsW0qSE_USCB9FaIE1GACr35oyJhTGgRK0efvE7ctELu8dcFNRaw9q5arn_cRXBE5oC" alt=""/><div class="insta-overlay"><span class="insta-icon">â™¡</span></div></div>
+    <div class="insta-cell"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPvR-ZERgKCplhXfQIp6iy_H0pQf7MbW9fq5avJNwjc8ykEfHZ6Web3xHN41VtYsF0c9kukbggkt0oZ9zt5dhvYkVrQzGAOqPA_5-NKrtbBgduyUykQH4qhWh_vxjtugeqNxcxEE840RMFJAAl-_c7dXCJtdvgdRvoVosfQpaB33DnT00d982ZQURNfcZelf9zc-aVn84KFdjfSQg-NoNRbC0xys4mgGVJ3dxIWQvqV3hhSbxQ3e0umw7SZaEgW6rtn4qHPHmOutg" alt=""/><div class="insta-overlay"><span class="insta-icon">â™¡</span></div></div>
+    <div class="insta-cell"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBea3HpZr1GORCRR_RApbAWjqZIjlLDOx0CwBMv0oUR1bLPEVb9Vh30feYT-6P7W8IudLCs-azNkBfq8nnWG7rJW0i1fJpd53Pro9Byj8MCilWb1v3eGJwEqWGFeE-udS354D7bCJAYcVEvpu_VtvSf7Bu6Zn2Wj0kYMA8yCJEVb-8MzmnKyqqdjLK7KLNfBansaWpCpNoEjHdH3joQr9MpL4Q001tlRZgldjvwsQj-f02cbb4JGuPupih0NHHlvuHkeP4ogdLJdbuR" alt=""/><div class="insta-overlay"><span class="insta-icon">â™¡</span></div></div>
+    <div class="insta-cell"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsvOJwoIzvAx1uJ-lMpq2qzpD42Cde4f7X6iLXef7OYMHdgwD28boghVwcpkonDlIoJHhPg2NMr5NZJACoXWHj0JL9-2q8boMvVP50NsxFPIND8oQxYoQVQqlraq71iBaT718KaUb_L7pfSFsG4S1blyO_FrPmUBVlkET5cPR3Z0MwlQ5kbyrLxQ2RZSr9lo6puvvYbWkmGgmIue58ib7UyYLNaS_gG8-gNEmoIUAJIMLu_-d9MGHDot3vSkvEyf4BfSTk6NG74obG" alt=""/><div class="insta-overlay"><span class="insta-icon">â™¡</span></div></div>
+    <div class="insta-cell"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyQrJx-J1HUQrDlri7GE9OO1pF_T4xZNNfGtqj-YUfJXWuDGwAbhGS3Kyr9PirrvgcEVs-Mazla1_jIwwE8Lef3XKceGsnNRuwxHyQ5Klfl9Ds_SQkiNOIzKnZCyFnkumW66HzCM5SCgjSXAX7DjXalPr5pFYk9YOddMFpe6FU9Qe9XRTgvYzWREeJZjxKeeKScf8rWJV43hNYjX-0Iw9jDtLYyblZLyJaoSrZU6iGvt-6Xhd-MATglpuTuQjERRSrDBs5p3R76cPq" alt=""/><div class="insta-overlay"><span class="insta-icon">â™¡</span></div></div>
   </div>
 </section>
 
 
-{# ── FOOTER ── #}
+{# â”€â”€ FOOTER â”€â”€ #}
 
 {% block extra_js %}
 <script>
-/* ── Wishlist heart toggle ── */
+/* â”€â”€ Wishlist heart toggle â”€â”€ */
 document.querySelectorAll('.js-wish-toggle').forEach(function(btn) {
   btn.addEventListener('click', function(e) {
     e.preventDefault();
@@ -623,7 +623,7 @@ document.querySelectorAll('.js-wish-toggle').forEach(function(btn) {
   });
 });
 
-/* ── Hero slider — horizontal slide ── */
+/* â”€â”€ Hero slider â€” horizontal slide â”€â”€ */
 (function() {
   var track   = document.getElementById('heroTrack');
   var dots    = document.querySelectorAll('.slider-dot');
@@ -673,3 +673,4 @@ document.querySelectorAll('.js-wish-toggle').forEach(function(btn) {
 </script>
 {% endblock %}
 {% endblock %}
+

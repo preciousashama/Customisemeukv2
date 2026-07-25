@@ -660,13 +660,13 @@
      ============================================================ -->
 <div class="promo-ticker" id="promoTicker">
   <div class="promo-ticker-track">
-    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
     <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
-    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
     <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
@@ -744,7 +744,7 @@
             </div>
             <div class="summary-row" id="summaryDiscountRow"{% if totals.discount == 0 %} style="display:none;"{% endif %}>
               <span class="summary-row-label" id="summaryDiscountLabel">Discount{% if totals.promo_code %} ({{ totals.promo_code }}){% endif %}</span>
-              <span class="summary-row-value" id="summaryDiscount">-Ã‚Â£{{ totals.discount|floatformat:2 }}</span>
+              <span class="summary-row-value" id="summaryDiscount">-Ã‚£{{ totals.discount|floatformat:2 }}</span>
             </div>
           </div>
         </div>
@@ -824,7 +824,7 @@
     <div class="header-icons">
       <button class="currency-btn" title="Change currency" aria-label="Currency: GBP">
         <span class="currency-flag">ðŸ‡¬ðŸ‡§</span>
-        <span class="currency-code">GBP Â£</span>
+        <span class="currency-code">GBP £</span>
       </button>
       <div class="icon-divider"></div>
       <a href="{% url 'wishlist-page' %}" class="hdr-icon-btn" title="Saved items" aria-label="Saved items">
@@ -1202,8 +1202,8 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
   function updateTotals(data){
     var sub   = document.getElementById('summarySubtotal');
     var total = document.getElementById('summaryTotal');
-    if(sub)   sub.textContent   = 'Â£' + parseFloat(data.subtotal).toFixed(2);
-    if(total) total.textContent = 'Â£' + parseFloat(data.total).toFixed(2);
+    if(sub)   sub.textContent   = '£' + parseFloat(data.subtotal).toFixed(2);
+    if(total) total.textContent = '£' + parseFloat(data.total).toFixed(2);
   }
 
   /* Remove item */
@@ -1218,9 +1218,9 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
     var removePromoBtn = document.getElementById('removePromoBtn');
     var discount = parseFloat(data.discount || 0);
 
-    if(sub) sub.textContent = 'Ã‚Â£' + parseFloat(data.subtotal || 0).toFixed(2);
-    if(ship) ship.textContent = 'Ã‚Â£' + parseFloat(data.shipping || 0).toFixed(2);
-    if(total) total.textContent = 'Ã‚Â£' + parseFloat(data.total || 0).toFixed(2);
+    if(sub) sub.textContent = 'Ã‚£' + parseFloat(data.subtotal || 0).toFixed(2);
+    if(ship) ship.textContent = 'Ã‚£' + parseFloat(data.shipping || 0).toFixed(2);
+    if(total) total.textContent = 'Ã‚£' + parseFloat(data.total || 0).toFixed(2);
 
     if(sub) sub.textContent = String.fromCharCode(163) + parseFloat(data.subtotal || 0).toFixed(2);
     if(ship) ship.textContent = String.fromCharCode(163) + parseFloat(data.shipping || 0).toFixed(2);
@@ -1230,7 +1230,7 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
       if(discount > 0){
         discountRow.style.display = '';
         discountLabel.textContent = data.promo_code ? ('Discount (' + data.promo_code + ')') : 'Discount';
-        discountValue.textContent = '-Ã‚Â£' + discount.toFixed(2);
+        discountValue.textContent = '-Ã‚£' + discount.toFixed(2);
         discountValue.textContent = '-' + String.fromCharCode(163) + discount.toFixed(2);
       } else {
         discountRow.style.display = 'none';
@@ -1411,4 +1411,5 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
 </script>
 </body>
 </html>
+
 

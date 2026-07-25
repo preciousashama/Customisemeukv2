@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,7 +25,7 @@
     overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column;
   }
 
-  /* ── CURSOR ── */
+  /* â”€â”€ CURSOR â”€â”€ */
   * { cursor: none; }
   #cursor {
     position: fixed; top: 0; left: 0; width: 10px; height: 10px;
@@ -42,7 +42,7 @@
   .progress-track { position: fixed; top: calc(34px + 102px); left: 0; right: 0; height: 2px; background: var(--grey-7); z-index: 99; }
   .progress-fill { height: 100%; background: var(--black); width: 0%; transition: width .1s linear; }
 
-  /* ══ HERO ══ */
+  /* â•â• HERO â•â• */
   .hero { padding: 96px 80px 80px; border-bottom: 1px solid var(--grey-7); text-align: center; }
   .hero-overline {
     font-size: 10px; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--grey-5);
@@ -63,7 +63,7 @@
     opacity: 0; animation: fadeUp .7s .3s ease forwards;
   }
 
-  /* ══ HOW IT WORKS ══ */
+  /* â•â• HOW IT WORKS â•â• */
   .section-how {
     padding: 96px 80px; border-bottom: 1px solid var(--grey-7);
     display: grid; grid-template-columns: 1fr 1.8fr; gap: 80px; align-items: start;
@@ -99,7 +99,7 @@
   .step-action.primary { background: var(--black); color: var(--white); border-color: var(--black); }
   .step-action.primary:hover { background: var(--grey-1); }
 
-  /* ══ REQUEST FORM ══ */
+  /* â•â• REQUEST FORM â•â• */
   .section-form {
     padding: 96px 80px; border-bottom: 1px solid var(--grey-7);
     display: grid; grid-template-columns: 280px 1fr; gap: 80px; align-items: start;
@@ -149,7 +149,7 @@
   .btn-submit-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; }
   .submit-note { font-size: 12px; color: var(--grey-4); text-align: center; margin-top: 12px; line-height: 1.6; }
 
-  /* ══ LIABILITY WAIVER ══ */
+  /* â•â• LIABILITY WAIVER â•â• */
   .section-waiver { padding: 96px 80px; }
   .waiver-inner { background: var(--black); color: var(--white); padding: 72px 80px; position: relative; overflow: hidden; text-align: center; }
   .waiver-inner::before { content: ''; position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(var(--grey-2) 1px, transparent 1px), linear-gradient(90deg, var(--grey-2) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.35; }
@@ -163,7 +163,7 @@
   .btn-waiver:hover { background: var(--grey-7); }
   .waiver-note { font-size: 11px; color: var(--grey-5); margin-top: 20px; line-height: 1.6; }
 
-  /* ══ FOOTER ══ */
+  /* â•â• FOOTER â•â• */
   footer { background: var(--black); color: var(--white); padding: 80px 80px 40px; }
   .footer-top { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 60px; padding-bottom: 64px; border-bottom: 1px solid var(--grey-2); }
   .footer-brand p { font-size: 13px; color: var(--grey-4); line-height: 1.7; margin-top: 20px; max-width: 260px; }
@@ -180,12 +180,12 @@
   .footer-bottom-links a { font-size: 12px; color: var(--grey-4); text-decoration: none; transition: color .2s; }
   .footer-bottom-links a:hover { color: var(--white); }
 
-  /* ══ ANIMATIONS ══ */
+  /* â•â• ANIMATIONS â•â• */
   @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
   .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
 
-  /* ══ RESPONSIVE ══ */
+  /* â•â• RESPONSIVE â•â• */
   @media (max-width: 1100px) {
     .hero { padding: 80px 48px 64px; }
     .section-how, .section-form, .section-waiver { padding-left: 48px; padding-right: 48px; }
@@ -210,7 +210,7 @@
     .footer-bottom { flex-direction: column; align-items: flex-start; }
   }
 
-  /* ══ PROMO TICKER ══ */
+  /* â•â• PROMO TICKER â•â• */
   .promo-ticker { position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: var(--black); height: 34px; overflow: hidden; display: flex; align-items: center; }
   .promo-ticker-track { display: flex; align-items: center; white-space: nowrap; animation: ticker 40s linear infinite; will-change: transform; }
   .promo-ticker-track:hover { animation-play-state: paused; }
@@ -218,7 +218,7 @@
   .promo-ticker-item { display: inline-flex; align-items: center; gap: 32px; font-family: var(--sans); font-size: 10.5px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.85); padding: 0 40px; }
   .promo-ticker-item .dot { display: inline-block; width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.35); flex-shrink: 0; }
 
-  /* ══ HEADER ══ */
+  /* â•â• HEADER â•â• */
   header, #mainHeader { position: fixed; top: 34px; left: 0; right: 0; z-index: 100; background: rgba(248,248,246,0.96); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--grey-6); transition: background 0.3s ease, border-color 0.3s ease; display: flex; flex-direction: column; }
   .header-top-row { display: flex; align-items: center; justify-content: center; padding: 8px 48px; border-bottom: 1px solid var(--grey-7); }
   .search-wrap { display: flex; align-items: center; gap: 10px; border: 1px solid var(--grey-6); padding: 6px 16px; background: var(--grey-8); width: 460px; transition: border-color 0.3s, background 0.3s, width 0.3s ease; }
@@ -260,13 +260,13 @@
   .currency-flag { font-size: 18px; line-height: 1; }
   .currency-code { font-family: var(--sans); font-size: 9px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
   .icon-divider { width: 1px; height: 28px; background: var(--grey-6); margin: 0 6px; }
-  /* ── Hamburger ── sits as direct child of header-bottom-row, outside .header-icons */
+  /* â”€â”€ Hamburger â”€â”€ sits as direct child of header-bottom-row, outside .header-icons */
   .hamburger { display: none; flex-direction: column; justify-content: center; align-items: center; gap: 5px; width: 40px; height: 40px; background: none; border: none; cursor: none; padding: 4px; flex-shrink: 0; }
   .hamburger span { display: block; width: 22px; height: 1.5px; background: var(--black); transition: transform .35s, opacity .25s, width .3s; transform-origin: center; }
   .hamburger.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
   .hamburger.active span:nth-child(2) { opacity: 0; width: 0; }
   .hamburger.active span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
-  /* ── Mobile nav ── */
+  /* â”€â”€ Mobile nav â”€â”€ */
   .mobile-nav { display: none; position: fixed; top: calc(28px + 56px); left: 0; right: 0; background: rgba(248,248,246,0.97); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--grey-6); z-index: 99; padding: 0 32px; max-height: 0; overflow: hidden; transition: max-height .45s cubic-bezier(.4,0,.2,1), padding .35s; }
   .mobile-nav.open { max-height: 400px; padding: 24px 32px 32px; }
   .mobile-nav a { display: block; font-family: var(--sans); font-size: 13px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--grey-3); text-decoration: none; padding: 14px 0; border-bottom: 1px solid var(--grey-7); opacity: 0; transform: translateY(10px); transition: color .2s, padding-left .2s, opacity .3s, transform .3s; }
@@ -284,7 +284,7 @@
   .page-wrap { padding-top: 136px !important; }
   .progress-track { top: calc(34px + 102px) !important; }
 
-  /* ── Responsive header ── */
+  /* â”€â”€ Responsive header â”€â”€ */
   @media (max-width: 768px) {
     .promo-ticker { height: 28px; }
     .promo-ticker-item { font-size: 9.5px; padding: 0 24px; }
@@ -300,7 +300,7 @@
     .page-wrap { padding-top: 84px !important; }
   }
 
-  /* ══ ACCOUNT DROPDOWN ══ */
+  /* â•â• ACCOUNT DROPDOWN â•â• */
   .hdr-account-wrap { position: relative; }
   .hdr-account-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; cursor: none; color: var(--grey-3); padding: 8px 10px; transition: color .2s; }
   .hdr-account-btn:hover, .hdr-account-wrap.open .hdr-account-btn { color: var(--black); }
@@ -344,7 +344,7 @@
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
   <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-  <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
+  <input type="text" name="q" placeholder="Search products, designs, categoriesâ€¦" aria-label="Search"
          value="{{ request.GET.q|default:'' }}"/>
 </form>
   </div>
@@ -420,7 +420,7 @@
       </div>
     </nav>
     <div class="header-icons">
-      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">🇬🇧</span><span class="currency-code">GBP £</span></button>
+      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">ðŸ‡¬ðŸ‡§</span><span class="currency-code">GBP £</span></button>
       <div class="icon-divider"></div>
       {% if user.is_authenticated %}
       <a href="{% url 'wishlist-page' %}" class="hdr-icon-btn" aria-label="Saved items">
@@ -477,7 +477,7 @@
 <div class="page-wrap">
 
   <section class="hero">
-    <div class="hero-overline">§ 00 — Send Your Items</div>
+    <div class="hero-overline">Â§ 00 â€” Send Your Items</div>
     <h1 class="hero-title">Customisation<br/><em>Request Form</em></h1>
     <p class="hero-desc">Ship us your favourite garments or accessories, and we'll transform them with premium customisation.</p>
   </section>
@@ -496,7 +496,7 @@
 
   <section class="section-how" id="how-it-works">
     <div class="how-left reveal">
-      <div class="section-overline">§ 01 — How It Works</div>
+      <div class="section-overline">Â§ 01 â€” How It Works</div>
       <h2 class="how-title">Your items,<br/><em>our expertise.</em></h2>
       <p class="how-body">Our "Send Your Own" service allows you to provide the base items while we provide the expert customisation. Whether it's a sentimental jacket or a batch of employee-owned hoodies, we apply the same professional standards to every piece you send us.</p>
     </div>
@@ -546,7 +546,7 @@
 
   <section class="section-form" id="request-form">
     <div class="form-sidebar reveal">
-      <div class="section-overline">§ 02</div>
+      <div class="section-overline">Â§ 02</div>
       <h2 class="form-sidebar-title">Request<br/><em>a Quote</em></h2>
       <p class="form-sidebar-body">Fill in the form and our team will review your request and come back to you within 24 hours with a formal quote and next steps.</p>
       <p class="form-sidebar-note">After submission, our team will review your request and contact you within 24 hours.</p>
@@ -637,7 +637,7 @@
   <section class="section-waiver" id="waiver">
     <div class="waiver-inner reveal">
       <div class="waiver-body">
-        <div class="waiver-overline">§ 04 — Legal</div>
+        <div class="waiver-overline">Â§ 04 â€” Legal</div>
         <h2 class="waiver-title">Download<br/><em>Liability Form</em></h2>
         <p class="waiver-desc">For all "Send Your Own" orders, we require a signed liability waiver to be included in your package. This ensures you understand the risks involved in customising high-value or sentimental items.</p>
         <a class="btn-waiver" href="{% static 'CMUK-CUSTOMER-ITEM-CUSTOMISATION-LIABILITY.pdf' %}" download>
@@ -681,7 +681,7 @@
       </ul></div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 CustomiseMe UK. All rights reserved.</p>
+      <p>Â© 2026 CustomiseMe UK. All rights reserved.</p>
       <div class="footer-bottom-links">
         <a href="{% url 'privacy-page' %}">Privacy</a>
         <a href="{% url 'conditions-page' %}">Terms</a>
@@ -692,7 +692,7 @@
 </div>
 
 <script>
-  /* ── Cursor ── */
+  /* â”€â”€ Cursor â”€â”€ */
   const cursor = document.getElementById('cursor');
   const ring   = document.getElementById('cursor-ring');
   let mx = 0, my = 0, rx = 0, ry = 0;
@@ -703,14 +703,14 @@
     el.addEventListener('mouseleave', () => { cursor.style.width='10px'; cursor.style.height='10px'; ring.style.width='36px'; ring.style.height='36px'; });
   });
 
-  /* ── Reading progress ── */
+  /* â”€â”€ Reading progress â”€â”€ */
   window.addEventListener('scroll', () => {
     const max = document.body.scrollHeight - window.innerHeight;
     const bar = document.getElementById('progressFill');
     if (bar && max > 0) bar.style.width = (window.scrollY / max * 100) + '%';
   });
 
-  /* ── Hamburger ── */
+  /* â”€â”€ Hamburger â”€â”€ */
   const hamburger = document.getElementById('hamburger');
   const mobileNav = document.getElementById('mobileNav');
   if (hamburger && mobileNav) {
@@ -735,7 +735,7 @@
     });
   }
 
-  /* ── File upload label ── */
+  /* â”€â”€ File upload label â”€â”€ */
   const artworkInput = document.getElementById('artwork');
   if (artworkInput) {
     artworkInput.addEventListener('change', function() {
@@ -744,7 +744,7 @@
     });
   }
 
-  /* ── Scroll reveal ── */
+  /* â”€â”€ Scroll reveal â”€â”€ */
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -761,7 +761,7 @@
     observer.observe(el);
   });
 
-  /* ── Account dropdown ── */
+  /* â”€â”€ Account dropdown â”€â”€ */
   const accountBtn  = document.getElementById('accountBtn');
   const accountWrap = document.getElementById('accountWrap');
   if (accountBtn && accountWrap) {

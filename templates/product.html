@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -388,7 +388,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
       <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search" value="{{ request.GET.q|default:'' }}"/>
+      <input type="text" name="q" placeholder="Search products, designs, categoriesâ€¦" aria-label="Search" value="{{ request.GET.q|default:'' }}"/>
     </form>
   </div>
   <div class="header-bottom-row">
@@ -456,7 +456,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
       </div>
     </nav>
     <div class="header-icons">
-      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">🇬🇧</span><span class="currency-code">GBP £</span></button>
+      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">ðŸ‡¬ðŸ‡§</span><span class="currency-code">GBP £</span></button>
       <div class="icon-divider"></div>
       {% if user.is_authenticated %}
       <a href="{% url 'wishlist-page' %}" class="hdr-icon-btn" aria-label="Saved items">
@@ -516,10 +516,10 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
 
   <nav class="breadcrumb">
     <a href="{% url 'home-page' %}">Home</a>
-    <span class="sep">—</span>
+    <span class="sep">â€”</span>
     {% if category_filter %}
       <a href="{% url 'product-page' %}">Shop</a>
-      <span class="sep">—</span>
+      <span class="sep">â€”</span>
       <span class="current">{{ category_filter }}</span>
     {% else %}
       <span class="current">Shop</span>
@@ -566,7 +566,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
           <a href="{% url 'product-page-detail' p.slug %}" class="carousel-track js-track">
             {% if p.image %}<img src="{{ p.image.url }}" class="carousel-slide" alt="{{ p.name }}" loading="lazy"/>{% endif %}
             {% for vi in variations %}
-              <img src="{{ vi.image.url }}" class="carousel-slide" alt="{{ p.name }} — {{ vi.label|default:'variation' }}" loading="lazy"/>
+              <img src="{{ vi.image.url }}" class="carousel-slide" alt="{{ p.name }} â€” {{ vi.label|default:'variation' }}" loading="lazy"/>
             {% endfor %}
 
             {% if not p.image and not variations %}
@@ -617,9 +617,9 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
 
   <nav class="breadcrumb">
     <a href="{% url 'home-page' %}">Home</a>
-    <span class="sep">—</span>
+    <span class="sep">â€”</span>
     <a href="{% url 'product-page' %}?category={{ product.category }}">{{ product.category|default:"Shop" }}</a>
-    <span class="sep">—</span>
+    <span class="sep">â€”</span>
     <span class="current">{{ product.name|default:"Product" }}</span>
   </nav>
 
@@ -643,12 +643,12 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
       <div class="thumbnails">
         {% if product.image %}
         <button class="thumb-btn active" onclick="switchThumb(this,'{{ product.image.url }}')">
-          <img src="{{ product.image.url }}" alt="{{ product.name }} — main"/>
+          <img src="{{ product.image.url }}" alt="{{ product.name }} â€” main"/>
         </button>
         {% endif %}
         {% for vi in variations %}
         <button class="thumb-btn{% if not product.image and forloop.first %} active{% endif %}" onclick="switchThumb(this,'{{ vi.image.url }}')">
-          <img src="{{ vi.image.url }}" alt="{{ product.name }} — {{ vi.label|default:'variation' }}"/>
+          <img src="{{ vi.image.url }}" alt="{{ product.name }} â€” {{ vi.label|default:'variation' }}"/>
         </button>
         {% endfor %}
       </div>
@@ -668,7 +668,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
         <li>Do not iron directly over embroidery</li>
       </ul></div>
       <div id="tab-shipping" class="tab-content" style="display:none;"><ul>
-        <li>Standard: ships within 3–5 business days</li>
+        <li>Standard: ships within 3â€“5 business days</li>
         <li>Free returns within 30 days on non-personalised items</li>
         <li>Personalised items are final sale unless defective</li>
       </ul></div>
@@ -704,7 +704,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             <div class="field-label"><span class="step-num" id="stepColour">1</span> Choose Colour</div>
             <div class="colour-select-wrap">
               <select class="field-input js-colour" id="colourSelect" name="colour">
-                <option value="">— Select a colour —</option>
+                <option value="">â€” Select a colour â€”</option>
               </select>
               <div class="colour-swatch" id="colourSwatch"></div>
             </div>
@@ -719,8 +719,8 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             <div class="field-label"><span class="step-num" id="stepArtSize">3</span> Artwork Size</div>
             <div class="font-grid">
               <button type="button" class="font-btn active js-art-size" data-size="Small" data-inches="4" data-add="0">Small <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">4 inches</span></button>
-              <button type="button" class="font-btn js-art-size" data-size="Medium" data-inches="6" data-add="3">Medium <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">6 inches · +£3</span></button>
-              <button type="button" class="font-btn js-art-size" data-size="Large" data-inches="8" data-add="5">Large <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">8 inches · +£5</span></button>
+              <button type="button" class="font-btn js-art-size" data-size="Medium" data-inches="6" data-add="3">Medium <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">6 inches Â· +£3</span></button>
+              <button type="button" class="font-btn js-art-size" data-size="Large" data-inches="8" data-add="5">Large <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">8 inches Â· +£5</span></button>
             </div>
           </div>
           <div class="field-block" id="blockPrintSide">
@@ -743,7 +743,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
           <div class="field-block" id="blockQuantity" style="display:none;">
             <div class="field-label"><span class="step-num" id="stepQuantity">2</span> Quantity</div>
             <select class="field-input" id="quantitySelect" name="quantity">
-              <option value="">— Select quantity —</option>
+              <option value="">â€” Select quantity â€”</option>
             </select>
             <div class="qty-stepper" id="qtyStepper" style="display:none;">
               <button type="button" class="qty-stepper-btn" id="qtyDecBtn" aria-label="Decrease quantity">&minus;</button>
@@ -753,12 +753,12 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
           </div>
           <div class="field-block" id="blockPartyText" style="display:none;">
             <div class="field-label"><span class="step-num" id="stepPartyText">3</span> Custom Text</div>
-            <input type="text" class="field-input" name="party_text" id="partyText" maxlength="50" placeholder="Up to 50 characters…"/>
+            <input type="text" class="field-input" name="party_text" id="partyText" maxlength="50" placeholder="Up to 50 charactersâ€¦"/>
           </div>
           <div class="field-block" id="blockPartyFont" style="display:none;">
             <div class="field-label"><span class="step-num" id="stepPartyFont">4</span> Font</div>
             <select class="field-input" name="party_font" id="partyFontSelect">
-              <option value="">— Select a font —</option>
+              <option value="">â€” Select a font â€”</option>
               <option value="Classic Serif">Classic Serif</option>
               <option value="Modern Sans">Modern Sans</option>
               <option value="Brush Script">Brush Script</option>
@@ -771,7 +771,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             <label class="artwork-upload-label" id="artworkLabel" for="artworkFile">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               <span id="artworkLabelText">Click to upload artwork</span>
-              <span style="font-size:11px;color:var(--grey-4);display:block;margin-top:4px;">PNG, JPG, SVG, PDF — max 25 MB</span>
+              <span style="font-size:11px;color:var(--grey-4);display:block;margin-top:4px;">PNG, JPG, SVG, PDF â€” max 25 MB</span>
             </label>
             <input type="file" name="artwork_file" id="artworkFile" accept=".png,.jpg,.jpeg,.svg,.pdf,.gif,.webp" style="display:none;" onchange="handleArtworkChange(this,'artworkLabel','artworkLabelText')"/>
           </div>
@@ -780,7 +780,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             <label class="artwork-upload-label" id="artworkLabelBack" for="artworkFileBack">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               <span id="artworkLabelTextBack">Click to upload back artwork</span>
-              <span style="font-size:11px;color:var(--grey-4);display:block;margin-top:4px;">PNG, JPG, SVG, PDF — max 25 MB</span>
+              <span style="font-size:11px;color:var(--grey-4);display:block;margin-top:4px;">PNG, JPG, SVG, PDF â€” max 25 MB</span>
             </label>
             <input type="file" name="artwork_file_back" id="artworkFileBack" accept=".png,.jpg,.jpeg,.svg,.pdf,.gif,.webp" style="display:none;" onchange="handleArtworkChange(this,'artworkLabelBack','artworkLabelTextBack')"/>
           </div>
@@ -792,7 +792,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
           </div>
           <div class="field-block" id="blockAdditional" style="display:none;">
             <div class="field-label"><span class="step-num" id="stepAdditional">5</span> Additional Information</div>
-            <textarea class="field-input" name="additional_info" id="additionalInfo" rows="3" placeholder="Any extra details for your order…" style="resize:vertical;"></textarea>
+            <textarea class="field-input" name="additional_info" id="additionalInfo" rows="3" placeholder="Any extra details for your orderâ€¦" style="resize:vertical;"></textarea>
           </div>
           <div class="price-breakdown" id="priceBreakdown">
             <div class="price-row"><span>Base price</span><span id="pbBase">£{{ product.price|floatformat:2 }}</span></div>
@@ -834,7 +834,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
       <div class="info-cards">
         <div class="info-card">
           <svg class="info-card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-          <div><span class="info-card-label">Ships in</span><span class="info-card-value">3–5 Days</span></div>
+          <div><span class="info-card-label">Ships in</span><span class="info-card-value">3â€“5 Days</span></div>
         </div>
         <div class="info-card">
           <svg class="info-card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -870,7 +870,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
     </ul></div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 CustomiseMe UK. All rights reserved.</p>
+    <p>Â© 2026 CustomiseMe UK. All rights reserved.</p>
     <div class="footer-bottom-links">
       <a href="{% url 'privacy-page' %}">Privacy</a>
       <a href="{% url 'conditions-page' %}">Terms</a>
@@ -914,7 +914,7 @@ if(accountWrap){
   }
 }
 
-/* Thumbnail switcher — detail mode only */
+/* Thumbnail switcher â€” detail mode only */
 function switchThumb(btn,url){
   document.querySelectorAll('.thumb-btn').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
@@ -922,7 +922,7 @@ function switchThumb(btn,url){
   if(main&&url) main.src=url;
 }
 
-/* Wishlist toggle — works in both listing and detail mode */
+/* Wishlist toggle â€” works in both listing and detail mode */
 document.addEventListener('click',function(e){
   var btn=e.target.closest('.js-wish-toggle');
   if(!btn) return;
@@ -947,7 +947,7 @@ document.addEventListener('click',function(e){
   });
 });
 
-/* Tab switcher — detail mode only */
+/* Tab switcher â€” detail mode only */
 function switchTab(btn,id){
   document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
@@ -956,7 +956,7 @@ function switchTab(btn,id){
   if(el) el.style.display='block';
 }
 
-/* ── Detail-mode JS — only runs when product exists ── */
+/* â”€â”€ Detail-mode JS â€” only runs when product exists â”€â”€ */
 {% if product %}
 (function(){
   var BASE_PRICE       = parseFloat('{{ product.price }}') || 0;
@@ -1036,7 +1036,7 @@ function switchTab(btn,id){
         var btn=document.createElement('button'); btn.type='button';
         btn.className='font-btn js-art-size'+(i===0?' active':'');
         btn.dataset.size=v.label; btn.dataset.inches=v.inches||''; btn.dataset.add=v.add||0;
-        var extra = (v.inches ? v.inches+' inches' : '') + (v.add>0 ? (v.inches?' · ':'')+'+£'+Number(v.add).toFixed(2) : '');
+        var extra = (v.inches ? v.inches+' inches' : '') + (v.add>0 ? (v.inches?' Â· ':'')+'+£'+Number(v.add).toFixed(2) : '');
         btn.innerHTML = v.label + (extra ? ' <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">'+extra+'</span>' : '');
         if(i===0) artAddCfg = parseFloat(v.add)||0;
         btn.addEventListener('click', function(){
@@ -1145,7 +1145,7 @@ function switchTab(btn,id){
     if (fsCfg && fsCfg.enabled && fsCfg.values && fsCfg.values.length) {
       showBlock('blockPartyFont'); stepNumCfg('stepPartyFont');
       var fselEl = document.getElementById('partyFontSelect');
-      fselEl.innerHTML = '<option value="">— Select a font —</option>';
+      fselEl.innerHTML = '<option value="">â€” Select a font â€”</option>';
       fsCfg.values.forEach(function(v){ var o=document.createElement('option'); o.value=v; o.textContent=v; fselEl.appendChild(o); });
     }
 
@@ -1199,7 +1199,7 @@ function switchTab(btn,id){
       if(printSide) parts.push('Printing: '+printSide);
       if(txt) parts.push(txt);
       if(font) parts.push(font);
-      document.getElementById('variantField').value=parts.join(' · ');
+      document.getElementById('variantField').value=parts.join(' Â· ');
     }
 
     buildVariantCfg(); updatePriceCfg();
@@ -1327,7 +1327,7 @@ function switchTab(btn,id){
     if(printSide) parts.push('Printing: '+printSide);
     if(partyText) parts.push(partyText);
     if(partyFont) parts.push(partyFont);
-    document.getElementById('variantField').value=parts.join(' · ');
+    document.getElementById('variantField').value=parts.join(' Â· ');
   }
 
   var partyTxtEl=document.getElementById('partyText');
@@ -1338,7 +1338,7 @@ function switchTab(btn,id){
 
 function handleArtworkChange(input,labelId,txtId){
   var label=document.getElementById(labelId||'artworkLabel');var txt=document.getElementById(txtId||'artworkLabelText');
-  if(input.files&&input.files[0]){var f=input.files[0];if(f.size>25*1024*1024){alert('File is too large. Max size is 25 MB.');input.value='';return;}if(label)label.classList.add('has-file');if(txt)txt.textContent='✓ '+f.name;}
+  if(input.files&&input.files[0]){var f=input.files[0];if(f.size>25*1024*1024){alert('File is too large. Max size is 25 MB.');input.value='';return;}if(label)label.classList.add('has-file');if(txt)txt.textContent='âœ“ '+f.name;}
   else{if(label)label.classList.remove('has-file');if(txt)txt.textContent=labelId==='artworkLabelBack'?'Click to upload back artwork':'Click to upload artwork';}
 }
 
@@ -1375,7 +1375,7 @@ if(form){
     if(hasFile) return;
     e.preventDefault();
     var btn=document.getElementById('addToCartBtn');var sp=btn?btn.querySelector('span'):null;
-    if(btn)btn.disabled=true;if(sp)sp.textContent='Adding…';
+    if(btn)btn.disabled=true;if(sp)sp.textContent='Addingâ€¦';
     fetch(CART_URL,{method:'POST',headers:{'X-Requested-With':'XMLHttpRequest','X-CSRFToken':CSRF_TOKEN},body:new FormData(form)})
     .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
     .then(function(data){

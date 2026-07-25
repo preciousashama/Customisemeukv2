@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,7 +28,7 @@
   #cursor { position: fixed; top:0; left:0; width:10px; height:10px; background:var(--black); border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:width .2s,height .2s; }
   #cursor-ring { position:fixed; top:0; left:0; width:36px; height:36px; border:1px solid var(--black); border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); transition:width .3s,height .3s; }
 
-  /* ── PROMO TICKER ── */
+  /* â”€â”€ PROMO TICKER â”€â”€ */
   .promo-ticker { position:fixed; top:0; left:0; right:0; z-index:200; background:var(--black); height:34px; overflow:hidden; display:flex; align-items:center; }
   .promo-ticker-track { display:flex; align-items:center; white-space:nowrap; animation:ticker 40s linear infinite; will-change:transform; }
   .promo-ticker-track:hover { animation-play-state:paused; }
@@ -36,7 +36,7 @@
   .promo-ticker-item { display:inline-flex; align-items:center; gap:32px; font-family:var(--sans); font-size:10.5px; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:rgba(255,255,255,0.85); padding:0 40px; }
   .promo-ticker-item .dot { display:inline-block; width:3px; height:3px; border-radius:50%; background:rgba(255,255,255,0.35); flex-shrink:0; }
 
-  /* ── HEADER ── */
+  /* â”€â”€ HEADER â”€â”€ */
   header, #mainHeader { position:fixed; top:34px; left:0; right:0; z-index:100; background:rgba(248,248,246,0.96); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border-bottom:1px solid var(--grey-6); display:flex; flex-direction:column; }
   .header-top-row { display:flex; align-items:center; justify-content:center; padding:8px 48px; border-bottom:1px solid var(--grey-7); }
   .search-wrap { display:flex; align-items:center; gap:10px; border:1px solid var(--grey-6); padding:6px 16px; background:var(--grey-8); width:460px; transition:border-color .3s,background .3s,width .3s; }
@@ -92,10 +92,10 @@
   .mobile-nav.open a { opacity:1; transform:translateY(0); }
   .mobile-nav.open a:nth-child(1) { transition-delay:.05s; } .mobile-nav.open a:nth-child(2) { transition-delay:.10s; } .mobile-nav.open a:nth-child(3) { transition-delay:.15s; } .mobile-nav.open a:nth-child(4) { transition-delay:.20s; } .mobile-nav.open a:nth-child(5) { transition-delay:.25s; } .mobile-nav.open a:nth-child(6) { transition-delay:.30s; }
 
-  /* ── MAIN LAYOUT ── */
+  /* â”€â”€ MAIN LAYOUT â”€â”€ */
   main { padding-top:136px !important; min-height:calc(100vh - 136px) !important; display:grid; grid-template-columns:1fr 1fr; }
 
-  /* ── LEFT PANEL ── */
+  /* â”€â”€ LEFT PANEL â”€â”€ */
   .login-left { position:relative; overflow:hidden; background:var(--grey-8); }
   .login-left img { width:100%; height:100%; object-fit:cover; filter:grayscale(30%); transition:filter .8s; }
   .login-left:hover img { filter:grayscale(0%); }
@@ -109,9 +109,9 @@
   .login-left-quote blockquote { font-family:var(--serif); font-size:28px; font-weight:300; font-style:italic; line-height:1.4; color:var(--white); text-shadow:0 1px 8px rgba(0,0,0,0.3); }
   .login-left-quote cite { display:block; margin-top:14px; font-family:var(--sans); font-size:11px; font-style:normal; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; color:rgba(248,248,246,0.6); }
 
-  /* ── RIGHT PANEL ── */
+  /* â”€â”€ RIGHT PANEL â”€â”€ */
   .login-right { background:var(--white); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 64px; position:relative; }
-  .login-right::before { content:'✦'; position:absolute; top:100px; right:52px; font-size:11px; color:var(--grey-6); animation:spin 14s linear infinite; }
+  .login-right::before { content:'âœ¦'; position:absolute; top:100px; right:52px; font-size:11px; color:var(--grey-6); animation:spin 14s linear infinite; }
   @keyframes spin { to { transform:rotate(360deg); } }
   .form-container { width:100%; max-width:400px; }
   .form-overline { font-family:var(--sans); font-size:11px; font-weight:500; letter-spacing:0.22em; text-transform:uppercase; color:var(--grey-4); margin-bottom:14px; display:flex; align-items:center; gap:12px; }
@@ -120,14 +120,14 @@
   .form-title em { font-style:italic; color:var(--grey-3); }
   .form-subtitle { font-size:14px; color:var(--grey-4); margin-bottom:32px; line-height:1.6; }
 
-  /* ── ALERTS ── */
+  /* â”€â”€ ALERTS â”€â”€ */
   .alert { padding:14px 18px; margin-bottom:20px; font-size:13px; line-height:1.6; border-left:3px solid; }
   .alert-success { background:var(--accent-light); border-color:var(--accent); color:var(--accent-dark); }
   .alert-error   { background:#fef2f2; border-color:#e53e3e; color:#c53030; }
   .alert-warning { background:#fffbeb; border-color:#d97706; color:#92400e; }
   .alert a { color:inherit; font-weight:600; }
 
-  /* ── FORM FIELDS ── */
+  /* â”€â”€ FORM FIELDS â”€â”€ */
   .divider-row { display:flex; align-items:center; gap:16px; margin-bottom:28px; }
   .divider-row::before, .divider-row::after { content:''; flex:1; height:1px; background:var(--grey-7); }
   .divider-row span { font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--grey-5); white-space:nowrap; }
@@ -148,7 +148,7 @@
   .check-row input[type="checkbox"] { width:15px; height:15px; accent-color:var(--black); cursor:none; }
   .check-row label { font-size:12px; letter-spacing:0.06em; text-transform:none; font-weight:400; color:var(--grey-4); }
 
-  /* ── SUBMIT BUTTON ── */
+  /* â”€â”€ SUBMIT BUTTON â”€â”€ */
   .btn-submit { width:100%; display:flex; align-items:center; justify-content:center; gap:12px; background:var(--black); color:var(--white); font-family:var(--sans); font-size:11px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; padding:18px 36px; border:none; cursor:none; position:relative; overflow:hidden; margin-bottom:28px; }
   .btn-submit::after { content:''; position:absolute; inset:0; background:var(--grey-2); transform:translateX(-100%); transition:transform .35s; }
   .btn-submit:hover::after { transform:translateX(0); }
@@ -165,7 +165,7 @@
   .form-container > *:nth-child(5){animation-delay:.38s;} .form-container > *:nth-child(6){animation-delay:.46s;}
   .form-container > *:nth-child(7){animation-delay:.54s;} .form-container > *:nth-child(8){animation-delay:.62s;}
 
-  /* ── FOOTER ── */
+  /* â”€â”€ FOOTER â”€â”€ */
   footer { background:var(--black); color:var(--white); padding:80px 80px 40px; }
   .footer-top { display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:60px; padding-bottom:64px; border-bottom:1px solid var(--grey-2); }
   .footer-brand p { font-size:13px; color:var(--grey-4); line-height:1.7; margin-top:20px; max-width:260px; }
@@ -182,7 +182,7 @@
   .footer-bottom-links a { font-size:12px; color:var(--grey-4); text-decoration:none; transition:color .2s; }
   .footer-bottom-links a:hover { color:var(--accent); }
 
-  /* ── RESPONSIVE ── */
+  /* â”€â”€ RESPONSIVE â”€â”€ */
   @media (max-width:1100px) { .footer-top { grid-template-columns:1fr 1fr; gap:40px; } }
   @media (max-width:900px) { main { grid-template-columns:1fr; } .login-left { display:none; } .login-right { padding:60px 32px; } }
   @media (max-width:768px) {
@@ -227,7 +227,7 @@
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
   <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-  <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
+  <input type="text" name="q" placeholder="Search products, designs, categoriesâ€¦" aria-label="Search"
          value="{{ request.GET.q|default:'' }}"/>
 </form>
   </div>
@@ -294,7 +294,7 @@
       </div>
     </nav>
     <div class="header-icons">
-      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">🇬🇧</span><span class="currency-code">GBP £</span></button>
+      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">ðŸ‡¬ðŸ‡§</span><span class="currency-code">GBP £</span></button>
       <div class="icon-divider"></div>
       {% if user.is_authenticated %}
       <a href="{% url 'wishlist-page' %}" class="hdr-icon-btn" aria-label="Saved items">
@@ -365,7 +365,7 @@
     </div>
   </div>
 
-  <!-- RIGHT: login form — pure Django, no JS required -->
+  <!-- RIGHT: login form â€” pure Django, no JS required -->
   <div class="login-right">
     <div class="form-container">
 
@@ -386,7 +386,7 @@
         <div class="alert alert-warning" role="alert">{{ verify_warning|safe }}</div>
       {% endif %}
 
-      {# ── Non-field form errors (wrong password, locked account, etc.) ── #}
+      {# â”€â”€ Non-field form errors (wrong password, locked account, etc.) â”€â”€ #}
       {% if form.non_field_errors %}
         <div class="alert alert-error" role="alert">
           {% for error in form.non_field_errors %}{{ error }}{% endfor %}
@@ -395,7 +395,7 @@
 
       <div class="divider-row"><span>Sign in with email</span></div>
 
-      {# ── THE FORM — action posts back to the same view, CSRF inside ── #}
+      {# â”€â”€ THE FORM â€” action posts back to the same view, CSRF inside â”€â”€ #}
       <form method="post" action="{% url 'login-page' %}" novalidate>
         {% csrf_token %}
 
@@ -500,7 +500,7 @@
     <div class="footer-col"><h4>Legal</h4><ul><li><a href="{% url 'privacy-page' %}">Privacy Policy</a></li><li><a href="{% url 'conditions-page' %}">Terms</a></li><li><a href="{% url 'contact-page' %}">Contact</a></li></ul></div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 CustomiseMe UK. All rights reserved.</p>
+    <p>Â© 2026 CustomiseMe UK. All rights reserved.</p>
     <div class="footer-bottom-links"><a href="{% url 'privacy-page' %}">Privacy</a><a href="{% url 'conditions-page' %}">Terms</a></div>
   </div>
 </footer>
@@ -544,7 +544,7 @@
     });
   }
 
-  /* Password show/hide — purely cosmetic, login works without this */
+  /* Password show/hide â€” purely cosmetic, login works without this */
   const pwToggle = document.getElementById('pwToggle');
   const pwInput  = document.getElementById('id_password');
   if (pwToggle && pwInput) {

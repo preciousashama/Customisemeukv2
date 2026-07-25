@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -116,7 +116,7 @@ nav > .nav-item > a .chevron {
 }
 .nav-item:hover > a .chevron { transform: rotate(-135deg) translateY(-2px); }
 
-/* ── Account dropdown ── */
+/* â”€â”€ Account dropdown â”€â”€ */
 .hdr-account-wrap { position: relative; }
 .hdr-account-btn {
   display: flex; flex-direction: column; align-items: center; gap: 4px;
@@ -535,7 +535,7 @@ footer { background: var(--black); color: var(--white); padding: 80px 80px 40px;
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
   <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-  <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
+  <input type="text" name="q" placeholder="Search products, designs, categoriesâ€¦" aria-label="Search"
          value="{{ request.GET.q|default:'' }}"/>
 </form>
   </div>
@@ -613,7 +613,7 @@ footer { background: var(--black); color: var(--white); padding: 80px 80px 40px;
       </div>
     </nav>
     <div class="header-icons">
-      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">🇬🇧</span><span class="currency-code">GBP £</span></button>
+      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">ðŸ‡¬ðŸ‡§</span><span class="currency-code">GBP £</span></button>
       <div class="icon-divider"></div>
       {% if user.is_authenticated %}
       <a href="{% url 'wishlist-page' %}" class="hdr-icon-btn" aria-label="Saved items">
@@ -809,7 +809,7 @@ footer { background: var(--black); color: var(--white); padding: 80px 80px 40px;
         {% endfor %}
       </div>
 
-      <!-- RECOMMENDATIONS — only real Django products, no hardcoded images -->
+      <!-- RECOMMENDATIONS â€” only real Django products, no hardcoded images -->
       <div class="recs-section">
         <div style="font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--grey-4);margin-bottom:10px;display:flex;align-items:center;gap:12px;">
           <span style="display:inline-block;width:24px;height:1px;background:var(--grey-5);"></span>Curated for You
@@ -889,7 +889,7 @@ footer { background: var(--black); color: var(--white); padding: 80px 80px 40px;
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 CustomiseMe UK. All rights reserved.</p>
+    <p>Â© 2026 CustomiseMe UK. All rights reserved.</p>
     <div class="footer-bottom-links">
       <a href="{% url 'privacy-page' %}">Privacy</a>
       <a href="{% url 'conditions-page' %}">Terms</a>
@@ -1001,7 +1001,7 @@ document.addEventListener('click',function(e){
   var card=btn.closest('.wish-card');
   btn.disabled=true;
   var sp=btn.querySelector('span');
-  if(sp) sp.textContent='Moving…';
+  if(sp) sp.textContent='Movingâ€¦';
   postWish({action:'move_to_cart',product_id:pid}).then(function(data){
     if(data.ok&&card){
       fadeRemove(card,checkEmpty);
@@ -1017,7 +1017,7 @@ if(addAllBtn){
   addAllBtn.addEventListener('click',function(){
     addAllBtn.disabled=true;
     var sp=addAllBtn.querySelector('span');
-    if(sp) sp.textContent='Adding…';
+    if(sp) sp.textContent='Addingâ€¦';
     postWish({action:'add_all_to_cart'}).then(function(data){
       if(data.ok){window.location.href=CART_URL;}
       else{addAllBtn.disabled=false;if(sp)sp.textContent='Add All to Cart';}

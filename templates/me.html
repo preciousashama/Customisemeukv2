@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -141,7 +141,7 @@ aside { position: sticky; top: 96px; }
   overflow: hidden;
 }
 
-/* CARD HERO — decorative top strip */
+/* CARD HERO â€” decorative top strip */
 .card-hero {
   height: 120px;
   background: var(--black);
@@ -333,7 +333,7 @@ footer { background: var(--black); color: var(--white); padding: 80px 80px 40px;
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
   <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-  <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
+  <input type="text" name="q" placeholder="Search products, designs, categoriesâ€¦" aria-label="Search"
          value="{{ request.GET.q|default:'' }}"/>
 </form>
   </div>
@@ -393,7 +393,7 @@ footer { background: var(--black); color: var(--white); padding: 80px 80px 40px;
       </div>
     </nav>
     <div class="header-icons">
-      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">🇬🇧</span><span class="currency-code">GBP £</span></button>
+      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">ðŸ‡¬ðŸ‡§</span><span class="currency-code">GBP £</span></button>
       <div class="icon-divider"></div>
       {% if user.is_authenticated %}
       <a href="{% url 'wishlist-page' %}" class="hdr-icon-btn" aria-label="Saved items">
@@ -490,7 +490,7 @@ footer { background: var(--black); color: var(--white); padding: 80px 80px 40px;
       <h1 class="page-title">My <em style="font-style:italic;color:var(--grey-3);">Profile</em></h1>
     </div>
 
-    <!-- ALERT — shown on save success/error via Django messages or JS -->
+    <!-- ALERT â€” shown on save success/error via Django messages or JS -->
     {% if messages %}
     {% for message in messages %}
     <div class="alert-banner {{ message.tags }}" id="alertBanner">
@@ -509,7 +509,7 @@ footer { background: var(--black); color: var(--white); padding: 80px 80px 40px;
 
       <!-- DECORATIVE HEADER STRIP -->
       <div class="card-hero">
-        <div class="card-hero-badge">CustomiseMe UK — Member</div>
+        <div class="card-hero-badge">CustomiseMe UK â€” Member</div>
       </div>
 
       <!-- AVATAR + VERIFIED PILL -->
@@ -525,14 +525,14 @@ footer { background: var(--black); color: var(--white); padding: 80px 80px 40px;
 
       <!-- CARD BODY -->
       <div class="card-body">
-        <div class="card-name" id="displayName">{{ user.full_name|default:"—" }}</div>
+        <div class="card-name" id="displayName">{{ user.full_name|default:"â€”" }}</div>
         <div class="card-email">{{ user.email }}</div>
 
         <!-- FIELDS GRID -->
         <div class="fields-grid">
           <div class="field-item">
             <div class="field-label">Full Name</div>
-            <div class="field-value" id="fieldName">{{ user.full_name|default:"—" }}</div>
+            <div class="field-value" id="fieldName">{{ user.full_name|default:"â€”" }}</div>
           </div>
           <div class="field-item">
             <div class="field-label">Email Address</div>
@@ -547,7 +547,7 @@ footer { background: var(--black); color: var(--white); padding: 80px 80px 40px;
           <div class="field-item">
             <div class="field-label">Account ID</div>
             <div class="field-value mono" id="fieldId" title="{{ user.id }}">
-              {{ user.id|slice:":8" }}…
+              {{ user.id|slice:":8" }}â€¦
             </div>
           </div>
         </div>
@@ -646,7 +646,7 @@ footer { background: var(--black); color: var(--white); padding: 80px 80px 40px;
     </ul></div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 CustomiseMe UK. All rights reserved.</p>
+    <p>Â© 2026 CustomiseMe UK. All rights reserved.</p>
     <div class="footer-bottom-links">
       <a href="{% url 'privacy-page' %}">Privacy</a>
       <a href="{% url 'conditions-page' %}">Terms</a>

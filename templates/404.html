@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,12 +25,12 @@
     display: flex; flex-direction: column;
   }
 
-  /* ── CURSOR ── */
+  /* â”€â”€ CURSOR â”€â”€ */
   * { cursor: none; }
   #cursor { position: fixed; top: 0; left: 0; width: 10px; height: 10px; background: var(--black); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width .2s, height .2s; }
   #cursor-ring { position: fixed; top: 0; left: 0; width: 36px; height: 36px; border: 1px solid var(--black); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .3s, height .3s; }
 
-  /* ── PROMO TICKER ── */
+  /* â”€â”€ PROMO TICKER â”€â”€ */
   .promo-ticker { position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: var(--black); height: 34px; overflow: hidden; display: flex; align-items: center; }
   .promo-ticker-track { display: flex; align-items: center; white-space: nowrap; animation: ticker 40s linear infinite; will-change: transform; }
   .promo-ticker-track:hover { animation-play-state: paused; }
@@ -38,7 +38,7 @@
   .promo-ticker-item { display: inline-flex; align-items: center; gap: 32px; font-family: var(--sans); font-size: 10.5px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.85); padding: 0 40px; }
   .promo-ticker-item .dot { display: inline-block; width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.35); flex-shrink: 0; }
 
-  /* ── HEADER ── */
+  /* â”€â”€ HEADER â”€â”€ */
   header { position: fixed; top: 34px; left: 0; right: 0; z-index: 100; background: rgba(248,248,246,0.96); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--grey-6); display: flex; flex-direction: column; }
   .header-top-row { display: flex; align-items: center; justify-content: center; padding: 8px 48px; border-bottom: 1px solid var(--grey-7); }
   .search-wrap { display: flex; align-items: center; gap: 10px; border: 1px solid var(--grey-6); padding: 6px 16px; background: var(--grey-8); width: 460px; }
@@ -100,10 +100,10 @@
   .mobile-nav.open a:nth-child(4) { transition-delay: .20s; }
   .mobile-nav.open a:nth-child(5) { transition-delay: .25s; }
 
-  /* ── PAGE ── */
+  /* â”€â”€ PAGE â”€â”€ */
   .page-wrap { flex: 1; padding-top: 136px !important; display: flex; align-items: center; }
 
-  /* ── 404 BLOCK ── */
+  /* â”€â”€ 404 BLOCK â”€â”€ */
   .error-block {
     max-width: 700px; margin: 0 auto;
     padding: 80px 48px 100px;
@@ -197,7 +197,7 @@
   .quick-link:hover { color: var(--black); }
   .quick-link svg { flex-shrink: 0; }
 
-  /* ── FOOTER ── */
+  /* â”€â”€ FOOTER â”€â”€ */
   footer { background: var(--black); color: var(--white); padding: 64px 80px 36px; }
   .footer-bottom { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
   .footer-bottom p { font-size: 12px; color: var(--grey-4); }
@@ -205,7 +205,7 @@
   .footer-bottom-links a { font-size: 12px; color: var(--grey-4); text-decoration: none; transition: color .2s; }
   .footer-bottom-links a:hover { color: var(--white); }
 
-  /* ── RESPONSIVE ── */
+  /* â”€â”€ RESPONSIVE â”€â”€ */
   @media (max-width: 768px) {
     .promo-ticker { height: 28px; }
     header { top: 28px; }
@@ -253,7 +253,7 @@
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
     <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
+    <input type="text" name="q" placeholder="Search products, designs, categoriesâ€¦" aria-label="Search"
           value="{{ request.GET.q|default:'' }}"/>
   </form>
   </div>
@@ -270,7 +270,7 @@
     </nav>
     <div class="header-icons">
       <button class="currency-btn" aria-label="Currency: GBP">
-        <span class="currency-flag">🇬🇧</span>
+        <span class="currency-flag">ðŸ‡¬ðŸ‡§</span>
         <span class="currency-code">GBP £</span>
       </button>
       <div class="icon-divider"></div>
@@ -366,10 +366,10 @@
   </div>
 </div>
 
-<!-- FOOTER (minimal — just the bottom bar) -->
+<!-- FOOTER (minimal â€” just the bottom bar) -->
 <footer>
   <div class="footer-bottom">
-    <p>© 2026 CustomiseMe UK. All rights reserved.</p>
+    <p>Â© 2026 CustomiseMe UK. All rights reserved.</p>
     <div class="footer-bottom-links">
       <a href="{% url 'privacy-page' %}">Privacy</a>
       <a href="{% url 'conditions-page' %}">Terms</a>
@@ -378,7 +378,7 @@
 </footer>
 
 <script>
-  /* ── Cursor ── */
+  /* â”€â”€ Cursor â”€â”€ */
   const cursor = document.getElementById('cursor');
   const ring   = document.getElementById('cursor-ring');
   let mx=0, my=0, rx=0, ry=0;
@@ -389,7 +389,7 @@
     el.addEventListener('mouseleave', () => { cursor.style.width='10px'; cursor.style.height='10px'; ring.style.width='36px'; ring.style.height='36px'; });
   });
 
-  /* ── Hamburger ── */
+  /* â”€â”€ Hamburger â”€â”€ */
   const hamburger = document.getElementById('hamburger');
   const mobileNav = document.getElementById('mobileNav');
   if (hamburger && mobileNav) {
@@ -418,7 +418,7 @@
     });
   }
 
-  /* ── Account dropdown ── */
+  /* â”€â”€ Account dropdown â”€â”€ */
   const accountBtn  = document.getElementById('accountBtn');
   const accountWrap = document.getElementById('accountWrap');
   if (accountBtn && accountWrap) {
@@ -440,3 +440,4 @@
 </script>
 </body>
 </html>
+
