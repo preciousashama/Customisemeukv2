@@ -984,7 +984,7 @@
               {% if totals.shipping == 0 %}
               <span class="summary-row-free" id="summaryShipping">Collection</span>
               {% else %}
-              <span class="summary-row-value" id="summaryShipping">Â£{{ totals.shipping|floatformat:2 }}</span>
+              <span class="summary-row-value" id="summaryShipping">£{{ totals.shipping|floatformat:2 }}</span>
               {% endif %}
             </div>
           </div>
@@ -1386,7 +1386,7 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
     }
 
     if(promoStatus){
-      promoStatus.textContent = data.promo_code ? ('Applied: ' + data.promo_code) : 'Add your Stripe coupon before checkout.';
+      promoStatus.textContent = data.promo_code ? ('Applied: ' + data.promo_code) : '';
       promoStatus.style.color = data.promo_code ? '#1f7a4c' : 'var(--grey-5)';
     }
 
