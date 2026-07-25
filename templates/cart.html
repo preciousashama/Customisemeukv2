@@ -982,7 +982,7 @@
             <div class="summary-row">
               <span class="summary-row-label">Shipping</span>
               {% if totals.shipping == 0 %}
-              <span class="summary-row-free" id="summaryShipping">Complimentary</span>
+              <span class="summary-row-free" id="summaryShipping">Collection</span>
               {% else %}
               <span class="summary-row-value" id="summaryShipping">£{{ totals.shipping|floatformat:2 }}</span>
               {% endif %}
@@ -1371,7 +1371,7 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
 
     if(ship){
       ship.textContent = shippingAmount <= 0
-        ? 'Complimentary'
+        ? 'Collection'
         : (String.fromCharCode(163) + shippingAmount.toFixed(2));
     }
 
