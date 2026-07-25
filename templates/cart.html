@@ -910,11 +910,11 @@
               </div>
               <div class="item-bottom">
                 <div class="qty-stepper">
-                  <button class="qty-btn js-qty-btn" data-product-id="{{ item.product_id }}" data-delta="-1">âˆ’</button>
+                  <button class="qty-btn js-qty-btn" data-product-id="{{ item.product_id }}" data-delta="-1">-</button>
                   <span class="qty-num" id="qty-{{ item.product_id }}">{{ item.quantity }}</span>
                   <button class="qty-btn js-qty-btn" data-product-id="{{ item.product_id }}" data-delta="1">+</button>
                 </div>
-                <span class="item-price" id="line-{{ item.product_id }}">Â£{{ item.line_total|floatformat:2 }}</span>
+                <span class="item-price" id="line-{{ item.product_id }}">£{{ item.line_total|floatformat:2 }}</span>
               </div>
             </div>
           </div>
@@ -944,7 +944,7 @@
               <select id="shippingRateSelect" style="width:100%;padding:14px 16px;border:1px solid var(--grey-6);background:var(--white);font-size:13px;color:var(--black);">
                 {% for option in shipping_options %}
                 <option value="{{ option.id }}"{% if selected_shipping and selected_shipping.id == option.id %} selected{% endif %}>
-                  {{ option.label }} â€” Â£{{ option.amount_display }}{% if option.eta %} Â· {{ option.eta }}{% endif %}
+                  {{ option.label }} - £{{ option.amount_display }}{% if option.eta %} · {{ option.eta }}{% endif %}
                 </option>
                 {% endfor %}
               </select>
@@ -963,7 +963,7 @@
                         data-code="{{ stripe_promo.code }}"
                         style="padding:8px 10px;border:1px solid var(--grey-6);background:var(--grey-8);font-size:11px;color:var(--black);text-align:left;">
                   <strong style="display:block;letter-spacing:0.08em;text-transform:uppercase;">{{ stripe_promo.code }}</strong>
-                  <span style="display:block;color:var(--grey-4);margin-top:2px;">{{ stripe_promo.summary }}{% if stripe_promo.minimum_amount_display %} Â· {{ stripe_promo.minimum_amount_display }}{% endif %}</span>
+                  <span style="display:block;color:var(--grey-4);margin-top:2px;">{{ stripe_promo.summary }}{% if stripe_promo.minimum_amount_display %} · {{ stripe_promo.minimum_amount_display }}{% endif %}</span>
                 </button>
                 {% endfor %}
               </div>
@@ -977,7 +977,7 @@
             </div>
             <div class="summary-row">
               <span class="summary-row-label">Subtotal</span>
-              <span class="summary-row-value" id="summarySubtotal">Â£{{ totals.subtotal|floatformat:2 }}</span>
+              <span class="summary-row-value" id="summarySubtotal">£{{ totals.subtotal|floatformat:2 }}</span>
             </div>
             <div class="summary-row">
               <span class="summary-row-label">Shipping</span>
@@ -991,12 +991,12 @@
 
           <div class="summary-row" id="summaryDiscountRow"{% if totals.discount == 0 %} style="display:none;"{% endif %}>
             <span class="summary-row-label" id="summaryDiscountLabel">Discount{% if totals.promo_code %} ({{ totals.promo_code }}){% endif %}</span>
-            <span class="summary-row-value" id="summaryDiscount">-Ã‚Â£{{ totals.discount|floatformat:2 }}</span>
+            <span class="summary-row-value" id="summaryDiscount">-£{{ totals.discount|floatformat:2 }}</span>
           </div>
 
           <div class="summary-total">
             <span class="summary-total-label">Total</span>
-            <span class="summary-total-value" id="summaryTotal">Â£{{ totals.total|floatformat:2 }}</span>
+            <span class="summary-total-value" id="summaryTotal">£{{ totals.total|floatformat:2 }}</span>
           </div>
 
           {% if cart %}
@@ -1021,7 +1021,7 @@
             </div>
             <div class="trust-note">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--grey-5);"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-              Estimated delivery: 3â€“5 business days
+              Estimated delivery: 3-5 business days
             </div>
           </div>
         </div>
@@ -1057,7 +1057,7 @@
             </div>
           </div>
           <a href="{% url 'shop-page' %}" class="rec-name" style="text-decoration:none;color:inherit;">{{ rec.name }}</a>
-          <p class="rec-price">Â£{{ rec.price|floatformat:2 }}</p>
+          <p class="rec-price">£{{ rec.price|floatformat:2 }}</p>
         </div>
         {% empty %}
         <!-- no recommendations available -->
@@ -1105,7 +1105,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <p>Â© 2026 CustomiseMe UK. All rights reserved.</p>
+    <p>© 2026 CustomiseMe UK. All rights reserved.</p>
     <div class="footer-bottom-links">
       <a href="{% url 'privacy-page' %}">Privacy</a>
       <a href="{% url 'conditions-page' %}">Terms</a>
@@ -1116,12 +1116,12 @@
 <!-- Stripe.js -->
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-/* â”€â”€ Cart page config â”€â”€ */
+/* Cart page config */
 const CHECKOUT_URL  = "{% url 'checkout' %}";
 const CART_URL      = "{% url 'cart-page' %}";
 const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
 
-/* â”€â”€ Custom cursor â”€â”€ */
+  /* Custom cursor */
   const cursor = document.getElementById('cursor');
   const ring   = document.getElementById('cursor-ring');
   let mx=0, my=0, rx=0, ry=0;
@@ -1135,7 +1135,7 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
     el.addEventListener('mouseleave',()=>{ cursor.style.width='10px'; cursor.style.height='10px'; ring.style.width='36px'; ring.style.height='36px'; });
   });
 
-  /* â”€â”€ Hamburger â”€â”€ */
+  /* Hamburger */
   const hamburger = document.getElementById('hamburger');
   const mobileNav = document.getElementById('mobileNav');
   if (hamburger && mobileNav) {
@@ -1165,7 +1165,7 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
     });
   }
 
-  /* â”€â”€ Cart AJAX helpers â”€â”€ */
+  /* Cart AJAX helpers */
   function postCartAction(data){
     return fetch(CART_URL, {
       method: 'POST',
@@ -1206,7 +1206,7 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
     if(total) total.textContent = 'Â£' + parseFloat(data.total).toFixed(2);
   }
 
-  /* â”€â”€ Remove item â”€â”€ */
+  /* Remove item */
   function refreshCartSummary(data){
     var sub = document.getElementById('summarySubtotal');
     var ship = document.getElementById('summaryShipping');
@@ -1288,7 +1288,7 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
     postCartAction({ action:'remove_item', product_id: pid }).then(refreshCartSummary);
   });
 
-  /* â”€â”€ Quantity steppers â”€â”€ */
+  /* Quantity steppers */
   document.addEventListener('click', function(e){
     var btn = e.target.closest('.js-qty-btn');
     if(!btn) return;
@@ -1301,7 +1301,7 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
     postCartAction({ action:'update_qty', product_id: pid, quantity: qty }).then(refreshCartSummary);
   });
 
-  /* â”€â”€ Quick-add recommendations â”€â”€ */
+  /* Quick-add recommendations */
   document.addEventListener('click', function(e){
     var btn = e.target.closest('.js-quick-add');
     if(!btn) return;
@@ -1313,18 +1313,18 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
       image_url:  btn.dataset.image || '',
     }).then(function(data){
       refreshCartSummary(data);
-      btn.textContent = 'âœ“ Added';
+      btn.textContent = 'Added';
       btn.style.background = '#27ae60';
       setTimeout(function(){ btn.textContent = '+ Add to Bag'; btn.style.background = ''; }, 2000);
     });
   });
 
-  /* â”€â”€ Stripe Checkout â”€â”€ */
+  /* Stripe Checkout */
   var checkoutBtn = document.getElementById('stripeCheckoutBtn');
   if(checkoutBtn){
     checkoutBtn.addEventListener('click', function(){
       checkoutBtn.disabled = true;
-      checkoutBtn.querySelector('span').textContent = 'Redirectingâ€¦';
+      checkoutBtn.querySelector('span').textContent = 'Redirecting...';
       fetch(CHECKOUT_URL, {
         method: 'POST',
         headers: { 'X-Requested-With':'XMLHttpRequest', 'X-CSRFToken': CSRF_TOKEN },
