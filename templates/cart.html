@@ -955,6 +955,19 @@
                 <input id="promoCodeInput" type="text" value="{{ promo.code|default:'' }}" placeholder="Enter code" style="flex:1;padding:14px 16px;border:1px solid var(--grey-6);background:var(--white);font-size:13px;color:var(--black);text-transform:uppercase;">
                 <button type="button" id="applyPromoBtn" style="padding:0 18px;border:1px solid var(--black);background:var(--black);color:var(--white);font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;">Apply</button>
               </div>
+              {% if promo_codes %}
+              <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
+                {% for stripe_promo in promo_codes %}
+                <button type="button"
+                        class="promo-suggestion"
+                        data-code="{{ stripe_promo.code }}"
+                        style="padding:8px 10px;border:1px solid var(--grey-6);background:var(--grey-8);font-size:11px;color:var(--black);text-align:left;">
+                  <strong style="display:block;letter-spacing:0.08em;text-transform:uppercase;">{{ stripe_promo.code }}</strong>
+                  <span style="display:block;color:var(--grey-4);margin-top:2px;">{{ stripe_promo.summary }}{% if stripe_promo.minimum_amount_display %} · {{ stripe_promo.minimum_amount_display }}{% endif %}</span>
+                </button>
+                {% endfor %}
+              </div>
+              {% endif %}
               <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
                 <span id="promoStatus" style="font-size:12px;color:{% if promo %}#1f7a4c{% else %}var(--grey-5){% endif %};">
                   {% if promo %}Applied: {{ promo.code }}{% else %}Add your Stripe coupon before checkout.{% endif %}
@@ -969,7 +982,7 @@
             <div class="summary-row">
               <span class="summary-row-label">Shipping</span>
               {% if totals.shipping == 0 %}
-              <span class="summary-row-free">Complimentary</span>
+              <span class="summary-row-free" id="summaryShipping">Complimentary</span>
               {% else %}
               <span class="summary-row-value" id="summaryShipping">£{{ totals.shipping|floatformat:2 }}</span>
               {% endif %}
@@ -1333,6 +1346,68 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
       });
     });
   }
+  function getShippingSummaryNode(){
+    return document.getElementById('summaryShipping') || document.querySelector('.summary-row-free');
+  }
+
+  function updateTotals(data){
+    var sub = document.getElementById('summarySubtotal');
+    var total = document.getElementById('summaryTotal');
+    if(sub) sub.textContent = String.fromCharCode(163) + parseFloat(data.subtotal || 0).toFixed(2);
+    if(total) total.textContent = String.fromCharCode(163) + parseFloat(data.total || 0).toFixed(2);
+  }
+
+  function refreshCartSummary(data){
+    var ship = getShippingSummaryNode();
+    var discountRow = document.getElementById('summaryDiscountRow');
+    var discountLabel = document.getElementById('summaryDiscountLabel');
+    var discountValue = document.getElementById('summaryDiscount');
+    var promoStatus = document.getElementById('promoStatus');
+    var removePromoBtn = document.getElementById('removePromoBtn');
+    var discount = parseFloat(data.discount || 0);
+    var shippingAmount = parseFloat(data.shipping || 0);
+
+    updateTotals(data);
+
+    if(ship){
+      ship.textContent = shippingAmount <= 0
+        ? 'Complimentary'
+        : (String.fromCharCode(163) + shippingAmount.toFixed(2));
+    }
+
+    if(discountRow && discountLabel && discountValue){
+      if(discount > 0){
+        discountRow.style.display = '';
+        discountLabel.textContent = data.promo_code ? ('Discount (' + data.promo_code + ')') : 'Discount';
+        discountValue.textContent = '-' + String.fromCharCode(163) + discount.toFixed(2);
+      } else {
+        discountRow.style.display = 'none';
+      }
+    }
+
+    if(promoStatus){
+      promoStatus.textContent = data.promo_code ? ('Applied: ' + data.promo_code) : 'Add your Stripe coupon before checkout.';
+      promoStatus.style.color = data.promo_code ? '#1f7a4c' : 'var(--grey-5)';
+    }
+
+    if(removePromoBtn){
+      removePromoBtn.style.display = data.promo_code ? '' : 'none';
+    }
+  }
+
+  document.querySelectorAll('.promo-suggestion').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      if(promoCodeInput) promoCodeInput.value = btn.dataset.code || '';
+    });
+  });
+
+  refreshCartSummary({
+    subtotal: "{{ totals.subtotal|floatformat:2 }}",
+    shipping: "{{ totals.shipping|floatformat:2 }}",
+    discount: "{{ totals.discount|floatformat:2 }}",
+    promo_code: "{{ totals.promo_code|default:''|escapejs }}",
+    total: "{{ totals.total|floatformat:2 }}"
+  });
 </script>
 </body>
 </html>

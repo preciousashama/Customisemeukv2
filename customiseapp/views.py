@@ -120,6 +120,65 @@ def _get_saved_promo(request):
     return promo if isinstance(promo, dict) else None
 
 
+def _promo_summary(promo):
+    percent_off = promo.get("percent_off")
+    amount_off = promo.get("amount_off")
+    currency = (promo.get("currency") or "gbp").upper()
+
+    if percent_off not in (None, ""):
+        return f"{percent_off:g}% off"
+    if amount_off not in (None, ""):
+        amount = _minor_to_decimal(amount_off)
+        return f"{currency} {amount:.2f} off"
+    return "Discount available"
+
+
+def _get_active_promo_codes():
+    if not settings.STRIPE_SECRET_KEY:
+        return []
+
+    try:
+        results = stripe.PromotionCode.list(
+            active=True,
+            limit=20,
+            expand=["data.coupon"],
+        )
+    except stripe.StripeError as exc:
+        logger.warning("Could not load Stripe promotion codes: %s", exc)
+        return []
+
+    promo_codes = []
+    for promo in results.auto_paging_iter():
+        code = (promo.get("code") or "").strip().upper()
+        coupon = promo.get("coupon") or {}
+        if not code or not coupon:
+            continue
+
+        restrictions = promo.get("restrictions") or {}
+        minimum_minor = restrictions.get("minimum_amount")
+        minimum_currency = (restrictions.get("minimum_amount_currency") or "gbp").upper()
+
+        promo_data = {
+            "id": promo.get("id", ""),
+            "code": code,
+            "name": coupon.get("name", "") or code,
+            "percent_off": coupon.get("percent_off"),
+            "amount_off": coupon.get("amount_off"),
+            "currency": coupon.get("currency", "gbp"),
+            "summary": "",
+            "minimum_amount_display": "",
+        }
+        promo_data["summary"] = _promo_summary(promo_data)
+        if minimum_minor:
+            minimum = _minor_to_decimal(minimum_minor)
+            promo_data["minimum_amount_display"] = f"{minimum_currency} {minimum:.2f} minimum"
+
+        promo_codes.append(promo_data)
+
+    promo_codes.sort(key=lambda item: item["code"])
+    return promo_codes
+
+
 def _promo_discount_for_subtotal(subtotal, promo):
     if not promo or subtotal <= 0:
         return Decimal("0.00")
@@ -640,6 +699,7 @@ def cartpage(request):
         "cart":           enriched,
         "totals":         totals,
         "promo":          _get_saved_promo(request),
+        "promo_codes":    _get_active_promo_codes(),
         "recommended":    recommended,
         "shipping_options": shipping_options,
         "selected_shipping": selected_shipping,
