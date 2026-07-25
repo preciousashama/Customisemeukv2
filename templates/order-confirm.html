@@ -832,7 +832,7 @@
       <div class="success-overline">Order Confirmed</div>
       <h1 class="success-title">Thank you{% if order %}{% if order.customer %}, <em style="font-style:italic;color:var(--grey-3);">{{ order.customer_name|truncatewords:1 }}.</em>{% endif %}{% endif %}</h1>
       <p class="success-subtitle">Your order has been received and is now being prepared with care.{% if order %}{% if order.customer %} A confirmation email has been sent to <strong>{{ order.customer_email_addr }}</strong>.{% endif %}{% else %} You'll receive a confirmation email shortly.{% endif %}</p>
-      <div class="order-ref">{% if order %}#{{ order.order_number }}{% else %}â€”{% endif %}</div>
+      <div class="order-ref">{% if order %}#{{ order.order_number }}{% else %}”{% endif %}</div>
       <div class="success-actions">
         <a class="btn-shop" href="{% url 'shop-page' %}">Continue Shopping</a>
       </div>
@@ -975,7 +975,7 @@
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="4" width="22" height="16"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
             </div>
             <div>
-              <div class="payment-card" style="color:var(--grey-5);font-style:italic;">â€”</div>
+              <div class="payment-card" style="color:var(--grey-5);font-style:italic;">”</div>
               <div class="payment-billed">No payment details</div>
             </div>
           </div>
@@ -1042,7 +1042,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <p>{% if order %}{% if order.customer %}A confirmation email has been sent to <strong>{{ order.customer_email_addr }}</strong> â€” please check your inbox.{% else %}A confirmation email will be sent to your registered address.{% endif %}{% else %}A confirmation email will be sent to your registered address.{% endif %}</p>
+    <p>{% if order %}{% if order.customer %}A confirmation email has been sent to <strong>{{ order.customer_email_addr }}</strong> ” please check your inbox.{% else %}A confirmation email will be sent to your registered address.{% endif %}{% else %}A confirmation email will be sent to your registered address.{% endif %}</p>
     <div class="footer-bottom-links">
       <a href="{% url 'privacy-page' %}">Privacy</a>
       <a href="{% url 'conditions-page' %}">Terms</a>

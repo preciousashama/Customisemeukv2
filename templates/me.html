@@ -509,7 +509,7 @@ footer { background: var(--black); color: var(--white); padding: 80px 80px 40px;
 
       <!-- DECORATIVE HEADER STRIP -->
       <div class="card-hero">
-        <div class="card-hero-badge">CustomiseMe UK â€” Member</div>
+        <div class="card-hero-badge">CustomiseMe UK” Member</div>
       </div>
 
       <!-- AVATAR + VERIFIED PILL -->
@@ -525,14 +525,14 @@ footer { background: var(--black); color: var(--white); padding: 80px 80px 40px;
 
       <!-- CARD BODY -->
       <div class="card-body">
-        <div class="card-name" id="displayName">{{ user.full_name|default:"â€”" }}</div>
+        <div class="card-name" id="displayName">{{ user.full_name|default:"”" }}</div>
         <div class="card-email">{{ user.email }}</div>
 
         <!-- FIELDS GRID -->
         <div class="fields-grid">
           <div class="field-item">
             <div class="field-label">Full Name</div>
-            <div class="field-value" id="fieldName">{{ user.full_name|default:"â€”" }}</div>
+            <div class="field-value" id="fieldName">{{ user.full_name|default:"”" }}</div>
           </div>
           <div class="field-item">
             <div class="field-label">Email Address</div>

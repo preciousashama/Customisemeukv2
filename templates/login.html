@@ -395,7 +395,7 @@
 
       <div class="divider-row"><span>Sign in with email</span></div>
 
-      {# â”€â”€ THE FORM â€” action posts back to the same view, CSRF inside â”€â”€ #}
+      {# â”€â”€ THE FORM ” action posts back to the same view, CSRF inside â”€â”€ #}
       <form method="post" action="{% url 'login-page' %}" novalidate>
         {% csrf_token %}
 

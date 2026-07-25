@@ -512,7 +512,7 @@
               {% for err in form.password.errors %}{{ err }}{% if not forloop.last %} &nbsp;{% endif %}{% endfor %}
             </span>
           {% endif %}
-          {# Live strength meter â€” cosmetic only, form still submits without JS #}
+          {# Live strength meter” cosmetic only, form still submits without JS #}
           <div class="pw-strength" id="pwStrength" style="display:none;">
             <div class="pw-strength-bar"><div class="pw-strength-fill" id="pwStrengthFill"></div></div>
             <span class="pw-strength-label" id="pwStrengthLabel"></span>
@@ -541,7 +541,7 @@
           {% endif %}
         </div>
 
-        {# TERMS CHECKBOX â€” required client-side via required attr; also enforced server-side if you add it to the form #}
+        {# TERMS CHECKBOX ” required client-side via required attr; also enforced server-side if you add it to the form #}
         <div class="terms-row">
           <input type="checkbox" id="id_terms" name="terms" required/>
           <label for="id_terms">

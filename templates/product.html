@@ -516,10 +516,10 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
 
   <nav class="breadcrumb">
     <a href="{% url 'home-page' %}">Home</a>
-    <span class="sep">â€”</span>
+    <span class="sep">”</span>
     {% if category_filter %}
       <a href="{% url 'product-page' %}">Shop</a>
-      <span class="sep">â€”</span>
+      <span class="sep">”</span>
       <span class="current">{{ category_filter }}</span>
     {% else %}
       <span class="current">Shop</span>
@@ -566,7 +566,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
           <a href="{% url 'product-page-detail' p.slug %}" class="carousel-track js-track">
             {% if p.image %}<img src="{{ p.image.url }}" class="carousel-slide" alt="{{ p.name }}" loading="lazy"/>{% endif %}
             {% for vi in variations %}
-              <img src="{{ vi.image.url }}" class="carousel-slide" alt="{{ p.name }} â€” {{ vi.label|default:'variation' }}" loading="lazy"/>
+              <img src="{{ vi.image.url }}" class="carousel-slide" alt="{{ p.name }}” {{ vi.label|default:'variation' }}" loading="lazy"/>
             {% endfor %}
 
             {% if not p.image and not variations %}
@@ -617,9 +617,9 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
 
   <nav class="breadcrumb">
     <a href="{% url 'home-page' %}">Home</a>
-    <span class="sep">â€”</span>
+    <span class="sep">”</span>
     <a href="{% url 'product-page' %}?category={{ product.category }}">{{ product.category|default:"Shop" }}</a>
-    <span class="sep">â€”</span>
+    <span class="sep">”</span>
     <span class="current">{{ product.name|default:"Product" }}</span>
   </nav>
 
@@ -643,12 +643,12 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
       <div class="thumbnails">
         {% if product.image %}
         <button class="thumb-btn active" onclick="switchThumb(this,'{{ product.image.url }}')">
-          <img src="{{ product.image.url }}" alt="{{ product.name }} â€” main"/>
+          <img src="{{ product.image.url }}" alt="{{ product.name }}” main"/>
         </button>
         {% endif %}
         {% for vi in variations %}
         <button class="thumb-btn{% if not product.image and forloop.first %} active{% endif %}" onclick="switchThumb(this,'{{ vi.image.url }}')">
-          <img src="{{ vi.image.url }}" alt="{{ product.name }} â€” {{ vi.label|default:'variation' }}"/>
+          <img src="{{ vi.image.url }}" alt="{{ product.name }}” {{ vi.label|default:'variation' }}"/>
         </button>
         {% endfor %}
       </div>
@@ -703,7 +703,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             <div class="field-label"><span class="step-num" id="stepColour">1</span> Choose Colour</div>
             <div class="colour-select-wrap">
               <select class="field-input js-colour" id="colourSelect" name="colour">
-                <option value="">â€” Select a colour â€”</option>
+                <option value="">” Select a colour ”</option>
               </select>
               <div class="colour-swatch" id="colourSwatch"></div>
             </div>
@@ -742,7 +742,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
           <div class="field-block" id="blockQuantity" style="display:none;">
             <div class="field-label"><span class="step-num" id="stepQuantity">2</span> Quantity</div>
             <select class="field-input" id="quantitySelect" name="quantity">
-              <option value="">â€” Select quantity â€”</option>
+              <option value="">” Select quantity ”</option>
             </select>
             <div class="qty-stepper" id="qtyStepper" style="display:none;">
               <button type="button" class="qty-stepper-btn" id="qtyDecBtn" aria-label="Decrease quantity">&minus;</button>
@@ -757,7 +757,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
           <div class="field-block" id="blockPartyFont" style="display:none;">
             <div class="field-label"><span class="step-num" id="stepPartyFont">4</span> Font</div>
             <select class="field-input" name="party_font" id="partyFontSelect">
-              <option value="">â€” Select a font â€”</option>
+              <option value="">” Select a font ”</option>
               <option value="Classic Serif">Classic Serif</option>
               <option value="Modern Sans">Modern Sans</option>
               <option value="Brush Script">Brush Script</option>
@@ -770,7 +770,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             <label class="artwork-upload-label" id="artworkLabel" for="artworkFile">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               <span id="artworkLabelText">Click to upload artwork</span>
-              <span style="font-size:11px;color:var(--grey-4);display:block;margin-top:4px;">PNG, JPG, SVG, PDF â€” max 25 MB</span>
+              <span style="font-size:11px;color:var(--grey-4);display:block;margin-top:4px;">PNG, JPG, SVG, PDF” max 25 MB</span>
             </label>
             <input type="file" name="artwork_file" id="artworkFile" accept=".png,.jpg,.jpeg,.svg,.pdf,.gif,.webp" style="display:none;" onchange="handleArtworkChange(this,'artworkLabel','artworkLabelText')"/>
           </div>
@@ -779,7 +779,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             <label class="artwork-upload-label" id="artworkLabelBack" for="artworkFileBack">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               <span id="artworkLabelTextBack">Click to upload back artwork</span>
-              <span style="font-size:11px;color:var(--grey-4);display:block;margin-top:4px;">PNG, JPG, SVG, PDF â€” max 25 MB</span>
+              <span style="font-size:11px;color:var(--grey-4);display:block;margin-top:4px;">PNG, JPG, SVG, PDF” max 25 MB</span>
             </label>
             <input type="file" name="artwork_file_back" id="artworkFileBack" accept=".png,.jpg,.jpeg,.svg,.pdf,.gif,.webp" style="display:none;" onchange="handleArtworkChange(this,'artworkLabelBack','artworkLabelTextBack')"/>
           </div>
@@ -1144,7 +1144,7 @@ function switchTab(btn,id){
     if (fsCfg && fsCfg.enabled && fsCfg.values && fsCfg.values.length) {
       showBlock('blockPartyFont'); stepNumCfg('stepPartyFont');
       var fselEl = document.getElementById('partyFontSelect');
-      fselEl.innerHTML = '<option value="">â€” Select a font â€”</option>';
+      fselEl.innerHTML = '<option value="">” Select a font ”</option>';
       fsCfg.values.forEach(function(v){ var o=document.createElement('option'); o.value=v; o.textContent=v; fselEl.appendChild(o); });
     }
 
