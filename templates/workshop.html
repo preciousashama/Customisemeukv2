@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,7 +25,7 @@
     display: flex; flex-direction: column;
   }
 
-  /* ── CURSOR ── */
+  /* â”€â”€ CURSOR â”€â”€ */
   * { cursor: none; }
   #cursor {
     position: fixed; top: 0; left: 0; width: 10px; height: 10px;
@@ -40,19 +40,19 @@
     transition: width .3s, height .3s;
   }
 
-  /* ── PAGE WRAP ── */
+  /* â”€â”€ PAGE WRAP â”€â”€ */
   .page-wrap { flex: 1; padding-top: 136px; }
 
-  /* ── READING PROGRESS ── */
+  /* â”€â”€ READING PROGRESS â”€â”€ */
   .progress-track {
     position: fixed; top: calc(34px + 102px); left: 0; right: 0;
     height: 2px; background: var(--grey-7); z-index: 99;
   }
   .progress-fill { height: 100%; background: var(--black); width: 0%; transition: width .1s linear; }
 
-  /* ═══════════════════════════════
-     § HERO
-  ═══════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     Â§ HERO
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .hero {
     position: relative; width: 100%; height: 68vh; min-height: 460px;
     overflow: hidden; display: flex; align-items: flex-end;
@@ -80,7 +80,7 @@
     border: 1px solid var(--grey-2); padding: 6px 14px;
     display: flex; align-items: center; gap: 8px;
   }
-  .hero-tag::before { content: '✦'; font-size: 8px; }
+  .hero-tag::before { content: 'âœ¦'; font-size: 8px; }
   .hero-content {
     position: relative; z-index: 1;
     padding: 0 80px 72px; max-width: 1200px; width: 100%;
@@ -106,7 +106,7 @@
     opacity: 0; animation: fadeUp .7s .3s ease forwards;
   }
 
-  /* ── Account dropdown ── */
+  /* â”€â”€ Account dropdown â”€â”€ */
   .hdr-account-wrap { position: relative; }
   .hdr-account-btn {
     display: flex; flex-direction: column; align-items: center; gap: 4px;
@@ -148,9 +148,9 @@
   .hdr-account-item--danger { color: #c0392b; }
   .hdr-account-item--danger:hover { background: #fdf0ef; color: #a93226; }
 
-  /* ═══════════════════════════════
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      SHARED SECTION CHROME
-  ═══════════════════════════════ */
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .section-overline {
     font-size: 10px; font-weight: 700; letter-spacing: 0.28em;
     text-transform: uppercase; color: var(--grey-5);
@@ -158,9 +158,9 @@
   }
   .section-overline::before { content: ''; width: 24px; height: 1px; background: var(--grey-6); }
 
-  /* ═══════════════════════════════
-     § INTRO  (3-col grid)
-  ═══════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     Â§ INTRO  (3-col grid)
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .section-intro {
     padding: 96px 80px;
     border-bottom: 1px solid var(--grey-7);
@@ -188,7 +188,7 @@
     justify-content: center; color: var(--grey-3);
   }
 
-  /* Intro feature cards — 2-col */
+  /* Intro feature cards â€” 2-col */
   .intro-right {
     display: grid; grid-template-columns: 1fr 1fr;
     gap: 2px; background: var(--grey-6); border: 1px solid var(--grey-6);
@@ -212,9 +212,9 @@
   }
   .intro-card-body { font-size: 13px; color: var(--grey-4); line-height: 1.8; }
 
-  /* ═══════════════════════════════
-     § TECHNIQUE SECTIONS  (alternating)
-  ═══════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     Â§ TECHNIQUE SECTIONS  (alternating)
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .section-technique {
     padding: 96px 80px;
     border-bottom: 1px solid var(--grey-7);
@@ -282,9 +282,9 @@
   }
   .technique-data-body { font-size: 12px; color: var(--grey-4); line-height: 1.6; }
 
-  /* ═══════════════════════════════
-     § GALLERY
-  ═══════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     Â§ GALLERY
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .section-gallery {
     padding: 96px 80px;
     border-bottom: 1px solid var(--grey-7);
@@ -323,9 +323,9 @@
   }
   .gallery-item:hover img { filter: grayscale(0%); transform: scale(1.07); }
 
-  /* ═══════════════════════════════
-     § EQUIPMENT  (dark panel)
-  ═══════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     Â§ EQUIPMENT  (dark panel)
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .section-equipment {
     padding: 96px 80px;
     border-bottom: 1px solid var(--grey-7);
@@ -383,9 +383,9 @@
     color: var(--grey-3); margin-top: 16px; line-height: 1;
   }
 
-  /* ═══════════════════════════════
-     § CTA
-  ═══════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     Â§ CTA
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .section-cta {
     padding: 96px 80px;
     text-align: center;
@@ -444,9 +444,9 @@
   }
   .text-link:hover { color: var(--black); border-color: var(--black); }
 
-  /* ═══════════════════════════════
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      FOOTER
-  ═══════════════════════════════ */
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   footer { background: var(--black); color: var(--white); padding: 80px 80px 40px; }
   .footer-top {
     display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
@@ -479,9 +479,9 @@
   .footer-bottom-links a { font-size: 12px; color: var(--grey-4); text-decoration: none; transition: color .2s; }
   .footer-bottom-links a:hover { color: var(--white); }
 
-  /* ═══════════════════════════════
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      ANIMATIONS
-  ═══════════════════════════════ */
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(14px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -489,9 +489,9 @@
   .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
 
-  /* ═══════════════════════════════
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      RESPONSIVE
-  ═══════════════════════════════ */
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   @media (max-width: 1100px) {
     .hero-content { padding: 0 48px 60px; }
     .section-intro, .section-technique, .section-gallery,
@@ -568,7 +568,7 @@
   }
 
   /* =============================================
-     HEADER — TWO-ROW STRUCTURE (desktop)
+     HEADER â€” TWO-ROW STRUCTURE (desktop)
      ============================================= */
   header, #mainHeader {
     position: fixed;
@@ -786,7 +786,7 @@
   /* Progress bar offset */
   .progress-track { top: calc(34px + 102px) !important; }
 
-  /* ── RESPONSIVE ── */
+  /* â”€â”€ RESPONSIVE â”€â”€ */
   @media (max-width: 768px) {
     .promo-ticker { height: 28px; }
     .promo-ticker-item { font-size: 9.5px; padding: 0 24px; }
@@ -810,19 +810,19 @@
 <div id="cursor-ring"></div>
 
 <!-- ============================================================
-     PROMO TICKER — infinite scrolling banner
+     PROMO TICKER â€” infinite scrolling banner
      ============================================================ -->
 <div class="promo-ticker" id="promoTicker">
   <div class="promo-ticker-track">
-    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
-    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c2abaca4ad82a1b7b1b6adafabb1a7afa7b7a9eca1adaf">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
-    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
-    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b8d1d6ded7f8dbcdcbccd7d5d1cbddd5ddcdd396dbd7d5">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
@@ -830,7 +830,7 @@
 </div>
 
 <!-- ============================================================
-     HEADER — two-row: search on top, logo|nav|icons below
+     HEADER â€” two-row: search on top, logo|nav|icons below
      ============================================================ -->
 <header id="mainHeader">
 
@@ -838,7 +838,7 @@
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
     <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
+    <input type="text" name="q" placeholder="Search products, designs, categoriesâ€¦" aria-label="Search"
           value="{{ request.GET.q|default:'' }}"/>
   </form>
   </div>
@@ -964,7 +964,7 @@
     </nav>
 
     <div class="header-icons">
-      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">🇬🇧</span><span class="currency-code">GBP £</span></button>
+      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">ðŸ‡¬ðŸ‡§</span><span class="currency-code">GBP Â£</span></button>
       <div class="icon-divider"></div>
       {% if user.is_authenticated %}
       <a href="{% url 'wishlist-page' %}" class="hdr-icon-btn" aria-label="Saved items">
@@ -1021,7 +1021,7 @@
 
 <div class="page-wrap">
 
-  <!-- ═══ HERO ═══ -->
+  <!-- â•â•â• HERO â•â•â• -->
   <section class="hero">
     <div class="hero-img"></div>
     <div class="hero-tag">Master Craftsmanship</div>
@@ -1032,10 +1032,10 @@
     </div>
   </section>
 
-  <!-- ═══ § INTRO ═══ -->
+  <!-- â•â•â• Â§ INTRO â•â•â• -->
   <section class="section-intro reveal">
     <div class="intro-left">
-      <div class="section-overline">§ 01 — Our Standards</div>
+      <div class="section-overline">Â§ 01 â€” Our Standards</div>
       <h2 class="intro-title">Driven by Quality &amp; <em>Precision</em></h2>
       <p class="intro-body">Every piece that leaves our workshop is a testament to our commitment to excellence. We use state-of-the-art machinery and sustainable materials to ensure your designs are captured with exactness.</p>
       <div class="intro-badge">
@@ -1075,24 +1075,24 @@
     </div>
   </section>
 
-  <!-- ═══ § TECHNIQUE 01 — EMBROIDERY ═══ -->
+  <!-- â•â•â• Â§ TECHNIQUE 01 â€” EMBROIDERY â•â•â• -->
   <section class="section-technique">
     <div class="technique-grid reveal">
 
       <div class="technique-text">
-        <div class="technique-num">§ 02 — Technique 01</div>
+        <div class="technique-num">Â§ 02 â€” Technique 01</div>
         <h2 class="technique-title">Premium<br/><em>Embroidery</em></h2>
         <p class="technique-body">Our multi-head Tajima embroidery machines offer unrivalled detail. We use premium Madeira threads that are durable, colour-fast, and possess a high-end sheen that makes logos stand apart.</p>
         <div class="technique-list">
           <div class="technique-item">
-            <span class="technique-item-num">— 01</span>
+            <span class="technique-item-num">â€” 01</span>
             <div>
               <div class="technique-item-title">3D Puff Embroidery</div>
               <div class="technique-item-body">Adding dimension to headwear and outerwear for a premium sculptural look and feel.</div>
             </div>
           </div>
           <div class="technique-item">
-            <span class="technique-item-num">— 02</span>
+            <span class="technique-item-num">â€” 02</span>
             <div>
               <div class="technique-item-title">High Density Stitching</div>
               <div class="technique-item-body">Up to 15,000 stitches per square inch for maximum detail and colour fidelity.</div>
@@ -1110,12 +1110,12 @@
     </div>
   </section>
 
-  <!-- ═══ § TECHNIQUE 02 — PRINTING ═══ -->
+  <!-- â•â•â• Â§ TECHNIQUE 02 â€” PRINTING â•â•â• -->
   <section class="section-technique" style="background:var(--grey-8);">
     <div class="technique-grid reverse reveal">
 
       <div class="technique-text">
-        <div class="technique-num">§ 03 — Technique 02</div>
+        <div class="technique-num">Â§ 03 â€” Technique 02</div>
         <h2 class="technique-title">Digital &amp; Screen<br/><em>Printing</em></h2>
         <p class="technique-body">From vintage-soft screen prints to high-definition Direct-to-Garment (DTG) technology, we select the right method for your specific design and fabric type.</p>
 
@@ -1126,7 +1126,7 @@
           </div>
           <div class="technique-data-cell">
             <div class="technique-data-label">Soft-Touch</div>
-            <div class="technique-data-body">Prints that feel like part of the fabric — not on top of it.</div>
+            <div class="technique-data-body">Prints that feel like part of the fabric â€” not on top of it.</div>
           </div>
         </div>
 
@@ -1145,11 +1145,11 @@
     </div>
   </section>
 
-  <!-- ═══ § GALLERY ═══ -->
+  <!-- â•â•â• Â§ GALLERY â•â•â• -->
   <section class="section-gallery">
     <div class="gallery-header reveal">
       <div>
-        <div class="section-overline">§ 04 — Behind the Scenes</div>
+        <div class="section-overline">Â§ 04 â€” Behind the Scenes</div>
         <h2 class="gallery-title">In the <em>Workshop</em></h2>
       </div>
       <a class="gallery-link" href="#">
@@ -1178,14 +1178,14 @@
     </div>
   </section>
 
-  <!-- ═══ § EQUIPMENT ═══ -->
+  <!-- â•â•â• Â§ EQUIPMENT â•â•â• -->
   <section class="section-equipment">
     <div class="equipment-inner reveal">
-      <div class="equipment-deco">§</div>
+      <div class="equipment-deco">Â§</div>
       <div class="equipment-body">
-        <div class="equipment-overline">§ 05 — Arsenal</div>
+        <div class="equipment-overline">Â§ 05 â€” Arsenal</div>
         <h2 class="equipment-title">Our Equipment<br/><em>Arsenal</em></h2>
-        <p class="equipment-desc">We invest in the best tools because great design deserves great execution — from Japanese embroidery technology to German screen printing units.</p>
+        <p class="equipment-desc">We invest in the best tools because great design deserves great execution â€” from Japanese embroidery technology to German screen printing units.</p>
 
         <div class="equipment-grid">
           <div class="equipment-card">
@@ -1213,9 +1213,9 @@
     </div>
   </section>
 
-  <!-- ═══ § CTA ═══ -->
+  <!-- â•â•â• Â§ CTA â•â•â• -->
   <section class="section-cta reveal">
-    <div class="cta-overline">§ 06 — Begin</div>
+    <div class="cta-overline">Â§ 06 â€” Begin</div>
     <h2 class="cta-title">Ready to start your <em>project?</em></h2>
     <p class="cta-body">Upload your artwork and let our workshop team bring your vision to life with precision and care. Every order is a collaboration.</p>
     <div class="cta-actions">
@@ -1229,7 +1229,7 @@
     </div>
   </section>
 
-  <!-- ═══ FOOTER ═══ -->
+  <!-- â•â•â• FOOTER â•â•â• -->
   <footer>
     <div class="footer-top">
       <div class="footer-brand">
@@ -1265,7 +1265,7 @@
     </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 CustomiseMe UK. All rights reserved.</p>
+      <p>Â© 2026 CustomiseMe UK. All rights reserved.</p>
       <div class="footer-bottom-links">
         <a href="{% url 'privacy-page' %}">Privacy</a>
         <a href="{% url 'conditions-page' %}">Terms</a>
@@ -1276,7 +1276,7 @@
 </div><!-- /.page-wrap -->
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-  /* ── Cursor ── */
+  /* â”€â”€ Cursor â”€â”€ */
   const cursor = document.getElementById('cursor');
   const ring   = document.getElementById('cursor-ring');
   let mx = 0, my = 0, rx = 0, ry = 0;
@@ -1294,13 +1294,13 @@
     el.addEventListener('mouseleave', () => { cursor.style.width='10px'; cursor.style.height='10px'; ring.style.width='36px'; ring.style.height='36px'; });
   });
 
-  /* ── Reading progress ── */
+  /* â”€â”€ Reading progress â”€â”€ */
   window.addEventListener('scroll', () => {
     const max = document.body.scrollHeight - window.innerHeight;
     document.getElementById('progressFill').style.width = (window.scrollY / max * 100) + '%';
   });
 
-  /* ── Hamburger ── */
+  /* â”€â”€ Hamburger â”€â”€ */
   const hamburger = document.getElementById('hamburger');
   const mobileNav = document.getElementById('mobileNav');
   hamburger.addEventListener('click', () => {
@@ -1323,7 +1323,7 @@
     }
   });
 
-  /* ── Scroll reveal ── */
+  /* â”€â”€ Scroll reveal â”€â”€ */
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
       if (entry.isIntersecting) {

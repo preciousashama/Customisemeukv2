@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,7 +24,7 @@
     overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column;
   }
 
-  /* ── CURSOR ── */
+  /* â”€â”€ CURSOR â”€â”€ */
   * { cursor: none; }
   #cursor {
     position: fixed; top: 0; left: 0; width: 10px; height: 10px;
@@ -37,16 +37,16 @@
     z-index: 9998; transform: translate(-50%,-50%); transition: width .3s, height .3s;
   }
 
-  /* ── PAGE WRAP ── */
+  /* â”€â”€ PAGE WRAP â”€â”€ */
   .page-wrap { flex: 1; padding-top: 136px; }
 
-  /* ── READING PROGRESS ── */
+  /* â”€â”€ READING PROGRESS â”€â”€ */
   .progress-track { position: fixed; top: calc(34px + 102px); left: 0; right: 0; height: 2px; background: var(--grey-7); z-index: 99; }
   .progress-fill { height: 100%; background: var(--black); width: 0%; transition: width .1s linear; }
 
-  /* ═══════════════════════════════
-     § HERO
-  ═══════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     Â§ HERO
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .hero {
     position: relative; width: 100%; height: 68vh; min-height: 460px;
     overflow: hidden; display: flex; align-items: flex-end; background: var(--black);
@@ -70,7 +70,7 @@
     color: var(--grey-4); border: 1px solid var(--grey-2); padding: 6px 14px;
     display: flex; align-items: center; gap: 8px;
   }
-  .hero-tag::before { content: '✦'; font-size: 8px; }
+  .hero-tag::before { content: 'âœ¦'; font-size: 8px; }
   .hero-content { position: relative; z-index: 1; padding: 0 80px 72px; max-width: 1200px; width: 100%; }
   .hero-overline {
     font-size: 10px; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--grey-5);
@@ -91,16 +91,16 @@
     opacity: 0; animation: fadeUp .7s .3s ease forwards;
   }
 
-  /* ── SHARED ── */
+  /* â”€â”€ SHARED â”€â”€ */
   .section-overline {
     font-size: 10px; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--grey-5);
     display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
   }
   .section-overline::before { content: ''; width: 24px; height: 1px; background: var(--grey-6); }
 
-  /* ═══════════════════════════════
-     § INTRO  (2-col)
-  ═══════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     Â§ INTRO  (2-col)
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .section-intro {
     padding: 96px 80px; border-bottom: 1px solid var(--grey-7);
     display: grid; grid-template-columns: 1fr 1.6fr; gap: 80px; align-items: start;
@@ -185,9 +185,9 @@
 .hdr-account-item--danger:hover { background: #fdf0ef; color: #a93226; }
 
 
-  /* ═══════════════════════════════
-     § SERVICES  (3 service cards)
-  ═══════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     Â§ SERVICES  (3 service cards)
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .section-services {
     padding: 96px 80px; border-bottom: 1px solid var(--grey-7); background: var(--grey-8);
   }
@@ -226,9 +226,9 @@
   }
   .list-marker { width: 4px; height: 4px; border-radius: 50%; background: var(--grey-4); flex-shrink: 0; margin-top: 9px; }
 
-  /* ═══════════════════════════════
-     § PROCESS  (4 numbered steps)
-  ═══════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     Â§ PROCESS  (4 numbered steps)
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .section-process { padding: 96px 80px; border-bottom: 1px solid var(--grey-7); }
   .process-header { margin-bottom: 56px; }
   .process-title {
@@ -252,9 +252,9 @@
   }
   .step-body { font-size: 13px; color: var(--grey-4); line-height: 1.8; }
 
-  /* ═══════════════════════════════
-     § WHY CHOOSE US  (dark panel)
-  ═══════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     Â§ WHY CHOOSE US  (dark panel)
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .section-why { padding: 96px 80px; border-bottom: 1px solid var(--grey-7); }
   .why-inner {
     background: var(--black); color: var(--white); padding: 72px 80px;
@@ -298,9 +298,9 @@
   }
   .why-card-body { font-size: 12px; color: var(--grey-4); line-height: 1.7; }
 
-  /* ═══════════════════════════════
-     § CTA
-  ═══════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     Â§ CTA
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .section-cta { padding: 96px 80px; text-align: center; }
   .cta-overline {
     font-size: 10px; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--grey-5);
@@ -336,9 +336,9 @@
   }
   .btn-ghost:hover { border-color: var(--grey-3); color: var(--black); }
 
-  /* ═══════════════════════════════
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      FOOTER
-  ═══════════════════════════════ */
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   footer { background: var(--black); color: var(--white); padding: 80px 80px 40px; }
   .footer-top {
     display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
@@ -369,7 +369,7 @@
   .footer-bottom-links a { font-size: 12px; color: var(--grey-4); text-decoration: none; transition: color .2s; }
   .footer-bottom-links a:hover { color: var(--white); }
 
-  /* ── ANIMATIONS ── */
+  /* â”€â”€ ANIMATIONS â”€â”€ */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(14px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -377,7 +377,7 @@
   .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
 
-  /* ── RESPONSIVE ── */
+  /* â”€â”€ RESPONSIVE â”€â”€ */
   @media (max-width: 1100px) {
     .hero-content { padding: 0 48px 60px; }
     .section-intro, .section-services, .section-process,
@@ -448,7 +448,7 @@
   }
 
   /* =============================================
-     HEADER — TWO-ROW STRUCTURE (desktop)
+     HEADER â€” TWO-ROW STRUCTURE (desktop)
      ============================================= */
   header, #mainHeader {
     position: fixed;
@@ -668,7 +668,7 @@
   /* Progress bar offset */
   .progress-track { top: calc(34px + 102px) !important; }
 
-  /* ── RESPONSIVE ── */
+  /* â”€â”€ RESPONSIVE â”€â”€ */
   @media (max-width: 768px) {
     .promo-ticker { height: 28px; }
     .promo-ticker-item { font-size: 9.5px; padding: 0 24px; }
@@ -692,19 +692,19 @@
 <div id="cursor-ring"></div>
 
 <!-- ============================================================
-     PROMO TICKER — infinite scrolling banner
+     PROMO TICKER â€” infinite scrolling banner
      ============================================================ -->
 <div class="promo-ticker" id="promoTicker">
   <div class="promo-ticker-track">
-    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
-    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4c25222a230c2f393f382321253f2921293927622f2321">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
-    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
-    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ee87808881ae8d9b9d9a8183879d8b838b9b85c08d8183">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
@@ -717,7 +717,7 @@
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
   <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-  <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
+  <input type="text" name="q" placeholder="Search products, designs, categoriesâ€¦" aria-label="Search"
          value="{{ request.GET.q|default:'' }}"/>
 </form>
   </div>
@@ -843,7 +843,7 @@
     </nav>
 
     <div class="header-icons">
-      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">🇬🇧</span><span class="currency-code">GBP £</span></button>
+      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">ðŸ‡¬ðŸ‡§</span><span class="currency-code">GBP Â£</span></button>
       <div class="icon-divider"></div>
       {% if user.is_authenticated %}
       <a href="{% url 'wishlist-page' %}" class="hdr-icon-btn" aria-label="Saved items">
@@ -900,7 +900,7 @@
 
 <div class="page-wrap">
 
-  <!-- ═══ HERO ═══ -->
+  <!-- â•â•â• HERO â•â•â• -->
   <section class="hero">
     <div class="hero-img"></div>
     <div class="hero-tag">Professional Service</div>
@@ -911,12 +911,12 @@
     </div>
   </section>
 
-  <!-- ═══ § INTRO ═══ -->
+  <!-- â•â•â• Â§ INTRO â•â•â• -->
   <section class="section-intro reveal">
     <div class="intro-left">
-      <div class="section-overline">§ 01 — Precision On-Site Service</div>
+      <div class="section-overline">Â§ 01 â€” Precision On-Site Service</div>
       <h2 class="intro-title">More Than Print.<br/><em>Full Installation.</em></h2>
-      <p class="intro-body">At CustomiseMe UK, we don't just print your graphics — we ensure they are installed to the highest professional standards. Our experienced installation team handles everything from delicate window films to large-scale wall murals and event displays, ensuring a perfect finish every time.</p>
+      <p class="intro-body">At CustomiseMe UK, we don't just print your graphics â€” we ensure they are installed to the highest professional standards. Our experienced installation team handles everything from delicate window films to large-scale wall murals and event displays, ensuring a perfect finish every time.</p>
       <div class="intro-badge">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -926,7 +926,7 @@
       </div>
     </div>
 
-    <!-- Quick-specs: 4 tiles in 2×2 -->
+    <!-- Quick-specs: 4 tiles in 2Ã—2 -->
     <div class="specs-grid">
       <div class="spec-card">
         <div class="spec-icon">
@@ -971,10 +971,10 @@
     </div>
   </section>
 
-  <!-- ═══ § SERVICES ═══ -->
+  <!-- â•â•â• Â§ SERVICES â•â•â• -->
   <section class="section-services">
     <div class="services-header reveal">
-      <div class="section-overline">§ 02 — What We Install</div>
+      <div class="section-overline">Â§ 02 â€” What We Install</div>
       <h2 class="services-title">Our Installation Services</h2>
     </div>
 
@@ -987,7 +987,7 @@
                alt="Window vinyl installation"/>
         </div>
         <div class="service-info">
-          <div class="service-num">§ 01</div>
+          <div class="service-num">Â§ 01</div>
           <div class="service-title">Window Vinyls</div>
           <ul class="service-list">
             <li><span class="list-marker"></span>Frosted privacy films</li>
@@ -1005,7 +1005,7 @@
                alt="Wall vinyl mural installation"/>
         </div>
         <div class="service-info">
-          <div class="service-num">§ 02</div>
+          <div class="service-num">Â§ 02</div>
           <div class="service-title">Wall Vinyls</div>
           <ul class="service-list">
             <li><span class="list-marker"></span>Custom branded murals</li>
@@ -1023,7 +1023,7 @@
                alt="Event backdrop installation"/>
         </div>
         <div class="service-info">
-          <div class="service-num">§ 03</div>
+          <div class="service-num">Â§ 03</div>
           <div class="service-title">Backdrops</div>
           <ul class="service-list">
             <li><span class="list-marker"></span>Media wall installation</li>
@@ -1037,10 +1037,10 @@
     </div>
   </section>
 
-  <!-- ═══ § PROCESS ═══ -->
+  <!-- â•â•â• Â§ PROCESS â•â•â• -->
   <section class="section-process">
     <div class="process-header reveal">
-      <div class="section-overline">§ 03 — How It Works</div>
+      <div class="section-overline">Â§ 03 â€” How It Works</div>
       <h2 class="process-title">The Installation Process</h2>
     </div>
 
@@ -1063,17 +1063,17 @@
       <div class="process-step">
         <div class="step-num">04</div>
         <div class="step-label">Finishing</div>
-        <div class="step-body">Final edge sealing and full site cleanup — delivered spotless, ready to impress from day one.</div>
+        <div class="step-body">Final edge sealing and full site cleanup â€” delivered spotless, ready to impress from day one.</div>
       </div>
     </div>
   </section>
 
-  <!-- ═══ § WHY CHOOSE US ═══ -->
+  <!-- â•â•â• Â§ WHY CHOOSE US â•â•â• -->
   <section class="section-why">
     <div class="why-inner reveal">
-      <div class="why-deco">§</div>
+      <div class="why-deco">Â§</div>
       <div class="why-body">
-        <div class="why-overline">§ 04 — Why Choose Us</div>
+        <div class="why-overline">Â§ 04 â€” Why Choose Us</div>
         <h2 class="why-title">The standard you<br/><em>deserve.</em></h2>
         <div class="why-grid">
           <div class="why-card">
@@ -1113,16 +1113,16 @@
               </svg>
             </div>
             <div class="why-card-title">Warranted</div>
-            <div class="why-card-body">Installation guarantee on all of our workmanship — we stand behind every job.</div>
+            <div class="why-card-body">Installation guarantee on all of our workmanship â€” we stand behind every job.</div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══ § CTA ═══ -->
+  <!-- â•â•â• Â§ CTA â•â•â• -->
   <section class="section-cta reveal">
-    <div class="cta-overline">§ 05 — Get Started</div>
+    <div class="cta-overline">Â§ 05 â€” Get Started</div>
     <h2 class="cta-title">Ready to transform<br/><em>your space?</em></h2>
     <p class="cta-body">Contact our team to book a site assessment. We'll handle everything from consultation through to a perfect, guaranteed finish.</p>
     <div class="cta-actions">
@@ -1136,7 +1136,7 @@
     </div>
   </section>
 
-  <!-- ═══ FOOTER ═══ -->
+  <!-- â•â•â• FOOTER â•â•â• -->
   <footer>
     <div class="footer-top">
       <div class="footer-brand">
@@ -1171,7 +1171,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 CustomiseMe UK. All rights reserved.</p>
+      <p>Â© 2026 CustomiseMe UK. All rights reserved.</p>
       <div class="footer-bottom-links">
         <a href="{% url 'privacy-page' %}">Privacy</a>
         <a href="{% url 'conditions-page' %}">Terms</a>
@@ -1182,7 +1182,7 @@
 </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-  /* ── Cursor ── */
+  /* â”€â”€ Cursor â”€â”€ */
   const cursor = document.getElementById('cursor');
   const ring   = document.getElementById('cursor-ring');
   let mx = 0, my = 0, rx = 0, ry = 0;
@@ -1200,13 +1200,13 @@
     el.addEventListener('mouseleave', () => { cursor.style.width='10px'; cursor.style.height='10px'; ring.style.width='36px'; ring.style.height='36px'; });
   });
 
-  /* ── Reading progress ── */
+  /* â”€â”€ Reading progress â”€â”€ */
   window.addEventListener('scroll', () => {
     const max = document.body.scrollHeight - window.innerHeight;
     document.getElementById('progressFill').style.width = (window.scrollY / max * 100) + '%';
   });
 
-  /* ── Hamburger ── */
+  /* â”€â”€ Hamburger â”€â”€ */
   const hamburger = document.getElementById('hamburger');
   const mobileNav = document.getElementById('mobileNav');
   hamburger.addEventListener('click', () => {
@@ -1229,7 +1229,7 @@
     }
   });
 
-  /* ── Scroll reveal ── */
+  /* â”€â”€ Scroll reveal â”€â”€ */
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
       if (entry.isIntersecting) {

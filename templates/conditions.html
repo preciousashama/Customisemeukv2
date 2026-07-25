@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,7 +25,7 @@
     display: flex; flex-direction: column;
   }
 
-  /* ── CURSOR ── */
+  /* â”€â”€ CURSOR â”€â”€ */
   * { cursor: none; }
   #cursor {
     position: fixed; top: 0; left: 0; width: 10px; height: 10px;
@@ -42,7 +42,7 @@
 
   
 
-  /* ── READING PROGRESS ── */
+  /* â”€â”€ READING PROGRESS â”€â”€ */
   .progress-bar-track {
     position: fixed; top: 72px; left: 0; right: 0;
     height: 2px; background: var(--grey-7); z-index: 99;
@@ -52,14 +52,14 @@
     width: 0%; transition: width .1s linear;
   }
 
-  /* ── PAGE LAYOUT ── */
+  /* â”€â”€ PAGE LAYOUT â”€â”€ */
   .page-wrap { flex: 1; padding-top: 136px; }
   .page-inner {
     max-width: 800px; margin: 0 auto;
     padding: 72px 48px 96px;
   }
 
-  /* ── DOC HEADER ── */
+  /* â”€â”€ DOC HEADER â”€â”€ */
   .doc-header { margin-bottom: 56px; }
   .doc-overline {
     font-family: var(--sans); font-size: 11px; font-weight: 500;
@@ -84,7 +84,7 @@
     padding-top: 28px; border-top: 1px solid var(--grey-7); margin-top: 28px;
   }
 
-  /* ── FAST-NAV CARDS ── */
+  /* â”€â”€ FAST-NAV CARDS â”€â”€ */
   .nav-cards {
     display: grid; grid-template-columns: repeat(3, 1fr);
     gap: 1px; background: var(--grey-6); border: 1px solid var(--grey-6);
@@ -110,7 +110,7 @@
   }
   .nav-card-body { font-size: 12px; color: var(--grey-4); line-height: 1.6; }
 
-  /* ── SECTION ── */
+  /* â”€â”€ SECTION â”€â”€ */
   .policy-section { margin-bottom: 56px; }
   .section-heading {
     display: flex; align-items: center; gap: 16px;
@@ -126,7 +126,7 @@
   .policy-body p { margin-bottom: 16px; }
   .policy-body p:last-child { margin-bottom: 0; }
 
-  /* ── DATA LIST (bullets) ── */
+  /* â”€â”€ DATA LIST (bullets) â”€â”€ */
   .data-list { list-style: none; display: flex; flex-direction: column; gap: 14px; margin: 20px 0; }
   .data-list li {
     display: flex; align-items: flex-start; gap: 14px;
@@ -137,7 +137,7 @@
     background: var(--grey-4); flex-shrink: 0; margin-top: 10px;
   }
 
-  /* ── ACCORDION ── */
+  /* â”€â”€ ACCORDION â”€â”€ */
   .accordion {
     border: 1px solid var(--grey-7); margin-bottom: 56px;
   }
@@ -193,7 +193,7 @@
   .accordion-body-inner p { margin-bottom: 14px; }
   .accordion-body-inner p:last-child { margin-bottom: 0; }
 
-  /* ── CALLOUT ── */
+  /* â”€â”€ CALLOUT â”€â”€ */
   .callout {
     padding: 28px 32px;
     border-left: 2px solid var(--black);
@@ -202,7 +202,7 @@
     margin-top: 14px;
   }
 
-  /* ── CONTACT CTA ── */
+  /* â”€â”€ CONTACT CTA â”€â”€ */
   .contact-cta {
     background: var(--black); color: var(--white);
     padding: 48px; position: relative; overflow: hidden;
@@ -249,7 +249,7 @@
   }
   .btn-cta-secondary:hover { border-color: var(--grey-4); color: var(--white); }
 
-  /* ── DOC FOOTER ── */
+  /* â”€â”€ DOC FOOTER â”€â”€ */
   .doc-footer {
     margin-top: 64px; padding-top: 32px;
     border-top: 1px solid var(--grey-7);
@@ -264,7 +264,7 @@
   }
   .doc-footer-links a:hover { color: var(--black); }
 
-  /* ── FOOTER ── */
+  /* â”€â”€ FOOTER â”€â”€ */
   footer { background: var(--black); color: var(--white); padding: 80px 80px 40px; }
   .footer-top {
     display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
@@ -297,7 +297,7 @@
   .footer-bottom-links a { font-size: 12px; color: var(--grey-4); text-decoration: none; transition: color .2s; }
   .footer-bottom-links a:hover { color: var(--white); }
 
-  /* ── RESPONSIVE ── */
+  /* â”€â”€ RESPONSIVE â”€â”€ */
   @media (max-width: 768px) {
     header { padding: 0 24px; }
     nav { display: none; }
@@ -352,7 +352,7 @@
   }
 
   /* =============================================
-     HEADER — TWO-ROW STRUCTURE (desktop)
+     HEADER â€” TWO-ROW STRUCTURE (desktop)
      ============================================= */
   header, #mainHeader {
     position: fixed;
@@ -571,7 +571,7 @@
   /* Progress bar offset */
   .progress-track { top: calc(34px + 102px) !important; }
 
-  /* ── RESPONSIVE ── */
+  /* â”€â”€ RESPONSIVE â”€â”€ */
   @media (max-width: 768px) {
     .promo-ticker { height: 28px; }
     .promo-ticker-item { font-size: 9.5px; padding: 0 24px; }
@@ -595,19 +595,19 @@
 <div id="cursor-ring"></div>
 
 <!-- ============================================================
-     PROMO TICKER — infinite scrolling banner
+     PROMO TICKER â€” infinite scrolling banner
      ============================================================ -->
 <div class="promo-ticker" id="promoTicker">
   <div class="promo-ticker-track">
-    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
-    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="553c3b333a15362026213a383c26303830203e7b363a38">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
-    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
-    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="274e4941486744525453484a4e54424a42524c0944484a">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
@@ -615,7 +615,7 @@
 </div>
 
 <!-- ============================================================
-     HEADER — two-row: search on top, logo|nav|icons below
+     HEADER â€” two-row: search on top, logo|nav|icons below
      ============================================================ -->
 <header id="mainHeader">
 
@@ -623,7 +623,7 @@
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
   <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-  <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
+  <input type="text" name="q" placeholder="Search products, designs, categoriesâ€¦" aria-label="Search"
          value="{{ request.GET.q|default:'' }}"/>
 </form>
   </div>
@@ -758,8 +758,8 @@
 
     <div class="header-icons">
       <button class="currency-btn" title="Change currency" aria-label="Currency: GBP">
-        <span class="currency-flag">🇬🇧</span>
-        <span class="currency-code">GBP £</span>
+        <span class="currency-flag">ðŸ‡¬ðŸ‡§</span>
+        <span class="currency-code">GBP Â£</span>
       </button>
       <div class="icon-divider"></div>
       <button class="hdr-icon-btn" title="Saved items" aria-label="Saved items">
@@ -805,15 +805,15 @@
 <div class="page-wrap">
   <div class="page-inner">
 
-    <!-- ── DOC HEADER ── -->
+    <!-- â”€â”€ DOC HEADER â”€â”€ -->
     <div class="doc-header">
-      <div class="doc-overline">Legal Documentation &nbsp;·&nbsp; Revised Version 2.4</div>
+      <div class="doc-overline">Legal Documentation &nbsp;Â·&nbsp; Revised Version 2.4</div>
       <h1 class="doc-title">Terms &amp; <em style="font-style:italic;color:var(--grey-3);">Conditions</em></h1>
       <div class="doc-meta">Last updated: October 24, 2023</div>
       <p class="doc-intro">These Terms and Conditions govern your use of our platform and services. By accessing or using Stitch &amp; Soul, you confirm that you have read, understood, and agreed to be bound by these Terms.</p>
     </div>
 
-    <!-- ── FAST-NAV CARDS ── -->
+    <!-- â”€â”€ FAST-NAV CARDS â”€â”€ -->
     <div class="nav-cards">
       <a class="nav-card" href="#your-privacy">
         <div class="nav-card-icon">
@@ -847,10 +847,10 @@
       </a>
     </div>
 
-    <!-- ── § 01 INTRODUCTION ── -->
+    <!-- â”€â”€ Â§ 01 INTRODUCTION â”€â”€ -->
     <section class="policy-section" id="introduction">
       <div class="section-heading">
-        <span class="section-num">§ 01</span>
+        <span class="section-num">Â§ 01</span>
         <h2 class="section-title">Introduction</h2>
       </div>
       <div class="policy-body">
@@ -859,14 +859,14 @@
       </div>
     </section>
 
-    <!-- ── ACCORDION SECTIONS ── -->
+    <!-- â”€â”€ ACCORDION SECTIONS â”€â”€ -->
     <div class="accordion" role="list">
 
-      <!-- § 02 -->
+      <!-- Â§ 02 -->
       <div class="accordion-item open" id="your-privacy" role="listitem">
         <button class="accordion-trigger" aria-expanded="true" data-accordion>
           <div class="accordion-trigger-left">
-            <span class="accordion-num">§ 02</span>
+            <span class="accordion-num">Â§ 02</span>
             <span class="accordion-title">User Obligations &amp; Eligibility</span>
           </div>
           <div class="accordion-icon">
@@ -888,11 +888,11 @@
         </div>
       </div>
 
-      <!-- § 03 -->
+      <!-- Â§ 03 -->
       <div class="accordion-item" id="billing" role="listitem">
         <button class="accordion-trigger" aria-expanded="false" data-accordion>
           <div class="accordion-trigger-left">
-            <span class="accordion-num">§ 03</span>
+            <span class="accordion-num">Â§ 03</span>
             <span class="accordion-title">Intellectual Property Rights</span>
           </div>
           <div class="accordion-icon">
@@ -909,11 +909,11 @@
         </div>
       </div>
 
-      <!-- § 04 -->
+      <!-- Â§ 04 -->
       <div class="accordion-item" id="acceptable-use" role="listitem">
         <button class="accordion-trigger" aria-expanded="false" data-accordion>
           <div class="accordion-trigger-left">
-            <span class="accordion-num">§ 04</span>
+            <span class="accordion-num">Â§ 04</span>
             <span class="accordion-title">Termination Clause</span>
           </div>
           <div class="accordion-icon">
@@ -929,11 +929,11 @@
         </div>
       </div>
 
-      <!-- § 05 -->
+      <!-- Â§ 05 -->
       <div class="accordion-item" role="listitem">
         <button class="accordion-trigger" aria-expanded="false" data-accordion>
           <div class="accordion-trigger-left">
-            <span class="accordion-num">§ 05</span>
+            <span class="accordion-num">Â§ 05</span>
             <span class="accordion-title">Limitation of Liability</span>
           </div>
           <div class="accordion-icon">
@@ -953,7 +953,7 @@
 
     </div><!-- /.accordion -->
 
-    <!-- ── CONTACT CTA ── -->
+    <!-- â”€â”€ CONTACT CTA â”€â”€ -->
     <div class="contact-cta">
       <div class="cta-overline">Get in Touch</div>
       <h2 class="cta-title">Questions about<br><em style="font-style:italic;color:var(--grey-5);">these terms?</em></h2>
@@ -974,7 +974,7 @@
   </div>
 </div>
 
-<!-- ═══ FOOTER ═══ -->
+<!-- â•â•â• FOOTER â•â•â• -->
 <footer>
   <div class="footer-top">
     <div class="footer-brand">
@@ -1010,7 +1010,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 CustomiseMe UK. All rights reserved.</p>
+    <p>Â© 2026 CustomiseMe UK. All rights reserved.</p>
     <div class="footer-bottom-links">
       <a href="{% url 'privacy-page' %}">Privacy</a>
       <a href="{% url 'conditions-page' %}">Terms</a>
@@ -1019,7 +1019,7 @@
 </footer>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-  /* ── Cursor ── */
+  /* â”€â”€ Cursor â”€â”€ */
   const cursor = document.getElementById('cursor');
   const ring   = document.getElementById('cursor-ring');
   let mx = 0, my = 0, rx = 0, ry = 0;
@@ -1037,14 +1037,14 @@
     el.addEventListener('mouseleave', () => { cursor.style.width='10px'; cursor.style.height='10px'; ring.style.width='36px'; ring.style.height='36px'; });
   });
 
-  /* ── Reading progress ── */
+  /* â”€â”€ Reading progress â”€â”€ */
   window.addEventListener('scroll', () => {
     const scrolled = window.scrollY;
     const max = document.body.scrollHeight - window.innerHeight;
     document.getElementById('progressFill').style.width = (scrolled / max * 100) + '%';
   });
 
-  /* ── Hamburger ── */
+  /* â”€â”€ Hamburger â”€â”€ */
   const hamburger = document.getElementById('hamburger');
   const mobileNav = document.getElementById('mobileNav');
   hamburger.addEventListener('click', () => {
@@ -1067,7 +1067,7 @@
     }
   });
 
-  /* ── Accordion ── */
+  /* â”€â”€ Accordion â”€â”€ */
   document.querySelectorAll('[data-accordion]').forEach(btn => {
     btn.addEventListener('click', () => {
       const item = btn.closest('.accordion-item');

@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -98,7 +98,7 @@
     margin-top: 28px;
   }
 
-    /* ── Account dropdown ── */
+    /* â”€â”€ Account dropdown â”€â”€ */
   .hdr-account-wrap { position: relative; }
   .hdr-account-btn {
     display: flex; flex-direction: column; align-items: center; gap: 4px;
@@ -626,15 +626,15 @@
 
 <div class="promo-ticker" id="promoTicker">
   <div class="promo-ticker-track">
-    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
-    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fa93949c95ba998f898e959793899f979f8f91d4999597">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
-    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
-    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="036a6d656c43607670776c6e6a70666e6676682d606c6e">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
@@ -645,7 +645,7 @@
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
   <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-  <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
+  <input type="text" name="q" placeholder="Search products, designs, categoriesâ€¦" aria-label="Search"
          value="{{ request.GET.q|default:'' }}"/>
 </form>
   </div>
@@ -769,7 +769,7 @@
     </nav>
 
     <div class="header-icons">
-      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">🇬🇧</span><span class="currency-code">GBP £</span></button>
+      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">ðŸ‡¬ðŸ‡§</span><span class="currency-code">GBP Â£</span></button>
       <div class="icon-divider"></div>
       {% if user.is_authenticated %}
       <a href="{% url 'wishlist-page' %}" class="hdr-icon-btn" aria-label="Saved items">
@@ -834,7 +834,7 @@
     <!-- SECTION 1 -->
     <section class="policy-section">
       <div class="section-heading">
-        <span class="section-num">§ 01</span>
+        <span class="section-num">Â§ 01</span>
         <h2 class="section-title">Data We Collect</h2>
       </div>
       <div class="policy-body">
@@ -859,7 +859,7 @@
     <!-- SECTION 2 -->
     <section class="policy-section">
       <div class="section-heading">
-        <span class="section-num">§ 02</span>
+        <span class="section-num">Â§ 02</span>
         <h2 class="section-title">How We Use Your Data</h2>
       </div>
       <div class="policy-body">
@@ -888,7 +888,7 @@
     <!-- SECTION 3 -->
     <section class="policy-section">
       <div class="section-heading">
-        <span class="section-num">§ 03</span>
+        <span class="section-num">Â§ 03</span>
         <h2 class="section-title">Data Security</h2>
       </div>
       <div class="callout">
@@ -899,7 +899,7 @@
     <!-- SECTION 4 -->
     <section class="policy-section">
       <div class="section-heading">
-        <span class="section-num">§ 04</span>
+        <span class="section-num">Â§ 04</span>
         <h2 class="section-title">Cookies</h2>
       </div>
       <div class="policy-body">
@@ -909,7 +909,7 @@
 
     <section class="policy-section">
       <div class="section-heading">
-        <span class="section-num">§ 05</span>
+        <span class="section-num">Â§ 05</span>
         <h2 class="section-title">Terms &amp; Conditions</h2>
       </div>
       <div class="policy-body">
@@ -1013,7 +1013,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 CustomiseMe UK. All rights reserved.</p>
+    <p>Â© 2026 CustomiseMe UK. All rights reserved.</p>
     <div class="footer-bottom-links">
       <a href="{% url 'privacy-page' %}">Privacy</a>
       <a href="{% url 'conditions-page' %}">Terms</a>

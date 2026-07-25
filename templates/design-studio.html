@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,7 +24,7 @@
   #cursor { position: fixed; top: 0; left: 0; width: 10px; height: 10px; background: var(--black); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width .2s, height .2s; }
   #cursor-ring { position: fixed; top: 0; left: 0; width: 36px; height: 36px; border: 1px solid var(--black); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .3s, height .3s; }
 
-  /* PAGE HERO — #f5f5f5 bg, black text, gold accents */
+  /* PAGE HERO â€” #f5f5f5 bg, black text, gold accents */
   .page-hero { background: #f5f5f5; position: relative; overflow: hidden; }
   .page-hero::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, transparent, transparent 40px, rgba(200,169,110,0.08) 40px, rgba(200,169,110,0.08) 41px); }
   .page-hero-inner { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 120px 80px 72px; display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
@@ -39,7 +39,7 @@
   .page-hero-stat-label { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--grey-3); margin-top: 8px; }
 
 
-  /* ── Account dropdown ── */
+  /* â”€â”€ Account dropdown â”€â”€ */
   .hdr-account-wrap { position: relative; }
   .hdr-account-btn {
     display: flex; flex-direction: column; align-items: center; gap: 4px;
@@ -149,7 +149,7 @@
   .mobile-nav.open a:nth-child(5) { transition-delay: .25s; }
   .mobile-nav.open a:nth-child(6) { transition-delay: .30s; }
 
-  /* NEWSLETTER — #f5f5f5, black text, gold accents */
+  /* NEWSLETTER â€” #f5f5f5, black text, gold accents */
   .newsletter { background: #f5f5f5; position: relative; overflow: hidden; }
   .newsletter::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 60px, rgba(200,169,110,0.1) 60px, rgba(200,169,110,0.1) 61px); }
   .newsletter-inner { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 100px 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
@@ -200,7 +200,7 @@
     footer { padding: 64px 24px 32px; } .footer-top { grid-template-columns: 1fr; gap: 32px; }
   }
 
-  /* ── DESIGN STUDIO ── */
+  /* â”€â”€ DESIGN STUDIO â”€â”€ */
   /* Full-width dark image hero */
   .studio-hero { position: relative; height: 520px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
   .studio-hero-bg { position: absolute; inset: 0; background: linear-gradient(135deg, #1a1a1a 0%, #2e2e2e 50%, #1a1a1a 100%); }
@@ -212,7 +212,7 @@
   .studio-hero h1 { font-family: var(--serif); font-size: clamp(52px, 7vw, 104px); font-weight: 300; color: var(--white); letter-spacing: -0.01em; line-height: 1; }
   .studio-hero h1 em { font-style: italic; color: var(--accent); }
   .studio-hero-sub { font-size: 15px; color: rgba(255,255,255,0.68); line-height: 1.75; max-width: 560px; margin: 24px auto 0; }
-  /* Service cards — matches screenshot exactly */
+  /* Service cards â€” matches screenshot exactly */
   .studio-cards-section { background: #f5f5f5; padding: 80px 80px 100px; }
   .studio-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; max-width: 1000px; margin: 0 auto; }
   .studio-card { background: var(--white); border: 1px solid var(--grey-7); padding: 52px 48px 44px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: border-color .25s, box-shadow .25s; }
@@ -222,7 +222,7 @@
   .studio-card-desc { font-size: 14px; color: var(--grey-3); line-height: 1.75; margin-bottom: 20px; max-width: 320px; }
   .studio-card-bullets { list-style: none; display: flex; flex-direction: column; gap: 6px; margin-bottom: 36px; }
   .studio-card-bullets li { font-size: 13px; color: var(--grey-3); display: flex; align-items: center; justify-content: center; gap: 6px; }
-  .studio-card-bullets li::before { content: '·'; color: var(--accent); font-size: 18px; line-height: 1; }
+  .studio-card-bullets li::before { content: 'Â·'; color: var(--accent); font-size: 18px; line-height: 1; }
   .btn-studio { display: inline-flex; align-items: center; gap: 10px; background: var(--black); color: var(--white); font-family: var(--sans); font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; padding: 14px 28px; border: none; cursor: none; text-decoration: none; transition: background .2s; }
   .btn-studio:hover { background: var(--accent); color: var(--black); }
   /* Process strip */
@@ -261,15 +261,15 @@
 <div id="cursor-ring"></div>
 <div class="promo-ticker" id="promoTicker">
   <div class="promo-ticker-track">
-    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
-    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="abc2c5cdc4ebc8ded8dfc4c6c2d8cec6cedec085c8c4c6">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
-    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
-    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4920272f26092a3c3a3d2624203a2c242c3c22672a2624">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
@@ -279,7 +279,7 @@
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
   <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-  <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
+  <input type="text" name="q" placeholder="Search products, designs, categoriesâ€¦" aria-label="Search"
          value="{{ request.GET.q|default:'' }}"/>
 </form>
   </div>
@@ -347,7 +347,7 @@
       </div>
     </nav>
     <div class="header-icons">
-      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">🇬🇧</span><span class="currency-code">GBP £</span></button>
+      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">ðŸ‡¬ðŸ‡§</span><span class="currency-code">GBP Â£</span></button>
       <div class="icon-divider"></div>
       {% if user.is_authenticated %}
       <a href="{% url 'wishlist-page' %}" class="hdr-icon-btn" aria-label="Saved items">
@@ -398,7 +398,7 @@
   <!-- <a href="{% url 'contact-page' %}">Contact</a> -->
 </div>
 
-<!-- FULL-WIDTH DARK HERO — matches screenshot -->
+<!-- FULL-WIDTH DARK HERO â€” matches screenshot -->
 <section class="studio-hero" style="margin-top:136px;">
   <div class="studio-hero-bg"></div>
   <div class="studio-hero-pattern"></div>
@@ -409,7 +409,7 @@
   </div>
 </section>
 
-<!-- SERVICE CARDS — matches screenshot layout -->
+<!-- SERVICE CARDS â€” matches screenshot layout -->
 <div class="studio-cards-section" id="services">
   <div class="studio-cards">
 
@@ -484,7 +484,7 @@
     <div class="studio-step reveal">
       <div class="studio-step-num">4</div>
       <h4>Deliver Files</h4>
-      <p>Once approved, you receive all final files in production-ready formats — ready to use immediately.</p>
+      <p>Once approved, you receive all final files in production-ready formats â€” ready to use immediately.</p>
     </div>
   </div>
 </div>
@@ -501,7 +501,7 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       </div>
       <div class="resource-card-name">Embroidery Artwork Guide</div>
-      <p class="resource-card-desc">Everything you need to know about preparing artwork for embroidery — file formats, stitch density, and minimum sizes.</p>
+      <p class="resource-card-desc">Everything you need to know about preparing artwork for embroidery â€” file formats, stitch density, and minimum sizes.</p>
       <a href="{% static 'CMUK-Artwork-Guidelines.docx' %}" class="resource-card-link">Download PDF <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
     </div>
     <div class="resource-card reveal">
@@ -572,7 +572,7 @@
     <div class="footer-col"><h4>Legal</h4><ul><li><a href="{% url 'privacy-page' %}">Privacy Policy</a></li><li><a href="{% url 'conditions-page' %}">Terms</a></li><li><a href="{% url 'contact-page' %}">Contact</a></li></ul></div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 CustomiseMe UK. All rights reserved.</p>
+    <p>Â© 2026 CustomiseMe UK. All rights reserved.</p>
     <div class="footer-bottom-links"><a href="{% url 'privacy-page' %}">Privacy</a><a href="{% url 'conditions-page' %}">Terms</a></div>
   </div>
 </footer>

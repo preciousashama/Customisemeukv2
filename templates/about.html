@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,7 +25,7 @@
     display: flex; flex-direction: column;
   }
 
-  /* ── CURSOR ── */
+  /* â”€â”€ CURSOR â”€â”€ */
   * { cursor: none; }
   #cursor {
     position: fixed; top: 0; left: 0; width: 10px; height: 10px;
@@ -40,10 +40,10 @@
     transition: width .3s, height .3s;
   }
 
-  /* ── PAGE WRAP ── */
+  /* â”€â”€ PAGE WRAP â”€â”€ */
   .page-wrap { flex: 1; padding-top: 136px; }
 
-  /* ── READING PROGRESS ── */
+  /* â”€â”€ READING PROGRESS â”€â”€ */
   .progress-track {
     position: fixed; top: calc(34px + 102px); left: 0; right: 0;
     height: 2px; background: var(--grey-7); z-index: 99;
@@ -53,9 +53,9 @@
     width: 0%; transition: width .1s linear;
   }
 
-  /* ═══════════════════════════════
-     § HERO
-  ═══════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     Â§ HERO
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .hero {
     position: relative; width: 100%; height: 72vh;
     min-height: 480px; overflow: hidden;
@@ -114,11 +114,11 @@
     border: 1px solid var(--grey-2); padding: 6px 14px;
     display: flex; align-items: center; gap: 8px;
   }
-  .hero-tag::before { content: '✦'; font-size: 8px; }
+  .hero-tag::before { content: 'âœ¦'; font-size: 8px; }
 
-  /* ═══════════════════════════════
-     § MISSION
-  ═══════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     Â§ MISSION
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .section-mission {
     padding: 96px 80px;
     border-bottom: 1px solid var(--grey-7);
@@ -144,9 +144,9 @@
     max-width: 680px; margin: 0 auto;
   }
 
-  /* ═══════════════════════════════
-     § VALUES
-  ═══════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     Â§ VALUES
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .section-values {
     background: var(--grey-8);
     padding: 96px 80px;
@@ -191,9 +191,9 @@
     font-size: 13px; color: var(--grey-4); line-height: 1.8; font-weight: 400;
   }
 
-  /* ═══════════════════════════════
-     § THE PROCESS  (2-col)
-  ═══════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     Â§ THE PROCESS  (2-col)
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .section-process {
     padding: 96px 80px;
     border-bottom: 1px solid var(--grey-7);
@@ -258,9 +258,9 @@
   }
   .process-img:hover img { filter: grayscale(0%); transform: scale(1.04); }
 
-  /* ═══════════════════════════════
-     § TEAM
-  ═══════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     Â§ TEAM
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .section-team {
     background: var(--grey-8);
     padding: 96px 80px;
@@ -301,9 +301,9 @@
     text-transform: uppercase; color: var(--grey-5);
   }
 
-  /* ═══════════════════════════════
-     § CTA
-  ═══════════════════════════════ */
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     Â§ CTA
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .section-cta {
     padding: 96px 80px;
   }
@@ -335,7 +335,7 @@
   .cta-title em { font-style: italic; color: rgba(248,248,246,0.4); }
   .cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
-  /* Primary CTA button — same slide-reveal as all other pages */
+  /* Primary CTA button â€” same slide-reveal as all other pages */
   .btn-cta-primary {
     display: inline-flex; align-items: center; gap: 10px;
     background: var(--white); color: var(--black);
@@ -365,9 +365,9 @@
   }
   .btn-cta-ghost:hover { border-color: var(--grey-5); color: var(--white); }
 
-  /* ═══════════════════════════════
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      FOOTER
-  ═══════════════════════════════ */
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   footer { background: var(--black); color: var(--white); padding: 80px 80px 40px; }
   .footer-top {
     display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
@@ -400,9 +400,9 @@
   .footer-bottom-links a { font-size: 12px; color: var(--grey-4); text-decoration: none; transition: color .2s; }
   .footer-bottom-links a:hover { color: var(--white); }
 
-  /* ═══════════════════════════════
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      ANIMATIONS
-  ═══════════════════════════════ */
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(14px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -413,9 +413,9 @@
   }
   .reveal.visible { opacity: 1; transform: translateY(0); }
 
-  /* ═══════════════════════════════
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      RESPONSIVE
-  ═══════════════════════════════ */
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   @media (max-width: 1100px) {
     .hero-content { padding: 0 48px 60px; }
     .section-mission, .section-values, .section-process,
@@ -488,7 +488,7 @@
   }
 
   /* =============================================
-     HEADER — TWO-ROW STRUCTURE (desktop)
+     HEADER â€” TWO-ROW STRUCTURE (desktop)
      ============================================= */
   header, #mainHeader {
     position: fixed;
@@ -713,7 +713,7 @@
   /* Progress bar offset */
   .progress-track { top: calc(34px + 102px) !important; }
 
-  /* ── RESPONSIVE ── */
+  /* â”€â”€ RESPONSIVE â”€â”€ */
   @media (max-width: 768px) {
     .promo-ticker { height: 28px; }
     .promo-ticker-item { font-size: 9.5px; padding: 0 24px; }
@@ -730,7 +730,7 @@
   }
 
 
-/* ── ACCOUNT DROPDOWN ── */
+/* â”€â”€ ACCOUNT DROPDOWN â”€â”€ */
 .hdr-account-wrap { position: relative; }
 .hdr-account-btn {
   display: flex; flex-direction: column; align-items: center; gap: 4px;
@@ -788,19 +788,19 @@
 <div id="cursor-ring"></div>
 
 <!-- ============================================================
-     PROMO TICKER — infinite scrolling banner
+     PROMO TICKER â€” infinite scrolling banner
      ============================================================ -->
 <div class="promo-ticker" id="promoTicker">
   <div class="promo-ticker-track">
-    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
-    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="01686f676e41627472756e6c6872646c64746a2f626e6c">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
-    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
-    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4c25222a230c2f393f382321253f2921293927622f2321">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
@@ -808,7 +808,7 @@
 </div>
 
 <!-- ============================================================
-     HEADER — two-row: search on top, logo|nav|icons below
+     HEADER â€” two-row: search on top, logo|nav|icons below
      ============================================================ -->
 <header id="mainHeader">
 
@@ -816,7 +816,7 @@
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
   <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-  <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
+  <input type="text" name="q" placeholder="Search products, designs, categoriesâ€¦" aria-label="Search"
          value="{{ request.GET.q|default:'' }}"/>
 </form>
   </div>
@@ -930,8 +930,8 @@
 
     <div class="header-icons">
       <button class="currency-btn" aria-label="Currency: GBP">
-        <span class="currency-flag">🇬🇧</span>
-        <span class="currency-code">GBP £</span>
+        <span class="currency-flag">ðŸ‡¬ðŸ‡§</span>
+        <span class="currency-code">GBP Â£</span>
       </button>
       <div class="icon-divider"></div>
       {% if user.is_authenticated %}
@@ -990,7 +990,7 @@
 
 <div class="page-wrap">
 
-  <!-- ═══ § HERO ═══ -->
+  <!-- â•â•â• Â§ HERO â•â•â• -->
   <section class="hero">
     <div class="hero-img"></div>
     <div class="hero-tag">Handcrafted Since 2018</div>
@@ -1001,17 +1001,17 @@
     </div>
   </section>
 
-  <!-- ═══ § MISSION ═══ -->
+  <!-- â•â•â• Â§ MISSION â•â•â• -->
   <section class="section-mission reveal">
     <div class="section-overline">The Mission</div>
     <h2 class="mission-title">Personalised Gifting, <em>Elevated.</em></h2>
     <p class="mission-body">At Stitch &amp; Soul, we believe that the most meaningful gestures are found in the details. Our mission is to redefine the art of giving by combining modern aesthetics with timeless craftsmanship. We curate every piece to ensure it meets our rigorous standards of quality and individuality.</p>
   </section>
 
-  <!-- ═══ § VALUES ═══ -->
+  <!-- â•â•â• Â§ VALUES â•â•â• -->
   <section class="section-values">
     <div class="values-header reveal">
-      <div class="section-overline">§ 01</div>
+      <div class="section-overline">Â§ 01</div>
       <h2 class="values-title">What We Stand For</h2>
     </div>
     <div class="values-grid">
@@ -1022,9 +1022,9 @@
             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
           </svg>
         </div>
-        <div class="value-num">§ 01</div>
+        <div class="value-num">Â§ 01</div>
         <div class="value-title">Exceptional Quality</div>
-        <p class="value-body">We source only the finest materials — from Italian leathers to sustainable linens — ensuring each piece has longevity far beyond its gifting moment.</p>
+        <p class="value-body">We source only the finest materials â€” from Italian leathers to sustainable linens â€” ensuring each piece has longevity far beyond its gifting moment.</p>
       </div>
 
       <div class="value-card reveal">
@@ -1034,9 +1034,9 @@
             <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
           </svg>
         </div>
-        <div class="value-num">§ 02</div>
+        <div class="value-num">Â§ 02</div>
         <div class="value-title">True Personalisation</div>
-        <p class="value-body">Each item is hand-finished by our artisans to match your exact vision. No two pieces are alike — every order is a commission.</p>
+        <p class="value-body">Each item is hand-finished by our artisans to match your exact vision. No two pieces are alike â€” every order is a commission.</p>
       </div>
 
       <div class="value-card reveal">
@@ -1045,7 +1045,7 @@
             <path d="M12 22c4.97-2.5 8-6.03 8-10V5l-8-3-8 3v7c0 3.97 3.03 7.5 8 10z"/>
           </svg>
         </div>
-        <div class="value-num">§ 03</div>
+        <div class="value-num">Â§ 03</div>
         <div class="value-title">Sustainability</div>
         <p class="value-body">Conscious crafting with eco-friendly packaging and ethically sourced raw materials. Beautiful things should not cost the earth.</p>
       </div>
@@ -1053,12 +1053,12 @@
     </div>
   </section>
 
-  <!-- ═══ § PROCESS ═══ -->
+  <!-- â•â•â• Â§ PROCESS â•â•â• -->
   <section class="section-process">
     <div class="process-grid">
 
       <div class="process-left reveal">
-        <div class="section-overline">§ 02 — The Process</div>
+        <div class="section-overline">Â§ 02 â€” The Process</div>
         <h2 class="process-title">Behind the Craft:<br/><em>Precision in every stitch.</em></h2>
         <p class="process-body">Our studio is where traditional technique meets modern precision. From delicate laser engraving to hand-guided embroidery, our team treats every gift as a small piece of art. We take pride in the silence of our workspace, where focus and finesse lead to perfection.</p>
 
@@ -1098,11 +1098,11 @@
   </section>
 
 
-  <!-- ═══ § CTA ═══ -->
+  <!-- â•â•â• Â§ CTA â•â•â• -->
   <section class="section-cta reveal">
     <div class="cta-inner">
       <div class="cta-body">
-        <div class="cta-overline">§ 04 — Begin</div>
+        <div class="cta-overline">Â§ 04 â€” Begin</div>
         <h2 class="cta-title">Ready to create something <em>truly unique?</em></h2>
         <div class="cta-actions">
           <a class="btn-cta-primary" href="{% url 'shop-page' %}">
@@ -1116,7 +1116,7 @@
     </div>
   </section>
 
-  <!-- ═══ FOOTER ═══ -->
+  <!-- â•â•â• FOOTER â•â•â• -->
   <footer>
     <div class="footer-top">
       <div class="footer-brand">
@@ -1154,7 +1154,7 @@
     </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 CustomiseMe UK. All rights reserved.</p>
+      <p>Â© 2026 CustomiseMe UK. All rights reserved.</p>
       <div class="footer-bottom-links">
         <a href="{% url 'privacy-page' %}">Privacy</a>
         <a href="{% url 'conditions-page' %}">Terms</a>
@@ -1166,7 +1166,7 @@
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   
-  /* ── Custom cursor ── */
+  /* â”€â”€ Custom cursor â”€â”€ */
   const cursor = document.getElementById('cursor');
   const ring   = document.getElementById('cursor-ring');
   let mx=0, my=0, rx=0, ry=0;
@@ -1180,7 +1180,7 @@
     el.addEventListener('mouseleave',()=>{ cursor.style.width='10px'; cursor.style.height='10px'; ring.style.width='36px'; ring.style.height='36px'; });
   });
 
-  /* ── Hamburger ── */
+  /* â”€â”€ Hamburger â”€â”€ */
   const hamburger = document.getElementById('hamburger');
   const mobileNav = document.getElementById('mobileNav');
   if (hamburger && mobileNav) {
@@ -1210,7 +1210,7 @@
     });
   }
 
-  /* ── Scroll reveal ── */
+  /* â”€â”€ Scroll reveal â”€â”€ */
   const revealEls = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
@@ -1223,7 +1223,7 @@
   }, { threshold: 0.12 });
   revealEls.forEach(el => observer.observe(el));
 
-  /* ── Account dropdown ── */
+  /* â”€â”€ Account dropdown â”€â”€ */
   var accountBtn  = document.getElementById('accountBtn');
   var accountMenu = document.getElementById('accountMenu');
   var accountWrap = document.getElementById('accountWrap');

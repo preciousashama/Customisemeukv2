@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,7 +24,7 @@
   #cursor { position: fixed; top: 0; left: 0; width: 10px; height: 10px; background: var(--black); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width .2s, height .2s; }
   #cursor-ring { position: fixed; top: 0; left: 0; width: 36px; height: 36px; border: 1px solid var(--black); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .3s, height .3s; }
 
-  /* PAGE HERO — #f5f5f5 bg, black text, gold accents */
+  /* PAGE HERO â€” #f5f5f5 bg, black text, gold accents */
   .page-hero { background: #f5f5f5; position: relative; overflow: hidden; }
   .page-hero::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, transparent, transparent 40px, rgba(200,169,110,0.08) 40px, rgba(200,169,110,0.08) 41px); }
   .page-hero-inner { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 120px 80px 72px; display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
@@ -106,7 +106,7 @@
   .mobile-nav.open a:nth-child(5) { transition-delay: .25s; }
   .mobile-nav.open a:nth-child(6) { transition-delay: .30s; }
 
-  /* NEWSLETTER — #f5f5f5, black text, gold accents */
+  /* NEWSLETTER â€” #f5f5f5, black text, gold accents */
   .newsletter { background: #f5f5f5; position: relative; overflow: hidden; }
   .newsletter::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 60px, rgba(200,169,110,0.1) 60px, rgba(200,169,110,0.1) 61px); }
   .newsletter-inner { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 100px 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
@@ -157,7 +157,7 @@
     footer { padding: 64px 24px 32px; } .footer-top { grid-template-columns: 1fr; gap: 32px; }
   }
 
-  /* ── DESIGN SERVICE ── */
+  /* â”€â”€ DESIGN SERVICE â”€â”€ */
   .ds-intro { text-align: center; padding: 80px 80px 0; background: var(--white); max-width: 800px; margin: 0 auto; }
   .ds-intro-overline { font-family: var(--sans); font-size: 10px; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 16px; }
   .ds-intro-overline::before, .ds-intro-overline::after { content: ''; flex: 1; max-width: 48px; height: 1px; background: var(--accent); }
@@ -227,7 +227,7 @@
   @media (max-width: 900px) { .ds-pricing-cards { grid-template-columns: 1fr; } .ds-field-row { grid-template-columns: 1fr; } .ds-review-grid { grid-template-columns: 1fr; } }
   @media (max-width: 768px) { .ds-intro { padding: 60px 24px 0; } .ds-steps { padding: 48px 24px 80px; } .ds-step-body { padding: 28px 24px; } .ds-pricing { padding: 72px 24px; } }
 
-/* ── ACCOUNT DROPDOWN ── */
+/* â”€â”€ ACCOUNT DROPDOWN â”€â”€ */
 .hdr-account-wrap { position: relative; }
 .hdr-account-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; cursor: none; color: var(--grey-3); padding: 8px 10px; transition: color .2s; }
 .hdr-account-btn:hover, .hdr-account-wrap.open .hdr-account-btn { color: var(--black); }
@@ -244,7 +244,7 @@
 .hdr-account-item--danger { color: #c0392b; }
 .hdr-account-item--danger:hover { background: #fdf0ef; color: #a93226; }
 
-/* ── INLINE ERROR MESSAGES ── */
+/* â”€â”€ INLINE ERROR MESSAGES â”€â”€ */
 .ds-error { font-size: 11px; color: #c0392b; margin-top: 6px; display: flex; align-items: center; gap: 6px; }
 .ds-error::before { content: ''; display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: #c0392b; flex-shrink: 0; }
 .ds-input.has-error, .ds-select.has-error, .ds-textarea.has-error { border-color: #c0392b; background: #fdf0ef; }
@@ -256,15 +256,15 @@
 <div id="cursor-ring"></div>
 <div class="promo-ticker" id="promoTicker">
   <div class="promo-ticker-track">
-    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
-    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a2cbccc4cde2c1d7d1d6cdcfcbd1c7cfc7d7c98cc1cdcf">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
-    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
-    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="aec7c0c8c1eecddbdddac1c3c7ddcbc3cbdbc580cdc1c3">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
@@ -274,7 +274,7 @@
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
   <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-  <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
+  <input type="text" name="q" placeholder="Search products, designs, categoriesâ€¦" aria-label="Search"
          value="{{ request.GET.q|default:'' }}"/>
 </form>
   </div>
@@ -341,7 +341,7 @@
       </div>
     </nav>
     <div class="header-icons">
-      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">🇬🇧</span><span class="currency-code">GBP £</span></button>
+      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">ðŸ‡¬ðŸ‡§</span><span class="currency-code">GBP Â£</span></button>
       <div class="icon-divider"></div>
       {% if user.is_authenticated %}
       <a href="{% url 'wishlist-page' %}" class="hdr-icon-btn" aria-label="Saved items">
@@ -396,7 +396,7 @@
     <div class="page-hero-text">
       <div class="page-hero-overline">Professional Design</div>
       <h1>Design<br/><em>Service</em></h1>
-      <p class="page-hero-sub">Transform your vision into reality with our simple 4-step process — from brief to beautiful in days, not weeks.</p>
+      <p class="page-hero-sub">Transform your vision into reality with our simple 4-step process â€” from brief to beautiful in days, not weeks.</p>
     </div>
     <div class="page-hero-stat">
       <div class="page-hero-stat-num">4<span> steps</span></div>
@@ -490,7 +490,7 @@
         <textarea class="ds-textarea {% if errors.brief_text %}has-error{% endif %}"
                   id="id_brief_text"
                   name="brief_text"
-                  placeholder="Describe your project, inspiration, and any specific requirements…">{{ post_data.brief_text|default:'' }}</textarea>
+                  placeholder="Describe your project, inspiration, and any specific requirementsâ€¦">{{ post_data.brief_text|default:'' }}</textarea>
         {% if errors.brief_text %}<p class="ds-error">{{ errors.brief_text }}</p>{% endif %}
       </div>
     </div>
@@ -517,7 +517,7 @@
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         </div>
         <p>Drag &amp; drop files here</p>
-        <span>Accepted: PNG, JPG, SVG, PDF, AI — Max 25MB per file</span>
+        <span>Accepted: PNG, JPG, SVG, PDF, AI â€” Max 25MB per file</span>
         <button class="ds-upload-btn" type="button"
                 onclick="document.getElementById('dsFileInput').click()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -535,7 +535,7 @@
                class="ds-input"
                id="id_colour_palette"
                name="colour_palette"
-               placeholder="e.g. Black, Gold, Navy — or describe a mood"
+               placeholder="e.g. Black, Gold, Navy â€” or describe a mood"
                value="{{ post_data.colour_palette|default:'' }}"/>
       </div>
 
@@ -549,11 +549,11 @@
             {% for val, label in budget_ranges %}
               <option value="{{ val }}" {% if post_data.budget_range == val %}selected{% endif %}>{{ label }}</option>
             {% empty %}
-              <option value="under50">Under £50</option>
-              <option value="50to150">£50 – £150</option>
-              <option value="150to500">£150 – £500</option>
-              <option value="500to1000">£500 – £1,000</option>
-              <option value="over1000">Over £1,000</option>
+              <option value="under50">Under Â£50</option>
+              <option value="50to150">Â£50 â€“ Â£150</option>
+              <option value="150to500">Â£150 â€“ Â£500</option>
+              <option value="500to1000">Â£500 â€“ Â£1,000</option>
+              <option value="over1000">Over Â£1,000</option>
             {% endfor %}
           </select>
           {% if errors.budget_range %}<p class="ds-error">{{ errors.budget_range }}</p>{% endif %}
@@ -571,7 +571,7 @@
     </div>
   </div>
 
-  <!-- STEP 3 — informational only, no inputs -->
+  <!-- STEP 3 â€” informational only, no inputs -->
   <div class="ds-step reveal">
     <div class="ds-step-left"><div class="ds-step-num">3</div></div>
     <div class="ds-step-body">
@@ -600,7 +600,7 @@
         <textarea class="ds-textarea"
                   id="id_additional_notes"
                   name="additional_notes"
-                  placeholder="Any final comments or special instructions for our team…">{{ post_data.additional_notes|default:'' }}</textarea>
+                  placeholder="Any final comments or special instructions for our teamâ€¦">{{ post_data.additional_notes|default:'' }}</textarea>
       </div>
 
       <!-- type="submit" so the browser POSTs the form on click -->
@@ -612,7 +612,7 @@
     </div>
   </div>
 
-</form><!-- /.ds-steps — end of design request form -->
+</form><!-- /.ds-steps â€” end of design request form -->
 
 <footer>
   <div class="footer-top">
@@ -638,7 +638,7 @@
     <div class="footer-col"><h4>Legal</h4><ul><li><a href="{% url 'privacy-page' %}">Privacy Policy</a></li><li><a href="{% url 'conditions-page' %}">Terms</a></li><li><a href="{% url 'contact-page' %}">Contact</a></li></ul></div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 CustomiseMe UK. All rights reserved.</p>
+    <p>Â© 2026 CustomiseMe UK. All rights reserved.</p>
     <div class="footer-bottom-links"><a href="{% url 'privacy-page' %}">Privacy</a><a href="{% url 'conditions-page' %}">Terms</a></div>
   </div>
 </footer>
@@ -654,7 +654,7 @@
     el.addEventListener('mouseleave',()=>{cursor.style.width='10px';cursor.style.height='10px';ring.style.width='36px';ring.style.height='36px';});
   });
 
-  /* ── Account dropdown ── */
+  /* â”€â”€ Account dropdown â”€â”€ */
   var accountBtn  = document.getElementById('accountBtn');
   var accountWrap = document.getElementById('accountWrap');
   if (accountBtn && accountWrap) {
@@ -674,7 +674,7 @@
     });
   }
 
-  /* ── Hamburger ── */
+  /* â”€â”€ Hamburger â”€â”€ */
   const hb=document.getElementById('hamburger'),mn=document.getElementById('mobileNav');
   if(hb&&mn){
     hb.addEventListener('click',()=>{const o=mn.classList.toggle('open');hb.classList.toggle('active',o);hb.setAttribute('aria-expanded',o);mn.setAttribute('aria-hidden',!o);document.body.style.overflow=o?'hidden':'';});
@@ -682,11 +682,11 @@
     document.addEventListener('click',e=>{if(!hb.contains(e.target)&&!mn.contains(e.target)){mn.classList.remove('open');hb.classList.remove('active');hb.setAttribute('aria-expanded','false');mn.setAttribute('aria-hidden','true');document.body.style.overflow='';}});
   }
 
-  /* ── Scroll reveal ── */
+  /* â”€â”€ Scroll reveal â”€â”€ */
   const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)';}});},{threshold:0.1});
   document.querySelectorAll('.reveal').forEach(el=>{el.style.opacity='0';el.style.transform='translateY(24px)';el.style.transition='opacity .6s ease, transform .6s ease';obs.observe(el);});
 
-  /* ── File upload: Browse button + drag-and-drop ── */
+  /* â”€â”€ File upload: Browse button + drag-and-drop â”€â”€ */
   (function() {
     var input     = document.getElementById('dsFileInput');
     var dropZone  = document.getElementById('dsDropZone');

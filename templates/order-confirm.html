@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -578,7 +578,7 @@
   /* Progress bar offset */
   .progress-track { top: calc(34px + 102px) !important; }
 
-  /* ── RESPONSIVE ── */
+  /* â”€â”€ RESPONSIVE â”€â”€ */
   @media (max-width: 768px) {
     .promo-ticker { height: 28px; }
     .promo-ticker-item { font-size: 9.5px; padding: 0 24px; }
@@ -594,7 +594,7 @@
     .page-wrap { padding-top: 84px !important; }
   }
 
-  /* ── ACCOUNT DROPDOWN ── */
+  /* â”€â”€ ACCOUNT DROPDOWN â”€â”€ */
   .hdr-account-wrap { position: relative; }
   .hdr-account-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; cursor: none; color: var(--grey-3); padding: 8px 10px; transition: color .2s; }
   .hdr-account-btn:hover, .hdr-account-wrap.open .hdr-account-btn { color: var(--black); }
@@ -622,15 +622,15 @@
 
 <div class="promo-ticker" id="promoTicker">
   <div class="promo-ticker-track">
-    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
-    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fe97909891be9d8b8d8a9193978d9b939b8b95d09d9193">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
-    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
-    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c7aea9a1a887a4b2b4b3a8aaaeb4a2aaa2b2ace9a4a8aa">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
@@ -644,7 +644,7 @@
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
   <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-  <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
+  <input type="text" name="q" placeholder="Search products, designs, categoriesâ€¦" aria-label="Search"
          value="{{ request.GET.q|default:'' }}"/>
 </form>
   </div>
@@ -760,7 +760,7 @@
     </nav>
 
     <div class="header-icons">
-      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">🇬🇧</span><span class="currency-code">GBP £</span></button>
+      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">ðŸ‡¬ðŸ‡§</span><span class="currency-code">GBP Â£</span></button>
       <div class="icon-divider"></div>
       {% if user.is_authenticated %}
       <a href="{% url 'wishlist-page' %}" class="hdr-icon-btn" aria-label="Saved items">
@@ -832,7 +832,7 @@
       <div class="success-overline">Order Confirmed</div>
       <h1 class="success-title">Thank you{% if order %}{% if order.customer %}, <em style="font-style:italic;color:var(--grey-3);">{{ order.customer_name|truncatewords:1 }}.</em>{% endif %}{% endif %}</h1>
       <p class="success-subtitle">Your order has been received and is now being prepared with care.{% if order %}{% if order.customer %} A confirmation email has been sent to <strong>{{ order.customer_email_addr }}</strong>.{% endif %}{% else %} You'll receive a confirmation email shortly.{% endif %}</p>
-      <div class="order-ref">{% if order %}#{{ order.order_number }}{% else %}—{% endif %}</div>
+      <div class="order-ref">{% if order %}#{{ order.order_number }}{% else %}â€”{% endif %}</div>
       <div class="success-actions">
         <a class="btn-shop" href="{% url 'shop-page' %}">Continue Shopping</a>
       </div>
@@ -844,7 +844,7 @@
       <!-- Order Summary -->
       <div class="panel">
         <div class="panel-heading">
-          <span class="panel-num">§ 01</span>
+          <span class="panel-num">Â§ 01</span>
           <h2 class="panel-title">Order Summary</h2>
         </div>
 
@@ -865,7 +865,7 @@
                   Qty {{ item.quantity }}{% if item.variant %} &middot; {{ item.variant }}{% endif %}
                 </div>
               </div>
-              <div class="item-price">£{{ item.line_total|floatformat:2 }}</div>
+              <div class="item-price">Â£{{ item.line_total|floatformat:2 }}</div>
             </div>
             {% empty %}
             <p style="font-size:13px;color:var(--grey-5);font-style:italic;">No items found.</p>
@@ -874,7 +874,7 @@
           <div class="totals">
             <div class="total-row">
               <span>Subtotal</span>
-              <span>£{{ order.subtotal|floatformat:2 }}</span>
+              <span>Â£{{ order.subtotal|floatformat:2 }}</span>
             </div>
             {% if order.shipping_cost == 0 %}
             <div class="total-row free">
@@ -884,12 +884,12 @@
             {% else %}
             <div class="total-row">
               <span>Shipping</span>
-              <span>£{{ order.shipping_cost|floatformat:2 }}</span>
+              <span>Â£{{ order.shipping_cost|floatformat:2 }}</span>
             </div>
             {% endif %}
             <div class="total-final">
               <span class="total-final-label">Total</span>
-              <span class="total-final-amount">£{{ order.total|floatformat:2 }}</span>
+              <span class="total-final-amount">Â£{{ order.total|floatformat:2 }}</span>
             </div>
           </div>
         {% else %}
@@ -903,7 +903,7 @@
         <!-- Shipping -->
         <div class="panel" style="flex:1;">
           <div class="panel-heading">
-            <span class="panel-num">§ 02</span>
+            <span class="panel-num">Â§ 02</span>
             <h2 class="panel-title">Shipping Details</h2>
           </div>
           {% if order %}
@@ -940,9 +940,9 @@
                 {% if order %}{% if order.estimated_delivery %}
                   {{ order.estimated_delivery|date:"l, d M" }}
                 {% else %}
-                  3–5 working days
+                  3â€“5 working days
                 {% endif %}{% else %}
-                  3–5 working days
+                  3â€“5 working days
                 {% endif %}
               </div>
             </div>
@@ -952,7 +952,7 @@
         <!-- Payment -->
         <div class="panel" style="border-top:1px solid var(--grey-7);">
           <div class="panel-heading">
-            <span class="panel-num">§ 03</span>
+            <span class="panel-num">Â§ 03</span>
             <h2 class="panel-title">Payment Method</h2>
           </div>
           {% if order %}
@@ -975,7 +975,7 @@
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="4" width="22" height="16"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
             </div>
             <div>
-              <div class="payment-card" style="color:var(--grey-5);font-style:italic;">—</div>
+              <div class="payment-card" style="color:var(--grey-5);font-style:italic;">â€”</div>
               <div class="payment-billed">No payment details</div>
             </div>
           </div>
@@ -1042,7 +1042,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <p>{% if order %}{% if order.customer %}A confirmation email has been sent to <strong>{{ order.customer_email_addr }}</strong> — please check your inbox.{% else %}A confirmation email will be sent to your registered address.{% endif %}{% else %}A confirmation email will be sent to your registered address.{% endif %}</p>
+    <p>{% if order %}{% if order.customer %}A confirmation email has been sent to <strong>{{ order.customer_email_addr }}</strong> â€” please check your inbox.{% else %}A confirmation email will be sent to your registered address.{% endif %}{% else %}A confirmation email will be sent to your registered address.{% endif %}</p>
     <div class="footer-bottom-links">
       <a href="{% url 'privacy-page' %}">Privacy</a>
       <a href="{% url 'conditions-page' %}">Terms</a>

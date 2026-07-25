@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,7 +24,7 @@
   #cursor { position: fixed; top: 0; left: 0; width: 10px; height: 10px; background: var(--black); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width .2s, height .2s; }
   #cursor-ring { position: fixed; top: 0; left: 0; width: 36px; height: 36px; border: 1px solid var(--black); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .3s, height .3s; }
 
-  /* PAGE HERO — #f5f5f5 bg, black text, gold accents */
+  /* PAGE HERO â€” #f5f5f5 bg, black text, gold accents */
   .page-hero { background: #f5f5f5; position: relative; overflow: hidden; }
   .page-hero::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, transparent, transparent 40px, rgba(200,169,110,0.08) 40px, rgba(200,169,110,0.08) 41px); }
   .page-hero-inner { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 120px 80px 72px; display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
@@ -107,7 +107,7 @@
   .mobile-nav.open a:nth-child(6) { transition-delay: .30s; }
 
 
-    /* ── Account dropdown ── */
+    /* â”€â”€ Account dropdown â”€â”€ */
   .hdr-account-wrap { position: relative; }
   .hdr-account-btn {
     display: flex; flex-direction: column; align-items: center; gap: 4px;
@@ -149,7 +149,7 @@
   .hdr-account-item--danger { color: #c0392b; }
   .hdr-account-item--danger:hover { background: #fdf0ef; color: #a93226; }
 
-  /* NEWSLETTER — #f5f5f5, black text, gold accents */
+  /* NEWSLETTER â€” #f5f5f5, black text, gold accents */
   .newsletter { background: #f5f5f5; position: relative; overflow: hidden; }
   .newsletter::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 60px, rgba(200,169,110,0.1) 60px, rgba(200,169,110,0.1) 61px); }
   .newsletter-inner { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 100px 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
@@ -200,7 +200,7 @@
     footer { padding: 64px 24px 32px; } .footer-top { grid-template-columns: 1fr; gap: 32px; }
   }
 
-  /* ── SUBSCRIPTIONS ── */
+  /* â”€â”€ SUBSCRIPTIONS â”€â”€ */
   .subs-coming { text-align: center; padding: 100px 80px 80px; background: var(--white); }
   .subs-coming-badge { display: inline-flex; align-items: center; gap: 10px; background: var(--accent-light); border: 1px solid var(--accent); padding: 8px 20px; margin-bottom: 40px; }
   .subs-coming-badge span { font-family: var(--sans); font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent-dark); }
@@ -257,15 +257,15 @@
 <div id="cursor-ring"></div>
 <div class="promo-ticker" id="promoTicker">
   <div class="promo-ticker-track">
-    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
-    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1a73747c755a796f696e757773697f777f6f7134797577">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
-    <span class="promo-ticker-item">Free Delivery Over £100 <span class="dot"></span></span>
+    <span class="promo-ticker-item">Free Delivery Over Â£100 <span class="dot"></span></span>
     <span class="promo-ticker-item">Contact Us <span class="dot"></span></span>
-    <span class="promo-ticker-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="01686f676e41627472756e6c6872646c64746a2f626e6c">[email&#160;protected]</a> <span class="dot"></span></span>
+    <span class="promo-ticker-item">hello@customisemeuk.com <span class="dot"></span></span>
     <span class="promo-ticker-item">07588 770 901 <span class="dot"></span></span>
     <span class="promo-ticker-item">New Arrivals Weekly <span class="dot"></span></span>
     <span class="promo-ticker-item">Custom Designs Available <span class="dot"></span></span>
@@ -275,7 +275,7 @@
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
   <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-  <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
+  <input type="text" name="q" placeholder="Search products, designs, categoriesâ€¦" aria-label="Search"
          value="{{ request.GET.q|default:'' }}"/>
 </form>
   </div>
@@ -343,7 +343,7 @@
       </div>
     </nav>
     <div class="header-icons">
-      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">🇬🇧</span><span class="currency-code">GBP £</span></button>
+      <button class="currency-btn" aria-label="Currency: GBP"><span class="currency-flag">ðŸ‡¬ðŸ‡§</span><span class="currency-code">GBP Â£</span></button>
       <div class="icon-divider"></div>
       {% if user.is_authenticated %}
       <a href="{% url 'wishlist-page' %}" class="hdr-icon-btn" aria-label="Saved items">
@@ -399,7 +399,7 @@
     <div class="page-hero-text">
       <div class="page-hero-overline">Premium Membership</div>
       <h1>Exclusive<br/><em>Subscriptions</em></h1>
-      <p class="page-hero-sub">Exclusive membership plans coming soon — premium designs and custom merchandise delivered right to your door, every month.</p>
+      <p class="page-hero-sub">Exclusive membership plans coming soon â€” premium designs and custom merchandise delivered right to your door, every month.</p>
     </div>
     <div class="page-hero-stat">
       <div class="page-hero-stat-num">3<span>+</span></div>
@@ -418,10 +418,10 @@
   <div class="subs-divider"></div>
   <p class="subs-coming-desc">We're crafting something special for our members. Stay tuned for exclusive subscription plans that will bring premium designs and custom merchandise right to your door.</p>
   <!-- <div class="subs-notify-form">
-    <input type="email" placeholder="Enter your email to get notified…"/>
+    <input type="email" placeholder="Enter your email to get notifiedâ€¦"/>
     <button type="button">Notify Me</button>
   </div> -->
-  <!-- <p class="subs-form-note">No spam — just a single email when we launch. Unsubscribe anytime.</p> -->
+  <!-- <p class="subs-form-note">No spam â€” just a single email when we launch. Unsubscribe anytime.</p> -->
 </div>
 
 <!-- PLAN PREVIEWS -->
@@ -432,7 +432,7 @@
     <div class="subs-card reveal">
       <div class="subs-card-tier">Starter</div>
       <div class="subs-card-name">Essential</div>
-      <div class="subs-card-price"><em>£</em>19<span>/month</span></div>
+      <div class="subs-card-price"><em>Â£</em>19<span>/month</span></div>
       <p class="subs-card-desc">Perfect for individuals who want a monthly custom piece without the fuss.</p>
       <ul class="subs-card-features">
         <li class="included">1 custom item per month</li>
@@ -447,7 +447,7 @@
       <div class="subs-card-badge">Most Popular</div>
       <div class="subs-card-tier">Studio</div>
       <div class="subs-card-name">Creative</div>
-      <div class="subs-card-price"><em>£</em>39<span>/month</span></div>
+      <div class="subs-card-price"><em>Â£</em>39<span>/month</span></div>
       <p class="subs-card-desc">For creatives and gift-givers who love variety and exclusive early access.</p>
       <ul class="subs-card-features">
         <li class="included">3 custom items per month</li>
@@ -461,7 +461,7 @@
     <div class="subs-card reveal">
       <div class="subs-card-tier">Business</div>
       <div class="subs-card-name">Corporate</div>
-      <div class="subs-card-price"><em>£</em>89<span>/month</span></div>
+      <div class="subs-card-price"><em>Â£</em>89<span>/month</span></div>
       <p class="subs-card-desc">Designed for businesses wanting branded merchandise on a rolling basis.</p>
       <ul class="subs-card-features">
         <li class="included">10 custom items per month</li>
@@ -482,7 +482,7 @@
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
     </div>
     <h4>Curated Monthly</h4>
-    <p>Every month our designers curate a fresh collection exclusively for members — never available in the public shop.</p>
+    <p>Every month our designers curate a fresh collection exclusively for members â€” never available in the public shop.</p>
   </div>
   <div class="subs-perk reveal">
     <div class="subs-perk-icon">
@@ -496,14 +496,14 @@
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
     </div>
     <h4>Member Discounts</h4>
-    <p>Enjoy 15–25% off all additional purchases beyond your monthly allocation, for the life of your membership.</p>
+    <p>Enjoy 15â€“25% off all additional purchases beyond your monthly allocation, for the life of your membership.</p>
   </div>
   <div class="subs-perk reveal">
     <div class="subs-perk-icon">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
     </div>
     <h4>Free Delivery Always</h4>
-    <p>All subscription orders ship free within the UK. No thresholds, no surprises — just your items at your door.</p>
+    <p>All subscription orders ship free within the UK. No thresholds, no surprises â€” just your items at your door.</p>
   </div>
 </div> -->
 
@@ -547,7 +547,7 @@
     <div class="footer-col"><h4>Legal</h4><ul><li><a href="{% url 'privacy-page' %}">Privacy Policy</a></li><li><a href="{% url 'conditions-page' %}">Terms</a></li><li><a href="{% url 'contact-page' %}">Contact</a></li></ul></div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 CustomiseMe UK. All rights reserved.</p>
+    <p>Â© 2026 CustomiseMe UK. All rights reserved.</p>
     <div class="footer-bottom-links"><a href="{% url 'privacy-page' %}">Privacy</a><a href="{% url 'conditions-page' %}">Terms</a></div>
   </div>
 </footer>
