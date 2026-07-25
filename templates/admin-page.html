@@ -249,7 +249,7 @@ tr:hover .product-thumb{filter:grayscale(0%);}
 .req-detail-panel{display:none;margin-top:8px;padding:10px 12px;background:var(--grey-8);border:1px solid var(--grey-7);font-size:12px;color:var(--grey-3);line-height:1.6;}
 .req-detail-panel.open{display:block;}
 
-/* â”€â”€ Â§ 06  PRODUCT CUSTOMISATIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* â”€â”€  06  PRODUCT CUSTOMISATIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .cust-table{width:100%;border-collapse:collapse;border:1px solid var(--grey-7);}
 .cust-table thead{background:var(--grey-8);border-bottom:1px solid var(--grey-7);}
 .cust-table th{padding:13px 20px;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--grey-4);text-align:left;}
@@ -499,11 +499,11 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
   </div>
 
 
-  <!-- â•â• Â§ 01  ORDERS â•â• -->
+  <!-- â•â•  01  ORDERS â•â• -->
   <div class="tab-panel {% if active_tab == 'orders' %}active{% endif %}" id="tab-orders" role="tabpanel">
     <div class="section-heading">
       <div>
-        <div class="section-num">Â§ 01</div>
+        <div class="section-num"> 01</div>
         <div class="section-title">Recent Orders</div>
         {% if viewed_order %}<div class="section-sub">Viewing detail for order #{{ viewed_order.order_number|default:viewed_order.id }}</div>{% endif %}
       </div>
@@ -556,9 +556,9 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
   </div>
 
 
-  <!-- â•â• Â§ 02  CAROUSEL â•â• -->
+  <!-- â•â•  02  CAROUSEL â•â• -->
   <div class="tab-panel {% if active_tab == 'carousel' %}active{% endif %}" id="tab-carousel" role="tabpanel">
-    <div class="section-heading"><div><div class="section-num">Â§ 02</div><div class="section-title">Homepage Carousel</div><div class="section-sub">Uploaded images display as full-bleed hero slides.</div></div>{% if not edit_slide %}<a class="btn-primary" href="?tab=carousel&add_slide=1"><div class="btn-inner"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Slide</div></a>{% endif %}</div>
+    <div class="section-heading"><div><div class="section-num"> 02</div><div class="section-title">Homepage Carousel</div><div class="section-sub">Uploaded images display as full-bleed hero slides.</div></div>{% if not edit_slide %}<a class="btn-primary" href="?tab=carousel&add_slide=1"><div class="btn-inner"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Slide</div></a>{% endif %}</div>
     {% if request.GET.add_slide or edit_slide %}
     <div class="form-panel">
       <div class="form-panel-title">{% if edit_slide %}Edit Slide â€” {{ edit_slide.title }}{% else %}New Carousel Slide{% endif %}<a class="form-panel-cancel" href="?tab=carousel">âœ• Cancel</a></div>
@@ -577,9 +577,9 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
   </div>
 
 
-  <!-- â•â• Â§ 03  PRODUCTS â•â• -->
+  <!-- â•â•  03  PRODUCTS â•â• -->
   <div class="tab-panel {% if active_tab == 'products' %}active{% endif %}" id="tab-products" role="tabpanel">
-    <div class="section-heading"><div><div class="section-num">Â§ 03</div><div class="section-title">Product Inventory</div>{% if search_query %}<div class="section-sub">Results for "{{ search_query }}" â€” <a href="?tab=products" style="color:var(--grey-4);text-decoration:underline;">clear</a></div>{% endif %}</div><div class="toolbar"><form class="search-form" method="GET" action="{% url 'admin-page' %}"><input type="hidden" name="tab" value="products"/><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" name="q" value="{{ search_query }}" placeholder="Search productsâ€¦" autocomplete="off"/><button type="submit" aria-label="Search"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></form>{% if not edit_product %}<a class="btn-primary" href="?tab=products&add_product=1"><div class="btn-inner"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Product</div></a>{% endif %}</div></div>
+    <div class="section-heading"><div><div class="section-num"> 03</div><div class="section-title">Product Inventory</div>{% if search_query %}<div class="section-sub">Results for "{{ search_query }}" â€” <a href="?tab=products" style="color:var(--grey-4);text-decoration:underline;">clear</a></div>{% endif %}</div><div class="toolbar"><form class="search-form" method="GET" action="{% url 'admin-page' %}"><input type="hidden" name="tab" value="products"/><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" name="q" value="{{ search_query }}" placeholder="Search productsâ€¦" autocomplete="off"/><button type="submit" aria-label="Search"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></form>{% if not edit_product %}<a class="btn-primary" href="?tab=products&add_product=1"><div class="btn-inner"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Product</div></a>{% endif %}</div></div>
     {% if request.GET.add_product or edit_product %}
     <div class="form-panel">
       <div class="form-panel-title">{% if edit_product %}Edit â€” {{ edit_product.name }}{% else %}New Product{% endif %}<a class="form-panel-cancel" href="?tab=products">âœ• Cancel</a></div>
@@ -865,9 +865,9 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
   </div>
 
 
-  <!-- â•â• Â§ 04  DESIGN SUBMISSIONS â•â• -->
+  <!-- â•â•  04  DESIGN SUBMISSIONS â•â• -->
   <div class="tab-panel {% if active_tab == 'designs' %}active{% endif %}" id="tab-designs" role="tabpanel">
-    <div class="section-heading"><div><div class="section-num">Â§ 04</div><div class="section-title">Design Submissions</div><div class="section-sub">Files and briefs uploaded by customers for custom design requests.</div></div></div>
+    <div class="section-heading"><div><div class="section-num"> 04</div><div class="section-title">Design Submissions</div><div class="section-sub">Files and briefs uploaded by customers for custom design requests.</div></div></div>
     <table class="submissions-table">
       <thead><tr><th style="width:22%">Customer</th><th style="width:16%">Service</th><th style="width:12%">Date</th><th style="width:16%">Files</th><th style="width:14%">Status</th><th>Update / Note</th></tr></thead>
       <tbody>
@@ -878,9 +878,9 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
   </div>
 
 
-  <!-- â•â• Â§ 05  SEND ITEM REQUESTS â•â• -->
+  <!-- â•â•  05  SEND ITEM REQUESTS â•â• -->
   <div class="tab-panel {% if active_tab == 'send_requests' %}active{% endif %}" id="tab-send-requests" role="tabpanel">
-    <div class="section-heading"><div><div class="section-num">Â§ 05</div><div class="section-title">Send Item Requests</div><div class="section-sub">Customers ship their own garments to the studio for customisation.</div></div></div>
+    <div class="section-heading"><div><div class="section-num"> 05</div><div class="section-title">Send Item Requests</div><div class="section-sub">Customers ship their own garments to the studio for customisation.</div></div></div>
     <table class="send-req-table">
       <thead><tr><th style="width:20%">Customer</th><th style="width:22%">Items</th><th style="width:8%">Qty</th><th style="width:11%">Deadline</th><th style="width:11%">Submitted</th><th style="width:10%">Status</th><th>Update</th></tr></thead>
       <tbody>
@@ -891,12 +891,12 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
   </div>
 
 
-  <!-- â•â• Â§ 06  PRODUCT CUSTOMISATIONS â•â• -->
+  <!-- â•â•  06  PRODUCT CUSTOMISATIONS â•â• -->
   <div class="tab-panel {% if active_tab == 'customisations' %}active{% endif %}" id="tab-customisations" role="tabpanel">
 
     <div class="section-heading">
       <div>
-        <div class="section-num">Â§ 06</div>
+        <div class="section-num"> 06</div>
         <div class="section-title">Product Customisations</div>
         <div class="section-sub">Artwork and customisation specs submitted by customers at the product page. Only paid orders are shown.</div>
       </div>
@@ -1045,7 +1045,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
       </tbody>
     </table>
   </div>
-  <!-- â•â• END Â§ 06 â•â• -->
+  <!-- â•â• END  06 â•â• -->
 
 
   <!-- FOOTER -->
@@ -1144,3 +1144,4 @@ if(menuBtn&&drawer){
 </script>
 </body>
 </html>
+
