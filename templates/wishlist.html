@@ -105,9 +105,9 @@ nav > .nav-item > a {
 }
 nav > .nav-item > a::after {
   content: ''; position: absolute; bottom: 16px; left: 0;
-  width: 0; height: 1px; background: var(--black); transition: width .3s;
+  width: 0; height: 1px; background: #c8a96e; transition: width .3s;
 }
-nav > .nav-item > a:hover, nav > .nav-item > a.active { color: var(--black); }
+nav > .nav-item > a:hover, nav > .nav-item > a.active { color: #c8a96e; }
 nav > .nav-item > a:hover::after, nav > .nav-item > a.active::after { width: 100%; }
 nav > .nav-item > a .chevron {
   display: inline-block; width: 7px; height: 7px;
@@ -297,7 +297,7 @@ aside { position: sticky; top: 96px; }
   border: 1px solid transparent; transition: color .2s, border-color .2s, background .2s;
 }
 .sidebar-link:hover { color: var(--black); background: var(--grey-8); }
-.sidebar-link.active { color: var(--black); border-color: var(--grey-6); background: var(--white); font-weight: 600; }
+.sidebar-link.active { color: #c8a96e; border-color: #c8a96e; background: rgba(200, 169, 110, 0.08); font-weight: 600; }
 .sidebar-link svg { flex-shrink: 0; }
 .savings-card { background: var(--black); color: var(--white); padding: 24px; }
 .savings-label { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--grey-5); font-weight: 600; margin-bottom: 8px; }
@@ -348,7 +348,7 @@ aside { position: sticky; top: 96px; }
   transition: color .2s, border-color .2s;
 }
 .tab-btn:hover { color: var(--black); }
-.tab-btn.active { color: var(--black); border-bottom-color: var(--black); font-weight: 600; }
+.tab-btn.active { color: #c8a96e; border-bottom-color: #c8a96e; font-weight: 600; }
 
 /* WISHLIST GRID */
 .wishlist-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; }
