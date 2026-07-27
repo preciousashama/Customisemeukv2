@@ -132,6 +132,44 @@ def _promo_summary(promo):
     return "Discount available"
 
 
+def _promo_success_message(promo):
+    code = (promo or {}).get("code") or "discount"
+    summary = _promo_summary(promo or {})
+    source_type = (promo or {}).get("source_type") or "promotion_code"
+
+    if source_type == "coupon":
+        return f"Coupon {code} is valid. {summary} will be applied at checkout."
+    return f"Promo code {code} is valid. {summary} will be applied at checkout."
+
+
+def _build_promo_payload(*, code, coupon, promotion_code_id=""):
+    return {
+        "id": promotion_code_id,
+        "code": (code or "").strip().upper(),
+        "coupon_id": coupon.get("id", ""),
+        "name": coupon.get("name", ""),
+        "percent_off": coupon.get("percent_off"),
+        "amount_off": coupon.get("amount_off"),
+        "currency": coupon.get("currency", "gbp"),
+        "source_type": "promotion_code" if promotion_code_id else "coupon",
+    }
+
+
+def _validate_coupon_object(coupon, entered_code):
+    if not coupon:
+        return None, "That coupon could not be found in Stripe."
+
+    if not coupon.get("valid", False):
+        return None, "This coupon exists in Stripe but is no longer valid."
+
+    currency = (coupon.get("currency") or "").lower()
+    if currency not in ("", "gbp"):
+        return None, f"This coupon is configured for {currency.upper()} and cannot be used on this GBP checkout."
+
+    promo = _build_promo_payload(code=entered_code, coupon=coupon)
+    return promo, None
+
+
 def _get_active_promo_codes():
     if not settings.STRIPE_SECRET_KEY:
         return []
@@ -210,9 +248,13 @@ def _validate_promo_code(code, subtotal):
     if not settings.STRIPE_SECRET_KEY:
         return None, "Stripe is not configured for promo codes yet."
 
+    entered_code = (code or "").strip()
+    if not entered_code:
+        return None, "Enter a promo code first."
+
     try:
         results = stripe.PromotionCode.list(
-            code=code,
+            code=entered_code,
             active=True,
             limit=10,
             expand=["data.coupon"],
@@ -234,17 +276,27 @@ def _validate_promo_code(code, subtotal):
         if not coupon:
             continue
 
-        return {
-            "id": promo.get("id", ""),
-            "code": promo.get("code", code).upper(),
-            "coupon_id": coupon.get("id", ""),
-            "name": coupon.get("name", ""),
-            "percent_off": coupon.get("percent_off"),
-            "amount_off": coupon.get("amount_off"),
-            "currency": coupon.get("currency", "gbp"),
-        }, None
+        coupon_payload, coupon_err = _validate_coupon_object(
+            coupon,
+            promo.get("code", entered_code),
+        )
+        if coupon_err:
+            return None, coupon_err
 
-    return None, "That promo code is invalid or no longer active."
+        coupon_payload["id"] = promo.get("id", "")
+        coupon_payload["source_type"] = "promotion_code"
+        return coupon_payload, None
+
+    try:
+        coupon = stripe.Coupon.retrieve(entered_code)
+    except stripe.StripeError as exc:
+        logger.info("Stripe coupon lookup failed for %s: %s", entered_code, exc)
+        coupon = None
+
+    if coupon:
+        return _validate_coupon_object(coupon, entered_code)
+
+    return None, "That code was not found in Stripe, or it is no longer active."
 
 
 def header_counts(request):
@@ -643,6 +695,8 @@ def cartpage(request):
                 return JsonResponse({"error": err}, status=400) if is_ajax else (messages.error(request, err) or redirect("cart-page"))
             request.session["cart_shipping_rate_id"] = selected["id"]
             request.session.modified = True
+            action_message = f"Shipping updated to {selected['label']}."
+            action_message_type = "info"
 
         elif action == "apply_promo":
             promo_code = request.POST.get("promo_code", "").strip()
@@ -652,10 +706,14 @@ def cartpage(request):
                 return JsonResponse({"error": err}, status=400) if is_ajax else (messages.error(request, err) or redirect("cart-page"))
             request.session["cart_promo"] = promo
             request.session.modified = True
+            action_message = _promo_success_message(promo)
+            action_message_type = "success"
 
         elif action == "remove_promo":
             request.session.pop("cart_promo", None)
             request.session.modified = True
+            action_message = "Promo code removed."
+            action_message_type = "info"
  
         _save_cart(request, cart)
         if not cart:
@@ -678,6 +736,8 @@ def cartpage(request):
                 "discount":   str(totals["discount"]),
                 "promo_code": totals["promo_code"],
                 "shipping_label": (selected_shipping or {}).get("label", ""),
+                "message": action_message if 'action_message' in locals() else "",
+                "message_type": action_message_type if 'action_message_type' in locals() else "",
                 "total":      str(totals["total"]),
             })
         return redirect("cart-page")
@@ -822,6 +882,8 @@ def create_checkout_session(request):
             discounts=(
                 [{"promotion_code": promo["id"]}]
                 if promo and promo.get("id")
+                else [{"coupon": promo["coupon_id"]}]
+                if promo and promo.get("coupon_id")
                 else []
             ),
         )

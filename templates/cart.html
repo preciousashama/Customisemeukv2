@@ -974,6 +974,7 @@
                 </span>
                 <button type="button" id="removePromoBtn" style="border:none;background:none;color:var(--grey-4);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;{% if not promo %}display:none;{% endif %}">Remove</button>
               </div>
+              <div id="promoFeedback" style="display:none;margin-top:12px;padding:12px 14px;border:1px solid var(--grey-6);font-size:12px;line-height:1.5;"></div>
             </div>
             <div class="summary-row">
               <span class="summary-row-label">Subtotal</span>
@@ -1184,6 +1185,28 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
     });
   }
 
+  function showPromoFeedback(message, type){
+    var feedback = document.getElementById('promoFeedback');
+    if(!feedback) return;
+    if(!message){
+      feedback.style.display = 'none';
+      feedback.textContent = '';
+      return;
+    }
+
+    var palette = {
+      success: { bg:'#f0faf4', border:'#cfe9d8', text:'#1f7a4c' },
+      error:   { bg:'#fff4f4', border:'#efcaca', text:'#b23b3b' },
+      info:    { bg:'#f7f7f7', border:'#dddddd', text:'#4a4a4a' }
+    };
+    var colors = palette[type] || palette.info;
+    feedback.style.display = 'block';
+    feedback.style.background = colors.bg;
+    feedback.style.borderColor = colors.border;
+    feedback.style.color = colors.text;
+    feedback.textContent = message;
+  }
+
   function removeCartRow(productId){
     const row = document.querySelector('.cart-item[data-product-id="'+productId+'"]');
     if(row){
@@ -1237,11 +1260,14 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
     }
 
     if(promoStatus){
-      promoStatus.textContent = data.promo_code ? ('Applied: ' + data.promo_code) : 'Add your Stripe coupon before checkout.';
+      promoStatus.textContent = data.promo_code ? ('Applied: ' + data.promo_code) : 'Add your Stripe coupon or coupon ID before checkout.';
       promoStatus.style.color = data.promo_code ? '#1f7a4c' : 'var(--grey-5)';
     }
     if(removePromoBtn){
       removePromoBtn.style.display = data.promo_code ? '' : 'none';
+    }
+    if(data.message){
+      showPromoFeedback(data.message, data.message_type || 'info');
     }
   }
 
@@ -1250,7 +1276,7 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
     shippingRateSelect.addEventListener('change', function(){
       postCartAction({ action:'select_shipping', shipping_rate_id: shippingRateSelect.value })
       .then(refreshCartSummary)
-      .catch(function(err){ alert(err.message || 'Could not update shipping.'); });
+      .catch(function(err){ showPromoFeedback(err.message || 'Could not update shipping.', 'error'); });
     });
   }
 
@@ -1260,12 +1286,12 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
     applyPromoBtn.addEventListener('click', function(){
       var code = (promoCodeInput.value || '').trim();
       if(!code){
-        alert('Enter a promo code first.');
+        showPromoFeedback('Enter a promo code or coupon ID first.', 'error');
         return;
       }
       postCartAction({ action:'apply_promo', promo_code: code })
       .then(refreshCartSummary)
-      .catch(function(err){ alert(err.message || 'Could not apply promo code.'); });
+      .catch(function(err){ showPromoFeedback(err.message || 'Could not apply promo code.', 'error'); });
     });
   }
 
@@ -1275,7 +1301,7 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
       if(promoCodeInput) promoCodeInput.value = '';
       postCartAction({ action:'remove_promo' })
       .then(refreshCartSummary)
-      .catch(function(err){ alert(err.message || 'Could not remove promo code.'); });
+      .catch(function(err){ showPromoFeedback(err.message || 'Could not remove promo code.', 'error'); });
     });
   }
 
@@ -1345,54 +1371,6 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
       });
     });
   }
-  function getShippingSummaryNode(){
-    return document.getElementById('summaryShipping') || document.querySelector('.summary-row-free');
-  }
-
-  function updateTotals(data){
-    var sub = document.getElementById('summarySubtotal');
-    var total = document.getElementById('summaryTotal');
-    if(sub) sub.textContent = String.fromCharCode(163) + parseFloat(data.subtotal || 0).toFixed(2);
-    if(total) total.textContent = String.fromCharCode(163) + parseFloat(data.total || 0).toFixed(2);
-  }
-
-  function refreshCartSummary(data){
-    var ship = getShippingSummaryNode();
-    var discountRow = document.getElementById('summaryDiscountRow');
-    var discountLabel = document.getElementById('summaryDiscountLabel');
-    var discountValue = document.getElementById('summaryDiscount');
-    var promoStatus = document.getElementById('promoStatus');
-    var removePromoBtn = document.getElementById('removePromoBtn');
-    var discount = parseFloat(data.discount || 0);
-    var shippingAmount = parseFloat(data.shipping || 0);
-
-    updateTotals(data);
-
-    if(ship){
-      ship.textContent = shippingAmount <= 0
-        ? 'Collection'
-        : (String.fromCharCode(163) + shippingAmount.toFixed(2));
-    }
-
-    if(discountRow && discountLabel && discountValue){
-      if(discount > 0){
-        discountRow.style.display = '';
-        discountLabel.textContent = data.promo_code ? ('Discount (' + data.promo_code + ')') : 'Discount';
-        discountValue.textContent = '-' + String.fromCharCode(163) + discount.toFixed(2);
-      } else {
-        discountRow.style.display = 'none';
-      }
-    }
-
-    if(promoStatus){
-      promoStatus.textContent = data.promo_code ? ('Applied: ' + data.promo_code) : '';
-      promoStatus.style.color = data.promo_code ? '#1f7a4c' : 'var(--grey-5)';
-    }
-
-    if(removePromoBtn){
-      removePromoBtn.style.display = data.promo_code ? '' : 'none';
-    }
-  }
 
   document.querySelectorAll('.promo-suggestion').forEach(function(btn){
     btn.addEventListener('click', function(){
@@ -1407,6 +1385,7 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
     promo_code: "{{ totals.promo_code|default:''|escapejs }}",
     total: "{{ totals.total|floatformat:2 }}"
   });
+  showPromoFeedback('', 'info');
 </script>
 </body>
 </html>
