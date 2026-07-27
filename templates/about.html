@@ -69,6 +69,18 @@
     background-repeat: no-repeat;
     filter: grayscale(100%); opacity: 0.35;
   }
+  .hero-img::before {
+    content: '';
+    position: absolute;
+    inset: -24px;
+    background-image: inherit;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    filter: blur(24px) grayscale(100%);
+    transform: scale(1.08);
+    opacity: 0.7;
+  }
   /* gradient: clear in middle, dark at bottom */
   .hero::after {
     content: ''; position: absolute; inset: 0;
@@ -431,9 +443,13 @@
       background-size: contain;
       background-position: center center;
     }
+    .hero-img::before {
+      opacity: 0.78;
+    }
   }
   @media (max-width: 768px) {
     header { padding: 0 24px; }
+    .hero-img::before { display: none; }
     nav { display: none; }
     .hamburger { display: flex; }
     .mobile-nav { display: block; }

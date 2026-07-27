@@ -355,6 +355,18 @@
     overflow: hidden;
     background: #121212;
   }
+  .hero-slide::before {
+    content: '';
+    position: absolute;
+    inset: -24px;
+    background-image: var(--hero-bg);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    filter: blur(24px) grayscale(35%);
+    transform: scale(1.08);
+    opacity: 0.45;
+  }
   .hero-slide img {
     width: 100%;
     height: 100%;
@@ -362,6 +374,8 @@
     object-position: 78% center;
     display: block;
     filter: grayscale(20%);
+    position: relative;
+    z-index: 1;
   }
   /* Gradient overlay per slide */
   .hero-slide::after {
@@ -371,6 +385,7 @@
       rgba(10,10,10,0.48) 34%,
       rgba(10,10,10,0.14) 68%,
       rgba(10,10,10,0.06) 100%);
+    z-index: 2;
   }
 
   /* Dot indicators */
@@ -388,11 +403,16 @@
     .hero-slide img {
       object-fit: contain;
       object-position: center center;
-      background: #121212;
+      background: transparent;
     }
   }
   @media (max-width: 768px) {
+    .hero-slide::before {
+      opacity: 0.25;
+      filter: blur(14px) grayscale(30%);
+    }
     .hero-slide img {
+      object-fit: cover;
       object-position: 72% center;
     }
     .hero-slide::after {
@@ -415,14 +435,14 @@
   <div class="hero-track" id="heroTrack">
     {% if slides %}
       {% for slide in slides %}
-      <div class="hero-slide" data-slide="{{ forloop.counter0 }}">
+      <div class="hero-slide" data-slide="{{ forloop.counter0 }}" style="--hero-bg: url('{{ slide.image.url }}');">
         <img src="{{ slide.image.url }}"
              alt="{{ slide.alt_text|default:'CustomiseMe UK' }}"/>
       </div>
       {% endfor %}
     {% else %}
     {# Fallback: shown when no slides are uploaded in the admin #}
-    <div class="hero-slide">
+    <div class="hero-slide" style="--hero-bg: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAAIx0YbsrqXpIKFp54IQ1Lts4PdiJV9FnD44bKTrNEoELUG_Xn8AhkVb8lXH6rPGnrgPF88L0Ov4fzWiGjQ5gT6GI2mMR3lHD_GEkn_mea605dVbp5PqQ_4iNuQIAbNBpMV6fVAtV0X_N3f4_mfMyeJUZLhkgOwqJz7SnHrtvmIJ53MdqkNRgvJtzGzwSnoHxGLbWhTlPLzNCrOEyIdYLubo7UNCU8f2Dtk_MM5sFc_EsK7wRBkR-6gZcqgnjII5YsLnnECDb92qeC');">
       <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAIx0YbsrqXpIKFp54IQ1Lts4PdiJV9FnD44bKTrNEoELUG_Xn8AhkVb8lXH6rPGnrgPF88L0Ov4fzWiGjQ5gT6GI2mMR3lHD_GEkn_mea605dVbp5PqQ_4iNuQIAbNBpMV6fVAtV0X_N3f4_mfMyeJUZLhkgOwqJz7SnHrtvmIJ53MdqkNRgvJtzGzwSnoHxGLbWhTlPLzNCrOEyIdYLubo7UNCU8f2Dtk_MM5sFc_EsK7wRBkR-6gZcqgnjII5YsLnnECDb92qeC"
            alt="Custom embroidered hoodie” hero background"/>
     </div>
