@@ -66,6 +66,7 @@
     position: absolute; inset: 0;
     background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCI_nR4yJJtVP-RRzUs_eryhsvA1tOWx12qpUMO0pS1VEGfegSBYEYGTrFnIqt5yQwU9kL9zRSzHYw6zSAF8YGCP1GoGgm_XuO0EdNAc4TI2qK2zehM1AV9ZILoLuEiRpy8cPqU2wPrWE7xFr39FctnW7W8q6xrxtXQ66IfgTAPE5x9kM0o09ye7WHLL0zHw7ldjsp3NoXSgCqMrqwEFn1aCpIhvAL9EKHdHC43VyD0OSg08UoaYDJ6yHg8VkyRNJJtUTP51E0ZtmO5');
     background-size: cover; background-position: center;
+    background-repeat: no-repeat;
     filter: grayscale(100%); opacity: 0.35;
   }
   /* gradient: clear in middle, dark at bottom */
@@ -424,6 +425,12 @@
     .team-grid { grid-template-columns: repeat(2, 1fr); }
     .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
     footer { padding: 60px 48px 32px; }
+  }
+  @media (min-width: 769px) {
+    .hero-img {
+      background-size: contain;
+      background-position: center center;
+    }
   }
   @media (max-width: 768px) {
     header { padding: 0 24px; }
