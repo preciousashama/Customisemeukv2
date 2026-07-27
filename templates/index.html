@@ -377,6 +377,13 @@
     position: relative;
     z-index: 1;
   }
+
+  @media (min-width: 769px) {
+    .hero-slide img {
+      object-fit: contain !important;
+      object-position: center center !important;
+    }
+  }
   /* Gradient overlay per slide */
   .hero-slide::after {
     content: ''; position: absolute; inset: 0;
@@ -399,13 +406,6 @@
     transition: background .3s, width .3s;
   }
   .slider-dot.active { background: var(--white); width: 40px; }
-  @media (min-width: 769px) {
-    .hero-slide img {
-      object-fit: contain;
-      object-position: center center;
-      background: transparent;
-    }
-  }
   @media (max-width: 768px) {
     .hero-slide::before {
       opacity: 0.25;
