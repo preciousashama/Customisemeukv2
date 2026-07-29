@@ -970,7 +970,7 @@
               {% endif %}
               <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
                 <span id="promoStatus" style="font-size:12px;color:{% if promo %}#1f7a4c{% else %}var(--grey-5){% endif %};">
-                  {% if promo %}Applied: {{ promo.code }}{% else %}Add your Stripe coupon before checkout.{% endif %}
+                  {% if promo %}Applied: {{ promo.code }}{% else %}Add your promo code before checkout.{% endif %}
                 </span>
                 <button type="button" id="removePromoBtn" style="border:none;background:none;color:var(--grey-4);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;{% if not promo %}display:none;{% endif %}">Remove</button>
               </div>
@@ -1260,7 +1260,7 @@ const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]')?.valu
     }
 
     if(promoStatus){
-      promoStatus.textContent = data.promo_code ? ('Applied: ' + data.promo_code) : 'Add your Stripe coupon or coupon ID before checkout.';
+      promoStatus.textContent = data.promo_code ? ('Applied: ' + data.promo_code) : 'Add your promo code before checkout.';
       promoStatus.style.color = data.promo_code ? '#1f7a4c' : 'var(--grey-5)';
     }
     if(removePromoBtn){

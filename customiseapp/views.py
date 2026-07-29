@@ -246,7 +246,7 @@ def _cart_totals(cart, shipping_amount=Decimal("0.00"), promo=None):
 
 def _validate_promo_code(code, subtotal):
     if not settings.STRIPE_SECRET_KEY:
-        return None, "Stripe is not configured for promo codes yet."
+        return None, "Promo codes are not configured yet."
 
     entered_code = (code or "").strip()
     if not entered_code:
@@ -296,7 +296,7 @@ def _validate_promo_code(code, subtotal):
     if coupon:
         return _validate_coupon_object(coupon, entered_code)
 
-    return None, "That code was not found in Stripe, or it is no longer active."
+    return None, "That code was not found, or it is no longer active."
 
 
 def header_counts(request):
