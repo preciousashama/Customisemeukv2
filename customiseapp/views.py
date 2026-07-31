@@ -16,7 +16,7 @@ from django.views.decorators.http import require_POST
 from .file_validators import validate_multiple_design_assets
 from django.db.models import Prefetch
 from .models import (
-    CarouselSlide, Product, Wishlist,
+    ArtworkResource, CarouselSlide, Product, Wishlist,
     DesignSubmission, DesignSubmissionFile,
     SendItemFile, SendItemRequest,
     ProductCustomisation, ProductImage,
@@ -361,7 +361,9 @@ def faqpage(request):           return render(request, "faq.html")
 def conditionpage(request):     return render(request, "conditions.html")
 # def contactpage(request):       return render(request, "contact.html")
 # def giftpage(request):          return render(request, "gift.html")
-def designstudiopage(request):  return render(request, "design-studio.html")
+def designstudiopage(request):
+    resources = ArtworkResource.objects.filter(is_active=True).order_by("position", "id")
+    return render(request, "design-studio.html", {"artwork_resources": resources})
 
 
 

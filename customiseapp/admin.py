@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 
 from .models import (
-    CarouselSlide, Category, Product, Wishlist,
+    ArtworkResource, CarouselSlide, Category, Product, Wishlist,
     DesignSubmission, DesignSubmissionFile,SendItemRequest,SendItemFile
 )
 
@@ -33,6 +33,27 @@ class CarouselSlideAdmin(admin.ModelAdmin):
     image_preview.short_description = "Preview"
 
 
+
+
+@admin.register(ArtworkResource)
+class ArtworkResourceAdmin(admin.ModelAdmin):
+    list_display = ("title", "position", "is_active", "pdf_link", "updated_at")
+    list_editable = ("position", "is_active")
+    ordering = ("position", "id")
+    search_fields = ("title", "description")
+    readonly_fields = ("pdf_link", "created_at", "updated_at")
+
+    fieldsets = (
+        (None, {"fields": ("title", "description", "pdf_file", "pdf_link")}),
+        ("Display", {"fields": ("button_label", "position", "is_active")}),
+        ("Timestamps", {"classes": ("collapse",), "fields": ("created_at", "updated_at")}),
+    )
+
+    def pdf_link(self, obj):
+        if obj.pdf_file:
+            return format_html('<a href="{}" target="_blank">Open PDF</a>', obj.pdf_file.url)
+        return "—"
+    pdf_link.short_description = "PDF"
 
 
 @admin.register(Category)

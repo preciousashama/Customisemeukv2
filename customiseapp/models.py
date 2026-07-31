@@ -5,6 +5,8 @@ from decimal import Decimal
 from django.conf import settings
 from django.db import models
 
+from .file_validators import validate_pdf_asset
+
 
 def _firebase_storage():
     from customiseapp.firebase_storage import FirebaseStorage
@@ -21,6 +23,27 @@ class CarouselSlide(models.Model):
     )
     position   = models.PositiveSmallIntegerField(default=0)
     is_active  = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["position", "id"]
+
+    def __str__(self):
+        return self.title
+
+
+class ArtworkResource(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    pdf_file = models.FileField(
+        upload_to="artwork-resources/",
+        storage=_firebase_storage,
+        validators=[validate_pdf_asset],
+    )
+    button_label = models.CharField(max_length=80, default="Download PDF", blank=True)
+    position = models.PositiveSmallIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

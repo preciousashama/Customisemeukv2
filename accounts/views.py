@@ -9,7 +9,15 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from .decorators import admin_required
 from orderapp.models import Order
-from customiseapp.models import CarouselSlide, Product, ProductImage, DesignSubmission, SendItemRequest, ProductCustomisation
+from customiseapp.models import (
+    ArtworkResource,
+    CarouselSlide,
+    Product,
+    ProductImage,
+    DesignSubmission,
+    SendItemRequest,
+    ProductCustomisation,
+)
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -21,7 +29,12 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST, require_http_methods
-from .file_validators import validate_carousel_image, validate_product_image, validate_multiple_design_assets
+from .file_validators import (
+    validate_carousel_image,
+    validate_product_image,
+    validate_multiple_design_assets,
+)
+from customiseapp.file_validators import validate_pdf_asset
 from .decorators import login_required_json, admin_required
 from .email_service import (
     send_admin_login_alert,
@@ -437,12 +450,14 @@ def _products_qs(search_query=""):
 
 
 def _build_context(request, active_tab, search_query="", form_errors=None,
-                   edit_slide=None, edit_product=None, viewed_order=None):
+                   edit_slide=None, edit_product=None, edit_resource=None,
+                   viewed_order=None):
     return {
         "stats":          _user_stats(),
         "recent_orders":  Order.objects.select_related("customer").order_by("-created_at")[:20],
         "slides":         CarouselSlide.objects.filter(is_active=True).order_by("position", "id"),
         "products":       _products_qs(search_query),
+        "artwork_resources": ArtworkResource.objects.order_by("position", "id"),
         "design_submissions": DesignSubmission.objects.select_related("user")
                                                       .prefetch_related("files")
                                                       .order_by("-created_at"),
@@ -459,6 +474,7 @@ def _build_context(request, active_tab, search_query="", form_errors=None,
         "form_errors":   form_errors or {},
         "edit_slide":    edit_slide,
         "edit_product":  edit_product,
+        "edit_resource": edit_resource,
         "viewed_order":  viewed_order,
     }
 
@@ -614,6 +630,7 @@ def admin_dashboard_data(request):
         search_query    = request.GET.get("q", "").strip()
         edit_slide_id   = request.GET.get("edit_slide")
         edit_product_id = request.GET.get("edit_product")
+        edit_resource_id = request.GET.get("edit_resource")
         order_query     = request.GET.get("q", "").strip()
 
         edit_slide = get_object_or_404(CarouselSlide, pk=edit_slide_id) if edit_slide_id else None
@@ -627,9 +644,11 @@ def admin_dashboard_data(request):
         if edit_product_id and not edit_product:
             from django.http import Http404
             raise Http404
+        edit_resource = get_object_or_404(ArtworkResource, pk=edit_resource_id) if edit_resource_id else None
 
         if edit_slide:   active_tab = "carousel"
         if edit_product: active_tab = "products"
+        if edit_resource: active_tab = "resources"
 
         viewed_order = None
         if active_tab == "orders" and order_query:
@@ -641,6 +660,7 @@ def admin_dashboard_data(request):
         ctx = _build_context(request, active_tab, search_query,
                               edit_slide=edit_slide,
                               edit_product=edit_product,
+                              edit_resource=edit_resource,
                               viewed_order=viewed_order)
         if edit_product:
             ctx["opt_display"] = _format_config_for_admin(edit_product.customisation_config)
@@ -868,6 +888,83 @@ def admin_dashboard_data(request):
         p.delete()
         messages.success(request, f'Product "{name}" deleted.')
         return redirect(f"{request.path}?tab=products")
+
+    if action in ("add_resource", "edit_resource"):
+        title = request.POST.get("resource_title", "").strip()
+        description = request.POST.get("resource_description", "").strip()
+        button_label = request.POST.get("resource_button_label", "").strip() or "Download PDF"
+        resource_id = request.POST.get("resource_id")
+        pdf_file = request.FILES.get("resource_pdf")
+        position_raw = request.POST.get("resource_position", "").strip()
+        is_active = request.POST.get("resource_is_active") == "on"
+        errors = {}
+
+        if not title:
+            errors["resource_title"] = "Resource title is required."
+
+        try:
+            position = int(position_raw or "0")
+            if position < 0:
+                raise ValueError
+        except (TypeError, ValueError):
+            errors["resource_position"] = "Enter a valid position number."
+            position = 0
+
+        if pdf_file:
+            try:
+                validate_pdf_asset(pdf_file)
+            except ValidationError as e:
+                errors["resource_pdf"] = e.message
+        elif action == "add_resource":
+            errors["resource_pdf"] = "A PDF upload is required."
+
+        edit_resource = get_object_or_404(ArtworkResource, pk=resource_id) if resource_id else None
+        if errors:
+            return render(
+                request,
+                "admin-page.html",
+                _build_context(
+                    request,
+                    "resources",
+                    form_errors=errors,
+                    edit_resource=edit_resource,
+                ),
+            )
+
+        if action == "edit_resource" and edit_resource:
+            edit_resource.title = title
+            edit_resource.description = description
+            edit_resource.button_label = button_label
+            edit_resource.position = position
+            edit_resource.is_active = is_active
+            if pdf_file:
+                if edit_resource.pdf_file:
+                    edit_resource.pdf_file.delete(save=False)
+                edit_resource.pdf_file = pdf_file
+            edit_resource.save()
+            messages.success(request, f'Resource "{title}" updated.')
+        else:
+            resource = ArtworkResource(
+                title=title,
+                description=description,
+                button_label=button_label,
+                position=position,
+                is_active=is_active,
+            )
+            resource.pdf_file = pdf_file
+            resource.save()
+            messages.success(request, f'Resource "{title}" added.')
+
+        return redirect(f"{request.path}?tab=resources")
+
+    if action == "delete_resource":
+        resource = get_object_or_404(ArtworkResource, pk=request.POST.get("resource_id"))
+        title = resource.title
+        if resource.pdf_file:
+            resource.pdf_file.delete(save=False)
+        resource.delete()
+        messages.success(request, f'Resource "{title}" deleted.')
+        return redirect(f"{request.path}?tab=resources")
 
     # ── § 04  DESIGN SUBMISSIONS ─────────────────────────────────────────────
     if action == "update_submission_status":

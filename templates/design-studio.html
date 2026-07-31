@@ -453,7 +453,7 @@
         <li>Colour profile guide</li>
         <li>Template downloads</li>
       </ul>
-      <a href="{% static 'CMUK-Artwork-Guidelines.docx' %}" class="btn-studio">Check Out Resources</a>
+      <a href="#resources" class="btn-studio">Check Out Resources</a>
     </div>
 
   </div>
@@ -496,54 +496,24 @@
     <h2 class="studio-section-title">Artwork <em>Resources</em></h2>
   </div>
   <div class="studio-resources-grid">
+    {% for resource in artwork_resources %}
     <div class="resource-card reveal">
       <div class="resource-card-icon">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       </div>
-      <div class="resource-card-name">Embroidery Artwork Guide</div>
-      <p class="resource-card-desc">Everything you need to know about preparing artwork for embroidery” file formats, stitch density, and minimum sizes.</p>
-      <a href="{% static 'CMUK-Artwork-Guidelines.docx' %}" class="resource-card-link">Download PDF <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      <div class="resource-card-name">{{ resource.title }}</div>
+      <p class="resource-card-desc">{{ resource.description|default:"A downloadable PDF guide prepared for your artwork and production planning needs." }}</p>
+      <a href="{{ resource.pdf_file.url }}" class="resource-card-link" target="_blank" rel="noopener">{{ resource.button_label|default:"Download PDF" }} <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
     </div>
-    <div class="resource-card reveal">
+    {% empty %}
+    <div class="resource-card reveal" style="grid-column:1 / -1;">
       <div class="resource-card-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       </div>
-      <div class="resource-card-name">Print-Ready File Checklist</div>
-      <p class="resource-card-desc">A step-by-step checklist to ensure your files are correctly set up for high-quality print output with no surprises.</p>
-      <a href="{% static 'CMUK-Artwork-Guidelines.docx' %}" class="resource-card-link">Download PDF <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      <div class="resource-card-name">Resources Coming Soon</div>
+      <p class="resource-card-desc">PDF artwork guides will appear here once they are uploaded in the admin portal.</p>
     </div>
-    <div class="resource-card reveal">
-      <div class="resource-card-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
-      </div>
-      <div class="resource-card-name">Colour Profile Guide</div>
-      <p class="resource-card-desc">Understand CMYK vs RGB, Pantone matching, and how to achieve consistent colour across all your printed products.</p>
-      <a href="{% static 'CMUK-Artwork-Guidelines.docx' %}" class="resource-card-link">Download PDF <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-    </div>
-    <div class="resource-card reveal">
-      <div class="resource-card-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      </div>
-      <div class="resource-card-name">Design Templates</div>
-      <p class="resource-card-desc">Pre-built templates for common products including t-shirts, hoodies, mugs, and banners. Editable in Illustrator and Canva.</p>
-      <a href="{% static 'CMUK-Artwork-Guidelines.docx' %}" class="resource-card-link">Browse Templates <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-    </div>
-    <div class="resource-card reveal">
-      <div class="resource-card-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      </div>
-      <div class="resource-card-name">Sticker &amp; Label Spec Sheet</div>
-      <p class="resource-card-desc">Cut line requirements, bleed areas, and material options for vinyl stickers, custom labels, and wall decals.</p>
-      <a href="{% static 'CMUK-Artwork-Guidelines.docx' %}" class="resource-card-link">Download PDF <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-    </div>
-    <div class="resource-card reveal">
-      <div class="resource-card-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-      </div>
-      <div class="resource-card-name">Turnaround Times Guide</div>
-      <p class="resource-card-desc">A complete breakdown of production times for every product category, including rush and standard service options.</p>
-      <a href="{% static 'CMUK-Artwork-Guidelines.docx' %}" class="resource-card-link">Download PDF <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-    </div>
+    {% endfor %}
   </div>
 </div>
 

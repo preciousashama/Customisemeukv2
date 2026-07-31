@@ -382,6 +382,9 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
     <a class="nav-link {% if active_tab == 'products' %}active{% endif %}" href="?tab=products">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>Products
     </a>
+    <a class="nav-link {% if active_tab == 'resources' %}active{% endif %}" href="?tab=resources">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="M9 15l3 3 3-3"/></svg>Artwork Resources
+    </a>
     <a class="nav-link {% if active_tab == 'designs' %}active{% endif %}" href="?tab=designs">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Design Uploads
     </a>
@@ -421,6 +424,10 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
     </a>
     <a class="nav-link {% if active_tab == 'products' %}active{% endif %}" href="?tab=products">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>Products
+    </a>
+    <a class="nav-link {% if active_tab == 'resources' %}active{% endif %}" href="?tab=resources">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="M9 15l3 3 3-3"/></svg>Artwork Resources
+      {% if artwork_resources %}<span class="tab-badge">{{ artwork_resources|length }}</span>{% endif %}
     </a>
     <a class="nav-link {% if active_tab == 'designs' %}active{% endif %}" href="?tab=designs">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Design Service Uploads
@@ -482,6 +489,10 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
       <a class="tab-btn {% if active_tab == 'products' %}active{% endif %}" href="?tab=products" role="tab">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
         Products <span class="tab-badge">{{ products|length }}</span>
+      </a>
+      <a class="tab-btn {% if active_tab == 'resources' %}active{% endif %}" href="?tab=resources" role="tab">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="M9 15l3 3 3-3"/></svg>
+        Resources <span class="tab-badge">{{ artwork_resources|length }}</span>
       </a>
       <a class="tab-btn {% if active_tab == 'designs' %}active{% endif %}" href="?tab=designs" role="tab">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -865,9 +876,103 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
   </div>
 
 
-  <!-- â•â•  04  DESIGN SUBMISSIONS â•â• -->
+  <!-- â•â•  04  ARTWORK RESOURCES â•â• -->
+  <div class="tab-panel {% if active_tab == 'resources' %}active{% endif %}" id="tab-resources" role="tabpanel">
+    <div class="section-heading">
+      <div>
+        <div class="section-num"> 04</div>
+        <div class="section-title">Artwork Resources</div>
+        <div class="section-sub">Upload the PDF guides customers can download from the Design Studio page.</div>
+      </div>
+      {% if not edit_resource %}
+      <a class="btn-primary" href="?tab=resources"><span class="btn-inner"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>Add Resource</span></a>
+      {% endif %}
+    </div>
+    {% if active_tab == 'resources' %}
+    <div class="form-panel">
+      <div class="form-panel-title">
+        <span>{% if edit_resource and edit_resource.id %}Edit Resource{% else %}Add PDF Resource{% endif %}</span>
+        <a class="form-panel-cancel" href="?tab=resources">Cancel</a>
+      </div>
+      <form method="POST" action="{% url 'admin-page' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="{% if edit_resource and edit_resource.id %}edit_resource{% else %}add_resource{% endif %}"/>
+        {% if edit_resource and edit_resource.id %}<input type="hidden" name="resource_id" value="{{ edit_resource.id }}"/>{% endif %}
+        <div class="form-row-grid">
+          <div class="field {% if form_errors.resource_title %}has-error{% endif %}">
+            <label for="resourceTitle">Resource Title</label>
+            <input id="resourceTitle" type="text" name="resource_title" value="{% if edit_resource %}{{ edit_resource.title }}{% endif %}" placeholder="Embroidery Artwork Guide"/>
+            {% if form_errors.resource_title %}<div class="field-error-msg">{{ form_errors.resource_title }}</div>{% endif %}
+          </div>
+          <div class="field {% if form_errors.resource_button_label %}has-error{% endif %}">
+            <label for="resourceButtonLabel">Button Label</label>
+            <input id="resourceButtonLabel" type="text" name="resource_button_label" value="{% if edit_resource %}{{ edit_resource.button_label }}{% else %}Download PDF{% endif %}" placeholder="Download PDF"/>
+            {% if form_errors.resource_button_label %}<div class="field-error-msg">{{ form_errors.resource_button_label }}</div>{% endif %}
+          </div>
+        </div>
+        <div class="field {% if form_errors.resource_description %}has-error{% endif %}" style="margin-top:16px;">
+          <label for="resourceDescription">Description</label>
+          <textarea id="resourceDescription" name="resource_description" placeholder="Short description shown on the website.">{% if edit_resource %}{{ edit_resource.description }}{% endif %}</textarea>
+          {% if form_errors.resource_description %}<div class="field-error-msg">{{ form_errors.resource_description }}</div>{% endif %}
+        </div>
+        <div class="form-row-grid" style="margin-top:16px;">
+          <div class="field {% if form_errors.resource_position %}has-error{% endif %}">
+            <label for="resourcePosition">Position</label>
+            <input id="resourcePosition" type="number" min="0" name="resource_position" value="{% if edit_resource %}{{ edit_resource.position }}{% else %}0{% endif %}"/>
+            {% if form_errors.resource_position %}<div class="field-error-msg">{{ form_errors.resource_position }}</div>{% endif %}
+          </div>
+          <div class="field {% if form_errors.resource_pdf %}has-error{% endif %}">
+            <label for="resourcePdf">PDF File</label>
+            <input id="resourcePdf" type="file" name="resource_pdf" accept="application/pdf,.pdf"/>
+            <div class="field-hint">PDF only. This replaces the downloadable file shown to customers.</div>
+            {% if edit_resource and edit_resource.pdf_file %}<div class="field-hint" style="margin-top:6px;">Current file: <a href="{{ edit_resource.pdf_file.url }}" target="_blank" rel="noopener">{{ edit_resource.title }}</a></div>{% endif %}
+            {% if form_errors.resource_pdf %}<div class="field-error-msg">{{ form_errors.resource_pdf }}</div>{% endif %}
+          </div>
+        </div>
+        <div class="field" style="margin-top:16px;">
+          <label style="display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:0.08em;">
+            <input type="checkbox" name="resource_is_active" {% if edit_resource %}{% if edit_resource.is_active %}checked{% endif %}{% else %}checked{% endif %} style="width:auto;cursor:none;"/>
+            Show this PDF on the Design Studio page
+          </label>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary"><div class="btn-inner"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>{% if edit_resource and edit_resource.id %}Save Changes{% else %}Add Resource{% endif %}</div></button>
+          <a class="btn-ghost" href="?tab=resources">Cancel</a>
+        </div>
+      </form>
+    </div>
+    {% endif %}
+    <table class="data-table">
+      <thead><tr><th style="width:28%">Title</th><th>Description</th><th style="width:12%">Position</th><th style="width:12%">Status</th><th style="width:16%">File</th><th class="r" style="width:18%">Actions</th></tr></thead>
+      <tbody>
+        {% for resource in artwork_resources %}
+        <tr>
+          <td><div style="font-weight:600;">{{ resource.title }}</div><div style="font-size:11px;color:var(--grey-4);margin-top:2px;">Button: {{ resource.button_label|default:"Download PDF" }}</div></td>
+          <td style="color:var(--grey-3);">{% if resource.description %}{{ resource.description|truncatechars:140 }}{% else %}<span style="font-style:italic;color:var(--grey-5);">No description</span>{% endif %}</td>
+          <td>{{ resource.position }}</td>
+          <td><span class="status-badge {% if resource.is_active %}status-delivered{% else %}status-cancelled{% endif %}">{% if resource.is_active %}Active{% else %}Hidden{% endif %}</span></td>
+          <td><a href="{{ resource.pdf_file.url }}" target="_blank" rel="noopener">Open PDF</a></td>
+          <td class="r">
+            <div class="product-actions" style="justify-content:flex-end;">
+              <a class="btn-icon" href="?tab=resources&edit_resource={{ resource.id }}" title="Edit resource"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></a>
+              <form method="POST" action="{% url 'admin-page' %}" class="delete-form" onsubmit="return confirm('Delete {{ resource.title }}?')">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete_resource"/>
+                <input type="hidden" name="resource_id" value="{{ resource.id }}"/>
+                <button type="submit" class="btn-icon danger" title="Delete resource"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}<tr class="empty-row"><td colspan="6">No artwork PDFs uploaded yet.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- â•â•  05  DESIGN SUBMISSIONS â•â• -->
   <div class="tab-panel {% if active_tab == 'designs' %}active{% endif %}" id="tab-designs" role="tabpanel">
-    <div class="section-heading"><div><div class="section-num"> 04</div><div class="section-title">Design Submissions</div><div class="section-sub">Files and briefs uploaded by customers for custom design requests.</div></div></div>
+    <div class="section-heading"><div><div class="section-num"> 05</div><div class="section-title">Design Submissions</div><div class="section-sub">Files and briefs uploaded by customers for custom design requests.</div></div></div>
     <table class="submissions-table">
       <thead><tr><th style="width:22%">Customer</th><th style="width:16%">Service</th><th style="width:12%">Date</th><th style="width:16%">Files</th><th style="width:14%">Status</th><th>Update / Note</th></tr></thead>
       <tbody>
@@ -877,10 +982,9 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
     </table>
   </div>
 
-
-  <!-- â•â•  05  SEND ITEM REQUESTS â•â• -->
+  <!-- â•â•  06  SEND ITEM REQUESTS â•â• -->
   <div class="tab-panel {% if active_tab == 'send_requests' %}active{% endif %}" id="tab-send-requests" role="tabpanel">
-    <div class="section-heading"><div><div class="section-num"> 05</div><div class="section-title">Send Item Requests</div><div class="section-sub">Customers ship their own garments to the studio for customisation.</div></div></div>
+    <div class="section-heading"><div><div class="section-num"> 06</div><div class="section-title">Send Item Requests</div><div class="section-sub">Customers ship their own garments to the studio for customisation.</div></div></div>
     <table class="send-req-table">
       <thead><tr><th style="width:20%">Customer</th><th style="width:22%">Items</th><th style="width:8%">Qty</th><th style="width:11%">Deadline</th><th style="width:11%">Submitted</th><th style="width:10%">Status</th><th>Update</th></tr></thead>
       <tbody>
@@ -890,13 +994,12 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
     </table>
   </div>
 
-
-  <!-- â•â•  06  PRODUCT CUSTOMISATIONS â•â• -->
+  <!-- â•â•  07  PRODUCT CUSTOMISATIONS â•â• -->
   <div class="tab-panel {% if active_tab == 'customisations' %}active{% endif %}" id="tab-customisations" role="tabpanel">
 
     <div class="section-heading">
       <div>
-        <div class="section-num"> 06</div>
+        <div class="section-num"> 07</div>
         <div class="section-title">Product Customisations</div>
         <div class="section-sub">Artwork and customisation specs submitted by customers at the product page. Only paid orders are shown.</div>
       </div>

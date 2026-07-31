@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 
 
 IMAGE_MIMES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
+PDF_MIMES = {"application/pdf"}
 
 DESIGN_ASSET_MIMES = {
     "image/jpeg", "image/png", "image/webp", "image/gif",
@@ -70,6 +71,12 @@ def validate_carousel_image(uploaded_file):
 def validate_design_asset(uploaded_file):
     return _check_magic(
         uploaded_file, DESIGN_ASSET_MIMES, MAX_DESIGN_ASSET_MB, label="Design file"
+    )
+
+
+def validate_pdf_asset(uploaded_file):
+    return _check_magic(
+        uploaded_file, PDF_MIMES, MAX_DESIGN_ASSET_MB, label="PDF file"
     )
 
 
