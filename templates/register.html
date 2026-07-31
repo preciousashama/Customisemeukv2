@@ -452,11 +452,11 @@
       <form method="post" action="{% url 'register-page' %}" novalidate>
         {% csrf_token %}
 
-        {# FULL NAME (optional) #}
+        {# FULL NAME #}
         <div class="field-group">
           <label class="field-label" for="id_full_name">
             Full Name
-            <span class="field-hint">optional</span>
+            <span class="field-hint">required</span>
           </label>
           <input
             class="field-input{% if form.full_name.errors %} is-invalid{% endif %}"
@@ -467,6 +467,7 @@
             value="{{ form.full_name.value|default:'' }}"
             autocomplete="name"
             autofocus
+            required
           />
           {% if form.full_name.errors %}
             <span class="field-error">{{ form.full_name.errors.0 }}</span>

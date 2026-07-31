@@ -22,10 +22,16 @@ def _validate_password_strength(password: str) -> str:
 
 
 class CustomerRegisterForm(forms.Form):
-    full_name = forms.CharField(max_length=255, required=False)
+    full_name = forms.CharField(max_length=255, required=True)
     email     = forms.EmailField()
     password  = forms.CharField(min_length=8, widget=forms.PasswordInput)
     password2 = forms.CharField(widget=forms.PasswordInput, label="Confirm password")
+
+    def clean_full_name(self):
+        full_name = self.cleaned_data["full_name"].strip()
+        if not full_name:
+            raise forms.ValidationError("Full name is required.")
+        return full_name
 
     def clean_email(self):
         email = self.cleaned_data["email"].lower().strip()

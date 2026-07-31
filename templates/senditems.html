@@ -56,7 +56,7 @@
     letter-spacing: -0.01em; margin-bottom: 24px;
     opacity: 0; animation: fadeUp .7s .2s ease forwards;
   }
-  .hero-title em { font-style: italic; color: var(--grey-4); }
+  .hero-title em { font-style: italic; color: var(--accent); }
   .hero-desc {
     font-size: clamp(14px, 1.4vw, 17px); font-weight: 300;
     color: var(--grey-3); line-height: 1.8; max-width: 540px; margin: 0 auto;
@@ -74,7 +74,7 @@
   }
   .section-overline::before { content: ''; width: 24px; height: 1px; background: var(--grey-6); }
   .how-title { font-family: var(--serif); font-size: clamp(28px, 3vw, 40px); font-weight: 300; line-height: 1.1; margin-bottom: 20px; }
-  .how-title em { font-style: italic; color: var(--grey-4); }
+  .how-title em { font-style: italic; color: var(--accent); }
   .how-body { font-size: 14px; color: var(--grey-3); line-height: 1.9; }
 
   .steps-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; background: var(--grey-6); border: 1px solid var(--grey-6); }
@@ -106,7 +106,7 @@
   }
   .form-sidebar { position: sticky; top: 96px; }
   .form-sidebar-title { font-family: var(--serif); font-size: 32px; font-weight: 300; line-height: 1.1; margin-bottom: 16px; }
-  .form-sidebar-title em { font-style: italic; color: var(--grey-4); }
+  .form-sidebar-title em { font-style: italic; color: var(--accent); }
   .form-sidebar-body { font-size: 13px; color: var(--grey-4); line-height: 1.8; margin-bottom: 24px; }
   .form-sidebar-note { font-size: 11px; color: var(--grey-5); line-height: 1.7; border-left: 2px solid var(--grey-6); padding-left: 14px; }
   .quote-form { display: flex; flex-direction: column; gap: 0; }
@@ -157,7 +157,7 @@
   .waiver-overline { font-size: 10px; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--grey-4); display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 16px; }
   .waiver-overline::before, .waiver-overline::after { content: ''; width: 24px; height: 1px; background: var(--grey-3); }
   .waiver-title { font-family: var(--serif); font-size: clamp(32px, 3.5vw, 50px); font-weight: 300; line-height: 1.05; margin-bottom: 16px; }
-  .waiver-title em { font-style: italic; color: rgba(248,248,246,0.4); }
+  .waiver-title em { font-style: italic; color: var(--accent); }
   .waiver-desc { font-size: 14px; color: var(--grey-4); line-height: 1.8; margin-bottom: 36px; }
   .btn-waiver { display: inline-flex; align-items: center; gap: 10px; background: var(--white); color: var(--black); font-family: var(--sans); font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; padding: 16px 36px; border: none; cursor: none; text-decoration: none; transition: background .2s; }
   .btn-waiver:hover { background: var(--grey-7); }
@@ -520,6 +520,7 @@
           <li><span class="list-marker"></span>Timeline estimate</li>
         </ul>
         <p class="step-note">Quotes are typically sent within 24 hours.</p>
+        <a class="step-action" href="#waiver">Liability Form <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
       </div>
       <div class="step-card">
         <div class="step-num">03</div><div class="step-label">Ship Your Items</div>
@@ -539,7 +540,6 @@
           <li><span class="list-marker"></span>Quality check</li>
           <li><span class="list-marker"></span>Safe return shipping</li>
         </ul>
-        <a class="step-action primary" href="#waiver">Liability Form <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
       </div>
     </div>
   </section>

@@ -2,6 +2,7 @@ import logging
 from typing import Optional
 
 from django.conf import settings
+from django.urls import reverse
 
 logger = logging.getLogger("accounts")
 
@@ -161,7 +162,7 @@ def send_welcome_email(user) -> bool:
 
 def send_password_reset_email(user, token: str) -> bool:
     site_url = getattr(settings, "SITE_URL", "").rstrip("/")
-    url  = f"{site_url}/auth/reset-password/{token}/"
+    url  = f"{site_url}{reverse('password-reset-confirm', args=[token])}"
     ttl  = getattr(settings, "PASSWORD_RESET_TIMEOUT_HOURS", 2)
     body = f"""
       <h2 style="font-family:Georgia,serif;font-size:28px;font-weight:300;

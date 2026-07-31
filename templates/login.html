@@ -376,6 +376,9 @@
       {% if verify_success %}
         <div class="alert alert-success" role="alert">{{ verify_success }}</div>
       {% endif %}
+      {% if reset_success %}
+        <div class="alert alert-success" role="alert">{{ reset_success }}</div>
+      {% endif %}
       {% if verify_error %}
         <div class="alert alert-error" role="alert">{{ verify_error }}</div>
       {% endif %}
@@ -424,10 +427,10 @@
 
      
         <div class="field-group">
-          {% comment %} <div class="field-header">
+          <div class="field-header">
             <label for="id_password">Password</label>
-            <a href="{% url 'password-change' %}" class="forgot-link">Forgot password?</a>
-          </div> {% endcomment %}
+            <a href="{% url 'password-reset' %}" class="forgot-link">Forgot password?</a>
+          </div>
           <div class="input-wrap">
             <input
               class="field-input{% if form.password.errors %} is-invalid{% endif %}"

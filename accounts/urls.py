@@ -25,8 +25,8 @@ urlpatterns = [
     path("profile/update/",  views.profile_update, name="profile-update"),
  
     # ── Password management ──────────────────────────────────────────────────
-    # path("password/reset/",              views.password_reset_request,  name="password-reset"),
-    # path("reset-password/<uuid:token>/", views.password_reset_confirm,  name="password-reset-confirm"),
+    path("password/reset/",              views.password_reset_request,  name="password-reset"),
+    path("reset-password/<uuid:token>/", views.password_reset_confirm,  name="password-reset-confirm"),
     path("account/password/change/", views.changepasswordpage, name="password-change"),
  
     # ── Content pages ────────────────────────────────────────────────────────

@@ -16,6 +16,7 @@ User = get_user_model()
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.core import signing as django_signing
 from django.contrib.auth import update_session_auth_hash
+from django.db import transaction
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
@@ -180,7 +181,7 @@ def loginpage(request):
         return redirect("home-page")
 
     context = {}
-    for key in ("verify_success", "verify_error", "reset_error"):
+    for key in ("verify_success", "verify_error", "reset_error", "reset_success"):
         val = request.session.pop(key, None)
         if val:
             context[key] = val
@@ -331,6 +332,81 @@ def admin_login_page(request):
             error = "Please check the fields below."
 
     return render(request, "admin-login.html", {"error": error})
+
+
+@require_http_methods(["GET", "POST"])
+def password_reset_request(request):
+    if request.user.is_authenticated:
+        return redirect("password-change")
+
+    form = PasswordResetRequestForm(request.POST or None)
+    reset_sent = False
+
+    if request.method == "POST" and form.is_valid():
+        email = form.cleaned_data["email"]
+        user = User.objects.filter(email=email).first()
+
+        if user is not None:
+            PasswordResetToken.objects.filter(user=user, used=False).update(used=True)
+            token_obj = PasswordResetToken.objects.create(user=user)
+            send_password_reset_email(user, str(token_obj.token))
+            logger.info("Password reset requested for %s", email)
+
+        reset_sent = True
+        form = PasswordResetRequestForm()
+
+    return render(request, "password-reset-request.html", {
+        "form": form,
+        "reset_sent": reset_sent,
+    })
+
+
+@require_http_methods(["GET", "POST"])
+def password_reset_confirm(request, token):
+    if request.user.is_authenticated:
+        return redirect("password-change")
+
+    try:
+        token_obj = PasswordResetToken.objects.select_related("user").get(token=token)
+    except PasswordResetToken.DoesNotExist:
+        request.session["reset_error"] = "This password reset link is invalid."
+        return redirect("login-page")
+
+    if not token_obj.is_valid:
+        request.session["reset_error"] = (
+            "This password reset link has already been used or has expired."
+        )
+        return redirect("login-page")
+
+    form = PasswordResetConfirmForm(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        with transaction.atomic():
+            token_obj = PasswordResetToken.objects.select_for_update().select_related("user").get(
+                pk=token_obj.pk
+            )
+            if not token_obj.is_valid:
+                request.session["reset_error"] = (
+                    "This password reset link has already been used or has expired."
+                )
+                return redirect("login-page")
+
+            user = token_obj.user
+            user.set_password(form.cleaned_data["password"])
+            user.save(update_fields=["password"])
+
+            token_obj.used = True
+            token_obj.save(update_fields=["used"])
+            PasswordResetToken.objects.filter(user=user, used=False).exclude(pk=token_obj.pk).update(used=True)
+
+        logger.info("Password reset completed for %s", user.email)
+        request.session["reset_success"] = "Your password has been reset. Please sign in."
+        return redirect("login-page")
+
+    return render(request, "password-reset-confirm.html", {
+        "form": form,
+        "token_email": token_obj.user.email,
+    })
 
 
 # ─────────────────────────────────────────────────────────────────────────────
