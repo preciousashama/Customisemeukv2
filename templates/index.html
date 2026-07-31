@@ -686,7 +686,6 @@ document.querySelectorAll('.js-wish-toggle').forEach(function(btn) {
   });
 });
 
-/* â”€â”€ Hero slider â€” horizontal slide â”€â”€ */
 (function() {
   var track   = document.getElementById('heroTrack');
   var dots    = document.querySelectorAll('.slider-dot');
@@ -701,7 +700,6 @@ document.querySelectorAll('.js-wish-toggle').forEach(function(btn) {
 
   function goTo(n) {
     current = (n + total) % total;
-    /* Slide the whole track left/right */
     track.style.transform = 'translateX(-' + (current * 100) + '%)';
     dots.forEach(function(d, i) {
       d.classList.toggle('active', i === current);
@@ -711,12 +709,6 @@ document.querySelectorAll('.js-wish-toggle').forEach(function(btn) {
   function next()       { goTo(current + 1); }
   function startTimer() { interval = setInterval(next, 5000); }
   function resetTimer() { clearInterval(interval); startTimer(); }
-
-  /* Set initial track width so all slides sit side by side */
-  track.style.width = (slides.length * 100) + '%';
-  slides.forEach(function(s) {
-    s.style.width = (100 / slides.length) + '%';
-  });
 
   startTimer();
 
