@@ -7,6 +7,9 @@
 
 {% block extra_css %}
 <style>
+  html, body {
+    overflow-x: hidden;
+  }
 /* ── PAGE HERO ── */
   .page-hero {
     padding-top: 72px;
@@ -268,6 +271,36 @@
     .page-hero-inner { padding: 60px 24px 48px; flex-direction: column; }
     .page-hero-stat { text-align: left; }
     .shop-layout { padding: 32px 20px 60px; }
+    .filter-bar {
+      position: static;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+      margin-bottom: 36px;
+    }
+    .filter-chips {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      flex-wrap: nowrap;
+      padding-bottom: 6px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .filter-chips::-webkit-scrollbar { display: none; }
+    .filter-divider { flex: 0 0 auto; }
+    .filter-chip { flex: 0 0 auto; }
+    .sort-wrap {
+      width: 100%;
+      justify-content: space-between;
+    }
+    #cartToast {
+      left: 20px;
+      right: 20px;
+      width: auto;
+      bottom: 20px;
+    }
     .products-grid { grid-template-columns: repeat(2, 1fr); gap: 28px 16px; }
     .product-card-featured { grid-column: span 2; }
   }
