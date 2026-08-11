@@ -48,6 +48,12 @@ body {
   display: flex;
   flex-direction: column;
 }
+/* Flex children of body default to min-width:auto, which stops them
+   from shrinking below their content's natural width — if anything
+   inside is even slightly wider than the viewport, it drags the
+   whole page into horizontal scroll. This forces them to shrink
+   to fit instead. */
+body > * { min-width: 0; }
 
 /* â”€â”€â”€ CUSTOM CURSOR â”€â”€â”€ */
 * { cursor: none; }
