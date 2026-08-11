@@ -63,7 +63,7 @@
     background: repeating-linear-gradient(-45deg, transparent, transparent 48px, rgba(200,169,110,0.04) 48px, rgba(200,169,110,0.04) 49px);
   }
   .page-hero::after {
-    content: 'âœ¦'; position: absolute; right: 80px; top: 50%; transform: translateY(-50%);
+    content: '✦'; position: absolute; right: 80px; top: 50%; transform: translateY(-50%);
     font-size: 200px; color: rgba(200,169,110,0.05); font-family: var(--serif); pointer-events: none;
     animation: spin-slow 30s linear infinite;
   }
@@ -94,7 +94,7 @@
     font-family: var(--serif); font-size: 15px; font-weight: 300; font-style: italic; color: var(--grey-3);
     display: flex; align-items: center; gap: 20px;
   }
-  .marquee-item::after { content: 'âœ¦'; font-style: normal; font-size: 8px; color: var(--accent); }
+  .marquee-item::after { content: '✦'; font-style: normal; font-size: 8px; color: var(--accent); }
 
   /* CONTACT LAYOUT */
   .contact-wrap { max-width: 1280px; margin: 0 auto; padding: 80px 80px 100px; }
@@ -343,7 +343,7 @@
   }
 
   /* =============================================
-     HEADER â€” TWO-ROW STRUCTURE (desktop)
+     HEADER — TWO-ROW STRUCTURE (desktop)
      ============================================= */
   header, #mainHeader {
     position: fixed;
@@ -564,7 +564,7 @@
   /* Progress bar offset */
   .progress-track { top: calc(34px + 102px) !important; }
 
-  /* â”€â”€ RESPONSIVE â”€â”€ */
+  /* ── RESPONSIVE ── */
   @media (max-width: 768px) {
     .promo-ticker { height: 28px; }
     .promo-ticker-item { font-size: 9.5px; padding: 0 24px; }
@@ -588,7 +588,7 @@
 <div id="cursor-ring"></div>
 
 <!-- ============================================================
-     PROMO TICKER â€” infinite scrolling banner
+     PROMO TICKER — infinite scrolling banner
      ============================================================ -->
 <div class="promo-ticker" id="promoTicker">
   <div class="promo-ticker-track">
@@ -607,7 +607,7 @@
 </div>
 
 <!-- ============================================================
-     HEADER â€” two-row: search on top, logo|nav|icons below
+     HEADER — two-row: search on top, logo|nav|icons below
      ============================================================ -->
 <header id="mainHeader">
 
@@ -615,7 +615,7 @@
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
   <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-  <input type="text" name="q" placeholder="Search products, designs, categoriesâ€¦" aria-label="Search"
+  <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
          value="{{ request.GET.q|default:'' }}"/>
 </form>
   </div>
@@ -868,7 +868,7 @@
           <div class="form-group">
             <label class="form-label" for="subject">Subject <span style="color:var(--accent);">*</span></label>
             <select class="form-select" id="subject" name="subject" required>
-              <option value="" {% if not form_data.subject %}selected{% endif %} disabled>Select a subjectâ€¦</option>
+              <option value="" {% if not form_data.subject %}selected{% endif %} disabled>Select a subject…</option>
               <option value="General Enquiry" {% if form_data.subject == "General Enquiry" %}selected{% endif %}>General Enquiry</option>
               <option value="Custom Order" {% if form_data.subject == "Custom Order" %}selected{% endif %}>Custom Order</option>
               <option value="Bulk / Corporate" {% if form_data.subject == "Bulk / Corporate" %}selected{% endif %}>Bulk / Corporate</option>
@@ -881,11 +881,11 @@
           <div class="form-group full">
             <label class="form-label" for="message">Message <span style="color:var(--accent);">*</span></label>
             <textarea class="form-textarea" id="message" name="message" rows="5"
-                      placeholder="Tell us about your enquiryâ€¦" required>{{ form_data.message|default:'' }}</textarea>
+                      placeholder="Tell us about your enquiry…" required>{{ form_data.message|default:'' }}</textarea>
             {% if form_errors.message %}<span style="font-size:11px;color:#c0392b;margin-top:4px;display:block;">{{ form_errors.message }}</span>{% endif %}
           </div>
         </div>
-        <button class="submit-btn" type="submit" id="submitBtn"><span>Send Message â†’</span></button>
+        <button class="submit-btn" type="submit" id="submitBtn"><span>Send Message →</span></button>
         <p class="form-note">By submitting, you agree to our <a href="{% url 'privacy-page' %}">Privacy Policy</a>.</p>
       </form>
     </div>
@@ -1013,4 +1013,3 @@
 </script>
 </body>
 </html>
-

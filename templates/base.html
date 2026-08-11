@@ -29,7 +29,7 @@
   --sans:  'DM Sans', system-ui, sans-serif;
 }
 
-/* â”€â”€â”€ RESET & BASE â”€â”€â”€ */
+/* ─── RESET & BASE ─── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html {
   scroll-behavior: smooth;
@@ -55,7 +55,7 @@ body {
    to fit instead. */
 body > * { min-width: 0; }
 
-/* â”€â”€â”€ CUSTOM CURSOR â”€â”€â”€ */
+/* ─── CUSTOM CURSOR ─── */
 * { cursor: none; }
 #cursor {
   position: fixed; top: 0; left: 0;
@@ -74,7 +74,7 @@ body > * { min-width: 0; }
   transition: width .3s, height .3s;
 }
 
-/* â”€â”€â”€ PROMO TICKER â”€â”€â”€ */
+/* ─── PROMO TICKER ─── */
 .promo-ticker {
   position: fixed; top: 0; left: 0; right: 0; z-index: 200;
   background: var(--black);
@@ -105,7 +105,7 @@ body > * { min-width: 0; }
   background: rgba(255,255,255,0.35); flex-shrink: 0;
 }
 
-/* â”€â”€â”€ HEADER â€” two-row: search | logo/nav/icons â”€â”€â”€ */
+/* ─── HEADER — two-row: search | logo/nav/icons ─── */
 header, #mainHeader {
   position: fixed;
   top: 34px;
@@ -363,14 +363,14 @@ nav > .nav-item > a .chevron {
 .mobile-nav.open a:nth-child(5) { transition-delay: .25s; }
 .mobile-nav.open a:nth-child(6) { transition-delay: .30s; }
 
-/* â”€â”€â”€ PAGE CONTENT OFFSET â”€â”€â”€ */
+/* ─── PAGE CONTENT OFFSET ─── */
 /* Compensates for the fixed header: 34px ticker + 34px search row + 68px nav = 136px */
 /* Use .page-wrap on the outermost content div.
    For full-bleed heroes that need to slide under the header, omit .page-wrap
    and handle the offset inside the hero's own padding (e.g. padding-top: 120px+). */
 .page-wrap { padding-top: 136px; }
 
-/* â”€â”€â”€ SHARED PAGE HERO (interior pages) â”€â”€â”€ */
+/* ─── SHARED PAGE HERO (interior pages) ─── */
 .page-hero {
   background: #f5f5f5;
   position: relative;
@@ -413,7 +413,7 @@ nav > .nav-item > a .chevron {
   line-height: 1.7; margin-top: 20px;
 }
 
-/* â”€â”€â”€ SHARED NEWSLETTER SECTION â”€â”€â”€ */
+/* ─── SHARED NEWSLETTER SECTION ─── */
 .newsletter { background: #f5f5f5; padding: 80px; }
 .newsletter-inner {
   max-width: 1280px; margin: 0 auto;
@@ -449,7 +449,7 @@ nav > .nav-item > a .chevron {
 }
 .nl-row button:hover { background: var(--accent-dark); color: var(--white); }
 
-/* â”€â”€â”€ FOOTER â”€â”€â”€ */
+/* ─── FOOTER ─── */
 footer {
   background: var(--black); color: var(--white);
   border-top: 1px solid var(--grey-2);
@@ -494,7 +494,7 @@ footer {
 }
 .footer-bottom-links a:hover { color: var(--accent); }
 
-/* â”€â”€â”€ SHARED ANIMATIONS â”€â”€â”€ */
+/* ─── SHARED ANIMATIONS ─── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -505,7 +505,7 @@ footer {
 .delay-3 { animation-delay: .3s; }
 .delay-4 { animation-delay: .4s; }
 
-/* â”€â”€â”€ RESPONSIVE â”€â”€â”€ */
+/* ─── RESPONSIVE ─── */
 @media (max-width: 1100px) {
   .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
   .newsletter-inner { grid-template-columns: 1fr; gap: 48px; }
@@ -535,11 +535,11 @@ footer {
   .footer-top { grid-template-columns: 1fr; gap: 40px; max-width: 100%; }
 }
 
-/* â”€â”€â”€ MOBILE OVERFLOW GUARD â”€â”€â”€
+/* ─── MOBILE OVERFLOW GUARD ───
    Belt-and-braces: stops common oversized elements (images, tables,
    fixed-width panels) from stretching the document and pushing
    full-width sections like the footer out of alignment with the
-   viewport. (.promo-ticker-track is intentionally exempt â€” it needs
+   viewport. (.promo-ticker-track is intentionally exempt — it needs
    to exceed 100vw for its marquee animation to work.) */
 @media (max-width: 768px) {
   img, table, pre, iframe, video { max-width: 100%; height: auto; }
@@ -580,7 +580,7 @@ footer {
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
     <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input type="text" name="q" placeholder="Search products, designs, categoriesâ€¦" aria-label="Search"
+    <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search"
           value="{{ request.GET.q|default:'' }}"/>
   </form>
   </div>
@@ -832,7 +832,7 @@ footer {
 
 <!-- â•â•â• SHARED JS â•â•â• -->
 <script>
-  // â”€â”€ Custom cursor â”€â”€
+  // ── Custom cursor ──
   const cursor = document.getElementById('cursor');
   const ring   = document.getElementById('cursor-ring');
   let mx = 0, my = 0, rx = 0, ry = 0;
@@ -856,7 +856,7 @@ footer {
     });
   });
 
-  // â”€â”€ Hamburger / mobile nav â”€â”€
+  // ── Hamburger / mobile nav ──
   const hamburger = document.getElementById('hamburger');
   const mobileNav = document.getElementById('mobileNav');
   if (hamburger && mobileNav) {
@@ -887,7 +887,7 @@ footer {
     });
   }
 
-  // â”€â”€ Account dropdown â”€â”€
+  // ── Account dropdown ──
   const accountBtn  = document.getElementById('accountBtn');
   const accountMenu = document.getElementById('accountMenu');
   const accountWrap = document.getElementById('accountWrap');
@@ -915,7 +915,7 @@ footer {
     });
   }
 
-  // â”€â”€ Scroll-triggered fade-in (for .fade-up elements) â”€â”€
+  // ── Scroll-triggered fade-in (for .fade-up elements) ──
   const fadeObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {

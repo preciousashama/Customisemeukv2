@@ -202,7 +202,7 @@
 .categories-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 64px; }
 .view-all { font-family: var(--sans); font-size: 12px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--grey-3); text-decoration: none; display: flex; align-items: center; gap: 8px; transition: color .2s; }
 .view-all:hover { color: var(--black); }
-.view-all::after { content: 'â†’'; }
+.view-all::after { content: '→'; }
 .cats-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 24px; }
 .cat-item { display: flex; flex-direction: column; align-items: center; gap: 16px; text-decoration: none; color: inherit; }
 .cat-img-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; border-radius: 0; border: 1px solid var(--grey-7); position: relative; background: var(--grey-8); transition: border-color .3s; }
@@ -333,11 +333,11 @@
   /* Animations */
    to { opacity: 1; transform: translateY(0); } 
 
-  /* â”€â”€ HERO SLIDER â”€â”€ */
+  /* ── HERO SLIDER ── */
   /* The hero itself must be the positioning root */
   .hero { position: relative; overflow: hidden; }
 
-  /* Slide track â€” all slides sit side-by-side horizontally */
+  /* Slide track — all slides sit side-by-side horizontally */
   .hero-track {
     display: flex;
     width: 100%;
@@ -429,7 +429,7 @@
 {% endblock %}
 
 {% block content %}
-{# â”€â”€ HERO â”€â”€ #}
+{# ── HERO ── #}
 <section class="hero">
 
   <!-- â•â• Background slides â•â• -->
@@ -486,7 +486,6 @@
 
 </section>
 
-{# â”€â”€ BEST SELLERS â”€â”€ #}
 <section class="bestsellers">
   <div class="bestsellers-header">
     <div>
@@ -532,7 +531,7 @@
 </section>
 
 
-{# â”€â”€ CATEGORIES â”€â”€ #}
+{# ── CATEGORIES ── #}
 <section class="categories">
   <div class="categories-header">
     <div>
@@ -588,7 +587,7 @@
 
 
 
-{# â”€â”€ TESTIMONIALS â”€â”€ #}
+{# ── TESTIMONIALS ── #}
 <section class="testimonials">
   <div class="testimonials-header">
     <div>
@@ -624,7 +623,7 @@
   </div>
 </section>
 
-{# â”€â”€ INSTAGRAM â”€â”€ #}
+{# ── INSTAGRAM ── #}
 <section class="instagram">
   <div class="instagram-header">
     <div class="section-label">Social</div>
@@ -654,11 +653,11 @@
 </section>
 
 
-{# â”€â”€ FOOTER â”€â”€ #}
+{# ── FOOTER ── #}
 
 {% block extra_js %}
 <script>
-/* â”€â”€ Wishlist heart toggle â”€â”€ */
+/* ── Wishlist heart toggle ── */
 document.querySelectorAll('.js-wish-toggle').forEach(function(btn) {
   btn.addEventListener('click', function(e) {
     e.preventDefault();
