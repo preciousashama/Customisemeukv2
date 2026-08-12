@@ -383,7 +383,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
   <div class="header-top-row">
     <form class="search-wrap" action="{% url 'shop-page' %}" method="GET" role="search">
       <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" name="q" placeholder="Search products, designs, categoriesâ€¦" aria-label="Search" value="{{ request.GET.q|default:'' }}"/>
+      <input type="text" name="q" placeholder="Search products, designs, categories…" aria-label="Search" value="{{ request.GET.q|default:'' }}"/>
     </form>
   </div>
   <div class="header-bottom-row">
@@ -710,8 +710,8 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
             <div class="field-label"><span class="step-num" id="stepArtSize">3</span> Artwork Size</div>
             <div class="font-grid">
               <button type="button" class="font-btn active js-art-size" data-size="Small" data-inches="4" data-add="0">Small <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">4 inches</span></button>
-              <button type="button" class="font-btn js-art-size" data-size="Medium" data-inches="6" data-add="3">Medium <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">6 inches Â· +£3</span></button>
-              <button type="button" class="font-btn js-art-size" data-size="Large" data-inches="8" data-add="5">Large <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">8 inches Â· +£5</span></button>
+              <button type="button" class="font-btn js-art-size" data-size="Medium" data-inches="6" data-add="3">Medium <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">6 inches · +£3</span></button>
+              <button type="button" class="font-btn js-art-size" data-size="Large" data-inches="8" data-add="5">Large <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">8 inches · +£5</span></button>
             </div>
           </div>
           <div class="field-block" id="blockPrintSide">
@@ -744,7 +744,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
           </div>
           <div class="field-block" id="blockPartyText" style="display:none;">
             <div class="field-label"><span class="step-num" id="stepPartyText">3</span> Custom Text</div>
-            <input type="text" class="field-input" name="party_text" id="partyText" maxlength="50" placeholder="Up to 50 charactersâ€¦"/>
+            <input type="text" class="field-input" name="party_text" id="partyText" maxlength="50" placeholder="Up to 50 characters…"/>
           </div>
           <div class="field-block" id="blockPartyFont" style="display:none;">
             <div class="field-label"><span class="step-num" id="stepPartyFont">4</span> Font</div>
@@ -783,7 +783,7 @@ footer{background:var(--black);color:var(--white);padding:80px 80px 40px;margin-
           </div>
           <div class="field-block" id="blockAdditional" style="display:none;">
             <div class="field-label"><span class="step-num" id="stepAdditional">5</span> Additional Information</div>
-            <textarea class="field-input" name="additional_info" id="additionalInfo" rows="3" placeholder="Any extra details for your orderâ€¦" style="resize:vertical;"></textarea>
+            <textarea class="field-input" name="additional_info" id="additionalInfo" rows="3" placeholder="Any extra details for your order…" style="resize:vertical;"></textarea>
           </div>
           <div class="price-breakdown" id="priceBreakdown">
             <div class="price-row"><span>Base price</span><span id="pbBase">£{{ product.price|floatformat:2 }}</span></div>
@@ -904,7 +904,7 @@ if(accountWrap){
   }
 }
 
-/* Thumbnail switcher â€” detail mode only */
+/* Thumbnail switcher — detail mode only */
 function switchThumb(btn,url){
   document.querySelectorAll('.thumb-btn').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
@@ -912,7 +912,7 @@ function switchThumb(btn,url){
   if(main&&url) main.src=url;
 }
 
-/* Wishlist toggle â€” works in both listing and detail mode */
+/* Wishlist toggle — works in both listing and detail mode */
 document.addEventListener('click',function(e){
   var btn=e.target.closest('.js-wish-toggle');
   if(!btn) return;
@@ -937,7 +937,7 @@ document.addEventListener('click',function(e){
   });
 });
 
-/* Tab switcher â€” detail mode only */
+/* Tab switcher — detail mode only */
 function switchTab(btn,id){
   document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
@@ -946,7 +946,7 @@ function switchTab(btn,id){
   if(el) el.style.display='block';
 }
 
-/* â”€â”€ Detail-mode JS â€” only runs when product exists â”€â”€ */
+/* ── Detail-mode JS — only runs when product exists ── */
 {% if product %}
 (function(){
   var BASE_PRICE       = parseFloat('{{ product.price }}') || 0;
@@ -1026,7 +1026,7 @@ function switchTab(btn,id){
         var btn=document.createElement('button'); btn.type='button';
         btn.className='font-btn js-art-size'+(i===0?' active':'');
         btn.dataset.size=v.label; btn.dataset.inches=v.inches||''; btn.dataset.add=v.add||0;
-        var extra = (v.inches ? v.inches+' inches' : '') + (v.add>0 ? (v.inches?' Â· ':'')+'+£'+Number(v.add).toFixed(2) : '');
+        var extra = (v.inches ? v.inches+' inches' : '') + (v.add>0 ? (v.inches?' · ':'')+'+£'+Number(v.add).toFixed(2) : '');
         btn.innerHTML = v.label + (extra ? ' <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">'+extra+'</span>' : '');
         if(i===0) artAddCfg = parseFloat(v.add)||0;
         btn.addEventListener('click', function(){
@@ -1068,18 +1068,23 @@ function switchTab(btn,id){
       var placementMultiCfg = !!plCfg.multi;
       var selectedPlacementsArrCfg = [];
       plCfg.values.forEach(function(v){
+        var vParts = String(v).split('+');
+        var label = vParts[0].trim();
+        var addAmt = vParts.length>1 ? parseFloat(vParts[1]) : 0;
+        if (isNaN(addAmt)) addAmt = 0;
         var btn=document.createElement('button'); btn.type='button';
-        btn.className='placement-btn js-placement'; btn.dataset.placement=v; btn.textContent=v;
+        btn.className='placement-btn js-placement'; btn.dataset.placement=label; btn.dataset.add=addAmt;
+        btn.innerHTML = label + (addAmt>0 ? ' <span style="font-size:10px;display:block;margin-top:2px;opacity:.7;">+£'+addAmt.toFixed(2).replace(/\.00$/,'')+'</span>' : '');
         btn.addEventListener('click', function(){
           if (placementMultiCfg) {
             this.classList.toggle('active');
-            var idx = selectedPlacementsArrCfg.indexOf(v);
-            if (this.classList.contains('active')) { if (idx===-1) selectedPlacementsArrCfg.push(v); }
+            var idx = selectedPlacementsArrCfg.indexOf(label);
+            if (this.classList.contains('active')) { if (idx===-1) selectedPlacementsArrCfg.push(label); }
             else if (idx!==-1) { selectedPlacementsArrCfg.splice(idx,1); }
           } else {
             document.querySelectorAll('.js-placement').forEach(function(b){b.classList.remove('active');});
             this.classList.add('active');
-            selectedPlacementsArrCfg = [v];
+            selectedPlacementsArrCfg = [label];
           }
           selectedPlacementCfg = selectedPlacementsArrCfg.join(', ');
           document.getElementById('placementField').value = selectedPlacementCfg;
@@ -1189,7 +1194,7 @@ function switchTab(btn,id){
       if(printSide) parts.push('Printing: '+printSide);
       if(txt) parts.push(txt);
       if(font) parts.push(font);
-      document.getElementById('variantField').value=parts.join(' Â· ');
+      document.getElementById('variantField').value=parts.join(' · ');
     }
 
     buildVariantCfg(); updatePriceCfg();
@@ -1317,7 +1322,7 @@ function switchTab(btn,id){
     if(printSide) parts.push('Printing: '+printSide);
     if(partyText) parts.push(partyText);
     if(partyFont) parts.push(partyFont);
-    document.getElementById('variantField').value=parts.join(' Â· ');
+    document.getElementById('variantField').value=parts.join(' · ');
   }
 
   var partyTxtEl=document.getElementById('partyText');
@@ -1365,7 +1370,7 @@ if(form){
     if(hasFile) return;
     e.preventDefault();
     var btn=document.getElementById('addToCartBtn');var sp=btn?btn.querySelector('span'):null;
-    if(btn)btn.disabled=true;if(sp)sp.textContent='Addingâ€¦';
+    if(btn)btn.disabled=true;if(sp)sp.textContent='Adding…';
     fetch(CART_URL,{method:'POST',headers:{'X-Requested-With':'XMLHttpRequest','X-CSRFToken':CSRF_TOKEN},body:new FormData(form)})
     .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
     .then(function(data){
